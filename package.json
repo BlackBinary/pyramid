@@ -1,0 +1,29 @@
+{
+  "name": "cptb",
+  "version": "0.0.1",
+  "description": "CPTB is a Coinbase Pro Trading Bot built in Node.JS",
+  "main": "index.js",
+  "scripts": {
+    "test": " echo \"No test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/BlackBinary/cptb.git"
+  },
+  "keywords": [
+    "Coinbase",
+    "Pro",
+    "Bitcoin",
+    "BTC",
+    "Ethereum",
+    "ETC",
+    "Trading",
+    "Bot"
+  ],
+  "author": "Daen Rebel",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/BlackBinary/cptb/issues"
+  },
+  "homepage": "https://github.com/BlackBinary/cptb#readme"
+}
