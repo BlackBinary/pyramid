@@ -1,3 +1,3 @@
-const client = require('@lib/coinbase/client');
+const api = require('@lib/coinbase/api');
 
-module.exports.get = () => client.getRequest('/accounts', true);
+module.exports.get = () => api.getRequest('/accounts', true);
