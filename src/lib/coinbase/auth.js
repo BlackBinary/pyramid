@@ -1,6 +1,6 @@
 const crypto = require('crypto');
-const { get: getTimestamp } = require('./endpoints/time');
-const logger = require('../logger');
+const { get: getTimestamp } = require('@lib/coinbase/endpoints/time');
+const logger = require('@lib/logger');
 
 // Get the required vars from the env
 const {
