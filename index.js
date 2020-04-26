@@ -1,5 +1,10 @@
-const main = () => {
+require('dotenv').config();
 
-}
+const accounts = require('./lib/coinbase/endpoints/accounts');
 
-main()
+const main = async () => {
+  const accountsData = await accounts.get();
+  console.log(accountsData);
+};
+
+main();
