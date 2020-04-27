@@ -31,19 +31,21 @@ module.exports.checkOrCreateTable = () => {
 };
 
 const limiter = new Bottleneck({
-  maxConcurrent: 2,
-  minTime: 1000,
+  maxConcurrent: 3,
+  minTime: 666,
 });
 
 module.exports.fetchCandlesAndSave = async (product, start, end, granularity) => {
   limiter.schedule(() => candles.get(product, start, end, granularity))
     .then((result) => {
+      logger.info(`Received result for timestamp ${result[0][0]}`);
       const dbJobs = result.map((candle) => dbClient.run(`
           INSERT INTO candles
           (product, time, low, high, open, close, volume)
           VALUES
           (?, ?, ?, ?, ?, ?, ?)
         `, [product, ...candle]));
+      logger.info(`Result for timestamp ${result[0][0]} saved to database`);
       return Promise.all(dbJobs);
     });
 };
@@ -53,7 +55,7 @@ module.exports = async () => {
   this.checkOrCreateTable();
 
   const granularity = 300;
-  const totalDatapoints = 300000;
+  const totalDatapoints = 600000;
   const product = 'BTC-EUR';
 
   logger.info('Importing data from Coinbase');
