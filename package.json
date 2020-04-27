@@ -39,12 +39,16 @@
   "dependencies": {
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
+    "minimist": "^1.2.5",
     "module-alias": "^2.2.2",
+    "moment": "^2.24.0",
     "pino": "^6.2.1",
-    "pino-pretty": "^4.0.0"
+    "pino-pretty": "^4.0.0",
+    "sqlite3": "^4.1.1"
   },
   "_moduleAliases": {
     "@root": ".",
+    "@data": "data/",
     "@lib": "src/lib/",
     "@core": "src/core/"
   }

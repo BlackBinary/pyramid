@@ -32,7 +32,14 @@ client.interceptors.response.use(
   },
 );
 
-// Add a helper function to add options to each request as necessary
+/**
+ * Create the options to be passed with the request
+ * @param {boolean} requriresAuth - Should the request be authenticated
+ * @param {string} method - One of [delete, post, patch, put, get]
+ * @param {string} path - Which path to request
+ * @param {Object|string} body - The request body
+ * @returns {Object}
+ */
 const options = async (requiresAuth, method, path, body = '') => {
   if (requiresAuth) {
     const headers = await auth.generateAuthHeaders(method, path, body);
@@ -41,7 +48,12 @@ const options = async (requiresAuth, method, path, body = '') => {
   return {};
 };
 
-// Export the getRequest function to be used by other parts of the application
+/**
+ * Do a get request to the Coinbase api
+ * @param {string} path - The path the request should go to
+ * @param {boolean} requriresAuth - Should the request be authenticated
+ * @returns {Object}
+ */
 module.exports.getRequest = async (path, requiresAuth = true) => {
   const requestOptions = await options(requiresAuth, 'GET', path);
 

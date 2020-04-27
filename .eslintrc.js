@@ -24,6 +24,7 @@ module.exports = {
                     ["@root", "./"],
                     ["@lib", resolve("src/lib")],
                     ["@core", resolve("src/core")],
+                    ["@data", resolve("data")],
                 ]
             }
         }
