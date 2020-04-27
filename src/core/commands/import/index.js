@@ -1,6 +1,9 @@
 const moment = require('moment');
 const logger = require('@lib/logger');
 const candles = require('@lib/coinbase/endpoints/products/candles');
+const Bottleneck = require('bottleneck');
+const { client: dbClient } = require('@lib/database');
+
 // const products = require('@lib/coinbase/endpoints/products');
 
 module.exports.isoFormat = 'YYYY-MM-DDThh:mm';
@@ -10,7 +13,45 @@ module.exports.generateDates = (start, granularity) => ({
   endDate: moment(start).subtract(granularity * 300, 'seconds').format(this.isoFormat),
 });
 
+module.exports.checkOrCreateTable = () => {
+  const query = `
+    CREATE TABLE IF NOT EXISTS candles
+    (
+      product TEXT,
+      time INTEGER,
+      low INTEGER,
+      high INTEGER,
+      open INTEGER,
+      close INTEGER,
+      volume INTEGER
+    );
+  `;
+
+  dbClient.run(query);
+};
+
+const limiter = new Bottleneck({
+  maxConcurrent: 2,
+  minTime: 1000,
+});
+
+module.exports.fetchCandlesAndSave = async (product, start, end, granularity) => {
+  limiter.schedule(() => candles.get(product, start, end, granularity))
+    .then((result) => {
+      const dbJobs = result.map((candle) => dbClient.run(`
+          INSERT INTO candles
+          (product, time, low, high, open, close, volume)
+          VALUES
+          (?, ?, ?, ?, ?, ?, ?)
+        `, [product, ...candle]));
+      return Promise.all(dbJobs);
+    });
+};
+
 module.exports = async () => {
+  // Check if the candles table exists
+  this.checkOrCreateTable();
+
   const granularity = 300;
   const totalDatapoints = 300000;
   const product = 'BTC-EUR';
@@ -30,7 +71,6 @@ module.exports = async () => {
     } else {
       dates = this.generateDates(dates.endDate, granularity);
     }
-    const data = await candles.get(product, dates.endDate, dates.startDate, granularity);
-    logger.info(data);
+    this.fetchCandlesAndSave(product, dates.endDate, dates.startDate, granularity);
   }
 };
