@@ -10,7 +10,7 @@ const {
 // Create an new Axios client
 const client = axios.create({
   baseURL: COINBASE_API_URL,
-  timeout: 1000,
+  timeout: 5000,
   headers: {
     'Content-type': 'application/json',
     Accept: 'application/json',
@@ -26,8 +26,8 @@ client.interceptors.response.use(
   (response) => Promise.resolve(response),
   // Errors should always reject after being logged
   (error) => {
-    logger.error(error.response.data);
-    logger.error(error.response.status);
+    logger.error('[API] Error. Request failed');
+    logger.error(error);
     return Promise.reject(error);
   },
 );
@@ -40,10 +40,11 @@ client.interceptors.response.use(
  * @param {Object|string} body - The request body
  * @returns {Object}
  */
-const options = async (requiresAuth, method, path, body = '') => {
+const options = (requiresAuth, method, path, body = '') => {
   if (requiresAuth) {
-    const headers = await auth.generateAuthHeaders(method, path, body);
-    return { headers };
+    return {
+      headers: auth.generateAuthHeaders(method, path, body),
+    };
   }
   return {};
 };
@@ -52,16 +53,12 @@ const options = async (requiresAuth, method, path, body = '') => {
  * Do a get request to the Coinbase api
  * @param {string} path - The path the request should go to
  * @param {boolean} requriresAuth - Should the request be authenticated
- * @returns {Object}
+ * @returns {Promise}
  */
-module.exports.getRequest = async (path, requiresAuth = true) => {
-  const requestOptions = await options(requiresAuth, 'GET', path);
+module.exports.getRequest = (path, requiresAuth = true) => new Promise((resolve, reject) => {
+  const requestOptions = options(requiresAuth, 'GET', path);
 
-  const { data, status } = (await client.get(path, requestOptions));
-
-  if (status !== 200) {
-    logger.error('Request failed');
-  }
-
-  return data;
-};
+  return client.get(path, requestOptions)
+    .then((response) => resolve(response))
+    .catch((error) => reject(error));
+});

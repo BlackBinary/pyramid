@@ -1,24 +1,11 @@
 const crypto = require('crypto');
-const { get: getTimestamp } = require('@lib/coinbase/endpoints/time');
-const logger = require('@lib/logger');
 
 // Get the required vars from the env
 const {
   COINBASE_KEY,
   COINBASE_SECRET,
-  GENERATE_TIMESTAMP,
   COINBASE_PASSPHRASE,
 } = process.env;
-
-// Either generate or get a timestamp from the server based on env
-module.exports.generateUnixTimestamp = async () => {
-  if (GENERATE_TIMESTAMP && GENERATE_TIMESTAMP === 'server') {
-    logger.warn('Please consider using timestamp local for improved speed');
-    const { epoch } = await getTimestamp();
-    return epoch;
-  }
-  return Date.now() / 1000;
-};
 
 // Generate a new HMAC signature to sign request with
 module.exports.generateHMAC = (method, path, body = '', timestamp) => {
@@ -42,9 +29,9 @@ module.exports.generateHMAC = (method, path, body = '', timestamp) => {
 };
 
 // Generate the authentication headers all together
-module.exports.generateAuthHeaders = async (method, path, body) => {
+module.exports.generateAuthHeaders = (method, path, body) => {
   // Either get or generate the unix timestamp based on the settings
-  const timestamp = await this.generateUnixTimestamp();
+  const timestamp = Date.now() / 1000;
 
   return {
     'CB-ACCESS-KEY': COINBASE_KEY,

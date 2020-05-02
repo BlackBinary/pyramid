@@ -10,7 +10,7 @@ module.exports.isoFormat = 'YYYY-MM-DDThh:mm';
 
 module.exports.generateDates = (start, granularity) => ({
   startDate: moment(start).format(this.isoFormat),
-  endDate: moment(start).subtract(granularity * 300, 'seconds').format(this.isoFormat),
+  endDate: moment(start).subtract(granularity * 60, 'seconds').format(this.isoFormat),
 });
 
 module.exports.checkOrCreateTable = () => {
@@ -31,31 +31,68 @@ module.exports.checkOrCreateTable = () => {
 };
 
 const limiter = new Bottleneck({
-  maxConcurrent: 3,
-  minTime: 666,
+  reservoir: 30, // initial value
+  reservoirIncreaseMaximum: 30,
+  reservoirRefreshAmount: 100,
+  reservoirRefreshInterval: 30 * 1000, // must be divisible by 250
+
+  // also use maxConcurrent and/or minTime for safety
+  maxConcurrent: 1,
+  minTime: 1000,
 });
 
-module.exports.fetchCandlesAndSave = async (product, start, end, granularity) => {
-  limiter.schedule(() => candles.get(product, start, end, granularity))
-    .then((result) => {
-      logger.info(`Received result for timestamp ${result[0][0]}`);
-      const dbJobs = result.map((candle) => dbClient.run(`
-          INSERT INTO candles
-          (product, time, low, high, open, close, volume)
-          VALUES
-          (?, ?, ?, ?, ?, ?, ?)
-        `, [product, ...candle]));
-      logger.info(`Result for timestamp ${result[0][0]} saved to database`);
-      return Promise.all(dbJobs);
+module.exports.addRanges = (ranges, product, granularity) => {
+  ranges.forEach(({ endDate, startDate }) => limiter.schedule(() => {
+    logger.info(`[IMPORT] Current job count: ${limiter.counts().QUEUED}`);
+    logger.info(`[IMPORT] Added range ${endDate} - ${startDate}`);
+    return this.fetchCandlesAndSave(product, endDate, startDate, granularity);
+  }));
+};
+
+module.exports.fetchCandlesAndSave = (product, start, end, granularity) => {
+  candles.get(product, start, end, granularity)
+    .then(({ data }) => {
+      logger.info('[IMPORT] New data received');
+      const prepared = dbClient.prepare(`
+        INSERT INTO candles
+        (product, time, low, high, open, close, volume)
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?)
+      `);
+      const dbJobs = data.map(async (candle) => {
+        prepared.run([product, ...candle]);
+      });
+      return Promise.all(dbJobs).finally(() => {
+        logger.info('[IMPORT] New data saved to database');
+      });
+    })
+    .catch((error) => {
+      logger.info('[IMPORT] Importing data failed');
+      if (error.response) {
+        if (error.response.status === 400) {
+          const divideBy = 3;
+          logger.info(`[IMPORT] Granularity too large for start and end date. Divide by ${divideBy}`);
+          const ranges = [];
+          let dates = {};
+          for (let i = 0; i < divideBy; i += 1) {
+            const newGranularity = (granularity / divideBy);
+            const dateToAdd = i === 0 ? start : dates.endDate;
+            dates = this.generateDates(dateToAdd, newGranularity);
+          }
+          this.addRanges(ranges, product, granularity);
+        }
+      } else {
+        limiter.schedule(() => this.fetchCandlesAndSave(product, end, start, granularity));
+      }
     });
 };
 
-module.exports = async () => {
+module.exports = () => {
   // Check if the candles table exists
   this.checkOrCreateTable();
 
-  const granularity = 300;
-  const totalDatapoints = 600000;
+  const granularity = 60;
+  const totalDatapoints = 20000;
   const product = 'BTC-EUR';
 
   logger.info('Importing data from Coinbase');
@@ -66,13 +103,13 @@ module.exports = async () => {
 
   const yesterday = moment(new Date()).subtract(1, 'day');
 
+  const ranges = [];
   let dates = {};
-  for (let i = 0; i < totalDatapoints; i += 300) {
-    if (i === 0) {
-      dates = this.generateDates(yesterday, granularity);
-    } else {
-      dates = this.generateDates(dates.endDate, granularity);
-    }
-    this.fetchCandlesAndSave(product, dates.endDate, dates.startDate, granularity);
+  for (let i = 0; i < totalDatapoints; i += granularity) {
+    const dateToAdd = i === 0 ? yesterday : dates.endDate;
+    dates = this.generateDates(dateToAdd, granularity);
+    ranges.push(dates);
   }
+
+  this.addRanges(ranges, product, granularity);
 };
