@@ -104,6 +104,11 @@ module.exports = async () => {
   // Average over set periods
   const averageOver = 5;
 
+  // Only buy if SMA is above
+  const buyAt = 5;
+  // Only sell if SMA is below
+  const sellAt = -7;
+
   // Set an initial portfolio to start trading with
   this.portfolio.usd = 100;
   const startedWith = { ...this.portfolio };
@@ -127,12 +132,12 @@ module.exports = async () => {
       const smaDifference = currentSma - previousSma;
 
       // If the difference is a positive number, do something (buy?)
-      if (smaDifference > 0) {
+      if (smaDifference > buyAt) {
         // logger.info(`[BACKTESTING] Closing SMA is up ${smaDifference}`);
         if (this.portfolio.usd > 0) {
           this.trade(this.portfolio.usd, currentPrice, this.BUY);
         }
-      } else if (smaDifference < 0) { // If the difference is a negative number, do something (sell?)
+      } else if (smaDifference < sellAt) { // If the difference is a negative number, do something (sell?)
         // logger.info(`[BACKTESTING] Closing SMA is down ${smaDifference}`);
         if (this.portfolio.btc > 0) {
           this.trade(this.portfolio.btc, currentPrice, this.SELL);
