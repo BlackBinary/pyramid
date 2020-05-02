@@ -6,7 +6,13 @@ const { client: dbClient } = require('@lib/database');
 module.exports.getMarketData = async () => {
   const query = `
   SELECT DISTINCT
-  time, product, low, high, open, close, volume
+    time,
+    product,
+    -- low,
+    -- high,
+    -- open,
+    close
+    -- volume
   FROM candles
   ORDER BY time;
   `;
@@ -32,36 +38,56 @@ module.exports = async () => {
 
   const data = await this.getMarketData();
 
+  // Create new arrays with data
   data.forEach(({
-    high, low, open, close, volume,
+    // high,
+    // low,
+    // open,
+    close,
+    // volume,
   }) => {
-    this.data.high.push(high);
-    this.data.low.push(low);
-    this.data.open.push(open);
+    // this.data.high.push(high);
+    // this.data.low.push(low);
+    // this.data.open.push(open);
     this.data.close.push(close);
-    this.data.volume.push(volume);
+    // this.data.volume.push(volume);
   });
 
-  tulind.indicators.macd.indicator([this.data.close], [12, 26, 9], (err, results) => {
-    console.log('Result of macd is:');
-    const [macd, signal, histogram] = results;
+  // Average over set periods
+  const averageOver = 5;
 
-    for (let i = 0; i < macd.length; i++) {
-      const currentMacd = macd[i];
-      const currentSignal = signal[i];
-      const previousMacd = macd[i - 1];
-      const previousSignal = signal[i - 1];
+  // First try with SMA over 5 periods
+  tulind.indicators.sma.indicator([this.data.close], [averageOver], (err, results) => {
+    // Get the results
+    const [closingSma] = results;
 
+    // For each result (price starts at the averageOver size, and should be smaller than the total length of prices + 1)
+    for (let i = averageOver; i < (this.data.close.length - averageOver + 1); i += 1) {
+      // Get the current and the previous result
+      const currentSma = closingSma[i];
+      const previousSma = closingSma[i - 1];
 
-      const up = currentMacd - previousMacd > previousMacd;
+      // Get the current and the previous price
+      const currentPrice = this.data.close[i];
+      const previousPrice = this.data.close[i - 1];
 
-      console.log(`Is market up? ${up}`);
-      // console.log(currentMacd - previousMacd);
-      // console.log(`macd:   ${currentMacd}`);
-      // console.log(`signal: ${currentSignal}`);
+      // Get the difference between
+      const smaDifference = currentSma - previousSma;
+
+      // If the difference is a positive number, do something (buy?)
+      if (smaDifference > 0) {
+        logger.info(`Closing SMA is up ${smaDifference}`);
+      } else if (smaDifference < 0) { // If the difference is a negative number, do something (sell?)
+        logger.info(`Closing SMA is down ${smaDifference}`);
+      } else {
+        logger.info('Closing SMA is equal');
+      }
+
+      logger.info(`Price Previous: ${previousPrice}`);
+      logger.info(`Price Current:  ${currentPrice}`);
+
+      logger.info(`SMA Previous: ${previousSma}`);
+      logger.info(`SMA Current:  ${currentSma}`);
     }
-    // console.log(macd);
-    // console.log(signal);
-    // console.log(histogram);
   });
 };
