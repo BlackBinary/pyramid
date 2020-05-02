@@ -41,26 +41,48 @@ module.exports.portfolio = {
 module.exports.SELL = 'SELL';
 module.exports.BUY = 'BUY';
 
+module.exports.fees = 0.5 / 100;
+
 module.exports.trades = [];
 
 module.exports.trade = (amount, price, type) => {
   if (type === this.BUY) {
+    const fee = amount * this.fees;
+    const buyingTotal = ((amount - fee) / price); // Total bitcoin
+    // Remove the total of usd used to buy
+    this.portfolio.usd -= amount;
+    // Add the amount of btc bought minus the fee
+    this.portfolio.btc += buyingTotal;
+    // Add the trade to the list of trades
+    this.trades.push({
+      type: this.BUY,
+      total: buyingTotal,
+      price,
+      amount,
+      fee,
+    });
     logger.info(`[BACKTESTING] Buying ${amount} at ${price}`);
-    this.portfolio.usd -= amount * price;
-    this.portfolio.btc = amount;
-    this.trades.push({ type: this.BUY, price, amount });
   } else if (type === this.SELL) {
-    logger.info(`[BACKTESTING] Selling ${amount} at ${price}`);
-    this.portfolio.usd += amount * price;
+    const fee = amount * this.fees;
+    const sellingTotal = ((amount - fee) * price); // Total usd
+    // Add the amount usd profit minus the fee
+    this.portfolio.usd += sellingTotal - fee;
+    // Remove the amount btc sold
     this.portfolio.btc -= amount;
-    this.trades.push({ type: this.SELL, price, amount });
-  } else {
-    logger.info('[BACKTESTING] Invalid trade type');
+    // Add the trade to the list of trades
+    this.trades.push({
+      type: this.SELL,
+      total: sellingTotal,
+      price,
+      amount,
+      fee,
+    });
+    logger.info(`[BACKTESTING] Selling ${amount} at ${price}`);
   }
 };
 
 module.exports = async () => {
-  logger.info('Backtesting');
+  logger.info('[BACKTESTING] Starting backtesting');
 
   const data = await this.getMarketData();
 
@@ -106,13 +128,12 @@ module.exports = async () => {
 
       // If the difference is a positive number, do something (buy?)
       if (smaDifference > 0) {
-        logger.info(`[BACKTESTING] Closing SMA is up ${smaDifference}`);
+        // logger.info(`[BACKTESTING] Closing SMA is up ${smaDifference}`);
         if (this.portfolio.usd > 0) {
-          const amount = this.portfolio.usd / currentPrice;
-          this.trade(amount, currentPrice, this.BUY);
+          this.trade(this.portfolio.usd, currentPrice, this.BUY);
         }
       } else if (smaDifference < 0) { // If the difference is a negative number, do something (sell?)
-        logger.info(`[BACKTESTING] Closing SMA is down ${smaDifference}`);
+        // logger.info(`[BACKTESTING] Closing SMA is down ${smaDifference}`);
         if (this.portfolio.btc > 0) {
           this.trade(this.portfolio.btc, currentPrice, this.SELL);
         }
@@ -120,12 +141,14 @@ module.exports = async () => {
         logger.info('[BACKTESTING] Closing SMA is equal');
       }
 
-      logger.info(`[BACKTESTING] Price Previous: ${previousPrice}`);
-      logger.info(`[BACKTESTING] Price Current:  ${currentPrice}`);
+      // logger.info(`[BACKTESTING] Price Previous: ${previousPrice}`);
+      // logger.info(`[BACKTESTING] Price Current:  ${currentPrice}`);
 
-      logger.info(`[BACKTESTING] SMA Previous: ${previousSma}`);
-      logger.info(`[BACKTESTING] SMA Current:  ${currentSma}`);
+      // logger.info(`[BACKTESTING] SMA Previous: ${previousSma}`);
+      // logger.info(`[BACKTESTING] SMA Current:  ${currentSma}`);
     }
+
+    console.log(this.trades);
 
     logger.info('\n\n\n\n');
     logger.info('[BACKTESTING] Results');
