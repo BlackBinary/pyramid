@@ -3,7 +3,7 @@ const moment = require('moment');
 const logger = require('@lib/logger');
 const { client: dbClient } = require('@lib/database');
 
-module.exports.getMarketData = async () => {
+module.exports.getMarketData = async (importName) => {
   const query = `
   SELECT
     timestamp,
@@ -14,12 +14,17 @@ module.exports.getMarketData = async () => {
     close,
     volume
   FROM candles
+  WHERE importId = (
+    SELECT id
+    FROM imports
+    WHERE name = ?
+  )
   GROUP BY timestamp, product
   ORDER BY timestamp;
   `;
 
   return new Promise((resolve, reject) => {
-    dbClient.all(query, [], (err, data) => {
+    dbClient.all(query, [importName], (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
@@ -109,7 +114,7 @@ module.exports = async (args) => {
       if (type === 'string') {
         return args.name;
       }
-      logger.error(`[IMPORTING] Name must be of type string. ${type} given`);
+      logger.error(`[BACKTESTING] Name must be of type string. ${type} given`);
     }
     return false;
   };
@@ -134,6 +139,11 @@ module.exports = async (args) => {
   this.loadStrategy(strategy());
 
   const marketData = await this.getMarketData(name());
+
+  if (!marketData.length) {
+    logger.error('[BACKTESTING] No market data to run against. Did you specify the correct import?');
+    return;
+  }
 
   // Create new arrays with data
   marketData.forEach(({

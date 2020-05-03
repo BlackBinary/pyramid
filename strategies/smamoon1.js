@@ -1,3 +1,15 @@
+/**
+ * SMA MOON 1
+ * Author: Daen Rebel
+ *
+ * This strategy seems to work. I need someone to help me verify
+ *
+ * Strategy
+ * Get SMA over last 5 closing prices
+ * Buy if difference between current and previous average is above 8
+ * Sell if difference between current and previous average is below -19
+ */
+
 const tulind = require('tulind');
 
 const logger = require('@lib/logger');
@@ -29,7 +41,7 @@ module.exports.init = (_this) => {
 module.exports.update = (i) => {
   // logger.info(`Received update for index ${i}`);
   if (i < this.config.averageOver) {
-    logger.info(`Skipping index ${i} because it's out of our data range`);
+    logger.info(`[SMA MOON 1] Skipping index ${i} because it's out of our data range`);
   } else {
     // Get the current and the previous result
     const currentSma = this.sma[i];
