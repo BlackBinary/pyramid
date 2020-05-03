@@ -25,6 +25,7 @@ module.exports = {
                     ["@lib", resolve("src/lib")],
                     ["@core", resolve("src/core")],
                     ["@data", resolve("data")],
+                    ["@strategies", resolve("strategies")],
                 ]
             }
         }

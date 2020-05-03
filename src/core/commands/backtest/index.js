@@ -1,19 +1,22 @@
-const tulind = require('tulind');
-const moment = require('moment');
+// const tulind = require('tulind');
+// const moment = require('moment');
+const strategy = require('@strategies/smamoon1');
 
 const logger = require('@lib/logger');
 const { client: dbClient } = require('@lib/database');
+
+module.exports.strategy = strategy;
 
 module.exports.getMarketData = async () => {
   const query = `
   SELECT DISTINCT
     time,
     product,
-    -- low,
-    -- high,
-    -- open,
-    close
-    -- volume
+    low,
+    high,
+    open,
+    close,
+    volume
   FROM candles
   ORDER BY time;
   `;
@@ -27,11 +30,11 @@ module.exports.getMarketData = async () => {
 };
 
 module.exports.data = {
-  // high: [],
-  // low: [],
-  // open: [],
+  high: [],
+  low: [],
+  open: [],
   close: [],
-  // volume: [],
+  volume: [],
 };
 
 module.exports.portfolio = {
@@ -39,15 +42,17 @@ module.exports.portfolio = {
   btc: 0,
 };
 
-module.exports.SELL = 'SELL';
-module.exports.BUY = 'BUY';
+module.exports.tradeTypes = {
+  SELL: 'SELL',
+  BUY: 'BUY',
+};
 
 module.exports.fees = 0.5 / 100;
 
 module.exports.trades = [];
 
 module.exports.trade = (amount, price, type) => {
-  if (type === this.BUY) {
+  if (type === this.tradeTypes.BUY) {
     const fee = amount * this.fees;
     const buyingTotal = ((amount - fee) / price); // Total bitcoin
     // Remove the total of usd used to buy
@@ -56,14 +61,14 @@ module.exports.trade = (amount, price, type) => {
     this.portfolio.btc += buyingTotal;
     // Add the trade to the list of trades
     this.trades.push({
-      type: this.BUY,
+      type: this.tradeTypes.BUY,
       total: buyingTotal,
       price,
       amount,
       fee,
     });
     logger.info(`[BACKTESTING] Buying ${buyingTotal} at ${price}`);
-  } else if (type === this.SELL) {
+  } else if (type === this.tradeTypes.SELL) {
     const fee = amount * this.fees;
     const sellingTotal = ((amount - fee) * price); // Total usd
     // Add the amount usd profit minus the fee
@@ -72,7 +77,7 @@ module.exports.trade = (amount, price, type) => {
     this.portfolio.btc -= amount;
     // Add the trade to the list of trades
     this.trades.push({
-      type: this.SELL,
+      type: this.tradeTypes.SELL,
       total: sellingTotal,
       price,
       amount,
@@ -89,85 +94,91 @@ module.exports = async () => {
 
   // Create new arrays with data
   data.forEach(({
-    // high,
-    // low,
-    // open,
+    high,
+    low,
+    open,
     close,
-    // volume,
+    volume,
   }) => {
-    // this.data.high.push(high);
-    // this.data.low.push(low);
-    // this.data.open.push(open);
+    this.data.high.push(high);
+    this.data.low.push(low);
+    this.data.open.push(open);
     this.data.close.push(close);
-    // this.data.volume.push(volume);
+    this.data.volume.push(volume);
   });
 
-  // Average over set periods
-  const averageOver = 5;
+  this.strategy.init(this);
 
-  // Only buy if SMA is above
-  const buyAt = 4;
-  // Only sell if SMA is below
-  const sellAt = -5;
+  for (let i = 0; i < data.length; i += 1) {
+    this.strategy.update(i);
+  }
 
-  // Set an initial portfolio to start trading with
-  this.portfolio.usd = 1000;
-  const startedWith = { ...this.portfolio };
+  // // Average over set periods
+  // const averageOver = 5;
 
-  // First try with SMA over 5 periods
-  tulind.indicators.sma.indicator([this.data.close], [averageOver], (err, results) => {
-    // Get the results
-    const [closingSma] = results;
+  // // Only buy if SMA is above
+  // const buyAt = 4;
+  // // Only sell if SMA is below
+  // const sellAt = -5;
 
-    // For each result (price starts at the averageOver size, and should be smaller than the total length of prices + 1)
-    for (let i = averageOver; i < (this.data.close.length - averageOver + 1); i += 1) {
-      // Get the current and the previous result
-      const currentSma = closingSma[i];
-      const previousSma = closingSma[i - 1];
+  // // Set an initial portfolio to start trading with
+  // this.portfolio.usd = 1000;
+  // const startedWith = { ...this.portfolio };
 
-      // Get the current and the previous price
-      const currentPrice = this.data.close[i];
-      const previousPrice = this.data.close[i - 1];
+  // // First try with SMA over 5 periods
+  // tulind.indicators.sma.indicator([this.data.close], [averageOver], (err, results) => {
+  //   // Get the results
+  //   const [closingSma] = results;
 
-      // Get the difference between
-      const smaDifference = currentSma - previousSma;
+  //   // For each result (price starts at the averageOver size, and should be smaller than the total length of prices + 1)
+  //   for (let i = averageOver; i < (this.data.close.length - averageOver + 1); i += 1) {
+  //     // Get the current and the previous result
+  //     const currentSma = closingSma[i];
+  //     const previousSma = closingSma[i - 1];
 
-      // If the difference is a positive number, do something (buy?)
-      if (smaDifference > buyAt) {
-        // logger.info(`[BACKTESTING] Closing SMA is up ${smaDifference}`);
-        if (this.portfolio.usd > 0) {
-          this.trade(this.portfolio.usd, currentPrice, this.BUY);
-        }
-      } else if (smaDifference < sellAt) { // If the difference is a negative number, do something (sell?)
-        // logger.info(`[BACKTESTING] Closing SMA is down ${smaDifference}`);
-        if (this.portfolio.btc > 0) {
-          this.trade(this.portfolio.btc, currentPrice, this.SELL);
-        }
-      }
+  //     // Get the current and the previous price
+  //     const currentPrice = this.data.close[i];
+  //     const previousPrice = this.data.close[i - 1];
 
-      // logger.info(`[BACKTESTING] Price Previous: ${previousPrice}`);
-      // logger.info(`[BACKTESTING] Price Current:  ${currentPrice}`);
+  //     // Get the difference between
+  //     const smaDifference = currentSma - previousSma;
 
-      // logger.info(`[BACKTESTING] SMA Previous: ${previousSma}`);
-      // logger.info(`[BACKTESTING] SMA Current:  ${currentSma}`);
-    }
+  //     // If the difference is a positive number, do something (buy?)
+  //     if (smaDifference > buyAt) {
+  //       // logger.info(`[BACKTESTING] Closing SMA is up ${smaDifference}`);
+  //       if (this.portfolio.usd > 0) {
+  //         this.trade(this.portfolio.usd, currentPrice, this.tradeTypes.BUY);
+  //       }
+  //     } else if (smaDifference < sellAt) { // If the difference is a negative number, do something (sell?)
+  //       // logger.info(`[BACKTESTING] Closing SMA is down ${smaDifference}`);
+  //       if (this.portfolio.btc > 0) {
+  //         this.trade(this.portfolio.btc, currentPrice, this.tradeTypes.SELL);
+  //       }
+  //     }
 
-    // console.log(this.trades);
+  //     // logger.info(`[BACKTESTING] Price Previous: ${previousPrice}`);
+  //     // logger.info(`[BACKTESTING] Price Current:  ${currentPrice}`);
 
-    logger.info('\n\n\n\n');
-    logger.info('[BACKTESTING] Results');
-    logger.info(`[BACKTESTING] Total trades done: ${this.trades.length}`);
+  //     // logger.info(`[BACKTESTING] SMA Previous: ${previousSma}`);
+  //     // logger.info(`[BACKTESTING] SMA Current:  ${currentSma}`);
+  //   }
 
-    logger.info('[BACKTESTING] Started With:');
-    logger.info(`[BACKTESTING] USD: ${startedWith.usd}`);
-    logger.info(`[BACKTESTING] BTC: ${startedWith.btc}`);
+  //   // console.log(this.trades);
 
-    logger.info('[BACKTESTING] Ended With:');
-    logger.info(`[BACKTESTING] USD: ${this.portfolio.usd}`);
-    logger.info(`[BACKTESTING] BTC: ${this.portfolio.btc}`);
+  //   logger.info('\n\n\n\n');
+  //   logger.info('[BACKTESTING] Results');
+  //   logger.info(`[BACKTESTING] Total trades done: ${this.trades.length}`);
 
-    const totalProfits = this.portfolio.usd + (this.portfolio.btc * this.data.close[this.data.close.length - 1]);
-    logger.info('[BACKTESTING] Potential profits:');
-    logger.info(`[BACKTESTING] USD: ${totalProfits}`);
-  });
+  //   logger.info('[BACKTESTING] Started With:');
+  //   logger.info(`[BACKTESTING] USD: ${startedWith.usd}`);
+  //   logger.info(`[BACKTESTING] BTC: ${startedWith.btc}`);
+
+  //   logger.info('[BACKTESTING] Ended With:');
+  //   logger.info(`[BACKTESTING] USD: ${this.portfolio.usd}`);
+  //   logger.info(`[BACKTESTING] BTC: ${this.portfolio.btc}`);
+
+  //   const totalProfits = this.portfolio.usd + (this.portfolio.btc * this.data.close[this.data.close.length - 1]);
+  //   logger.info('[BACKTESTING] Potential profits:');
+  //   logger.info(`[BACKTESTING] USD: ${totalProfits}`);
+  // });
 };

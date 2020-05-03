@@ -6,6 +6,7 @@
       "@lib/*": ["src/lib/*"],
       "@core/*": ["src/core/*"],
       "@data/*": ["data/*"],
+      "@strategies/*": ["strategies/*"],
     }
   }
 }

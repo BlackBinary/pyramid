@@ -52,6 +52,7 @@
     "@root": ".",
     "@data": "data/",
     "@lib": "src/lib/",
-    "@core": "src/core/"
+    "@core": "src/core/",
+    "@strategies": "strategies/"
   }
 }
