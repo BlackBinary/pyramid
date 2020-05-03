@@ -15,13 +15,13 @@ const tulind = require('tulind');
 const logger = require('@lib/logger');
 
 module.exports.config = {
-  averageOver: 5,
-  buyAt: 8,
-  sellAt: -19,
+  averageOver: 4,
+  buyAt: 2,
+  sellAt: -5,
   backtesting: {
     portfolio: {
-      usd: 1000,
-      btc: 0,
+      fiat: 1000,
+      crypto: 0,
     },
   },
 };
@@ -57,13 +57,13 @@ module.exports.update = (i) => {
     // If the difference is a positive number, do something (buy?)
     if (smaDifference > this.config.buyAt) {
       logger.info(`[SMA MOON 1] Closing SMA is up by ${smaDifference}`);
-      if (this.main.portfolio.usd > 0) {
-        this.main.trade(this.main.portfolio.usd, currentPrice, this.main.tradeTypes.BUY);
+      if (this.main.portfolio.fiat > 0) {
+        this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
       }
     } else if (smaDifference < this.config.sellAt) { // If the difference is a negative number, do something (sell?)
       logger.info(`[SMA MOON 1] Closing SMA is down by ${smaDifference}`);
-      if (this.main.portfolio.btc > 0) {
-        this.main.trade(this.main.portfolio.btc, currentPrice, this.main.tradeTypes.SELL);
+      if (this.main.portfolio.crypto > 0) {
+        this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
       }
     }
 

@@ -41,7 +41,7 @@ module.exports.data = {
 };
 
 module.exports.portfolio = {
-  usd: 0,
+  fiat: 0,
   crypto: 0,
 };
 
@@ -71,8 +71,8 @@ module.exports.trade = (amount, price, type, timestamp) => {
   if (type === this.tradeTypes.BUY) {
     const fee = amount * this.fees;
     const buyingTotal = ((amount - fee) / price); // Total bitcoin
-    // Remove the total of usd used to buy
-    this.portfolio.usd -= amount;
+    // Remove the total of fiat used to buy
+    this.portfolio.fiat -= amount;
     // Add the amount of crypto bought minus the fee
     this.portfolio.crypto += buyingTotal;
     // Add the trade to the list of trades
@@ -87,9 +87,9 @@ module.exports.trade = (amount, price, type, timestamp) => {
     logger.info(`[BACKTESTING] Buying ${buyingTotal} at ${price}`);
   } else if (type === this.tradeTypes.SELL) {
     const fee = amount * this.fees;
-    const sellingTotal = ((amount - fee) * price); // Total usd
-    // Add the amount usd profit minus the fee
-    this.portfolio.usd += sellingTotal - fee;
+    const sellingTotal = ((amount - fee) * price); // Total fiat
+    // Add the amount fiat profit minus the fee
+    this.portfolio.fiat += sellingTotal - fee;
     // Remove the amount crypto sold
     this.portfolio.crypto -= amount;
     // Add the trade to the list of trades
@@ -188,16 +188,16 @@ module.exports = async (args) => {
   logger.info(`[BACKTESTING] Trades done between ${startTime} and ${endtTime}`);
 
   logger.info('[BACKTESTING] Started With:');
-  logger.info(`[BACKTESTING] USD:    ${startedWith.usd}`);
+  logger.info(`[BACKTESTING] Fiat:   ${startedWith.fiat}`);
   logger.info(`[BACKTESTING] Crypto: ${startedWith.crypto}`);
 
   logger.info('[BACKTESTING] Ended With:');
-  logger.info(`[BACKTESTING] USD:    ${this.portfolio.usd}`);
+  logger.info(`[BACKTESTING] Fiat:   ${this.portfolio.fiat}`);
   logger.info(`[BACKTESTING] Crypto: ${this.portfolio.crypto}`);
 
-  const totalProfits = this.portfolio.usd + (this.portfolio.crypto * this.data.close[this.data.close.length - 1]);
+  const totalProfits = this.portfolio.fiat + (this.portfolio.crypto * this.data.close[this.data.close.length - 1]);
 
   logger.info('[BACKTESTING] Potential outcome:');
-  logger.info(`[BACKTESTING] Total USD:  ${totalProfits}`);
-  logger.info(`[BACKTESTING] Profit USD: ${totalProfits - startedWith.usd}`);
+  logger.info(`[BACKTESTING] Total fiat:  ${totalProfits}`);
+  logger.info(`[BACKTESTING] Profit fiat: ${totalProfits - startedWith.fiat}`);
 };
