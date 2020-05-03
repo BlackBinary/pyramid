@@ -188,12 +188,12 @@ module.exports = async (args) => {
   logger.info(`[BACKTESTING] Trades done between ${startTime} and ${endtTime}`);
 
   logger.info('[BACKTESTING] Started With:');
-  logger.info(`[BACKTESTING] USD: ${startedWith.usd}`);
-  logger.info(`[BACKTESTING] crypto: ${startedWith.crypto}`);
+  logger.info(`[BACKTESTING] USD:    ${startedWith.usd}`);
+  logger.info(`[BACKTESTING] Crypto: ${startedWith.crypto}`);
 
   logger.info('[BACKTESTING] Ended With:');
-  logger.info(`[BACKTESTING] USD: ${this.portfolio.usd}`);
-  logger.info(`[BACKTESTING] crypto: ${this.portfolio.crypto}`);
+  logger.info(`[BACKTESTING] USD:    ${this.portfolio.usd}`);
+  logger.info(`[BACKTESTING] Crypto: ${this.portfolio.crypto}`);
 
   const totalProfits = this.portfolio.usd + (this.portfolio.crypto * this.data.close[this.data.close.length - 1]);
 
