@@ -1,4 +1,5 @@
 const tulind = require('tulind');
+const moment = require('moment');
 
 const logger = require('@lib/logger');
 const { client: dbClient } = require('@lib/database');
