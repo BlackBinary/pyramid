@@ -62,7 +62,7 @@ module.exports.trade = (amount, price, type) => {
       amount,
       fee,
     });
-    logger.info(`[BACKTESTING] Buying ${amount} at ${price}`);
+    logger.info(`[BACKTESTING] Buying ${buyingTotal} at ${price}`);
   } else if (type === this.SELL) {
     const fee = amount * this.fees;
     const sellingTotal = ((amount - fee) * price); // Total usd
@@ -106,12 +106,12 @@ module.exports = async () => {
   const averageOver = 5;
 
   // Only buy if SMA is above
-  const buyAt = 5;
+  const buyAt = 4;
   // Only sell if SMA is below
-  const sellAt = -7;
+  const sellAt = -5;
 
   // Set an initial portfolio to start trading with
-  this.portfolio.usd = 100;
+  this.portfolio.usd = 1000;
   const startedWith = { ...this.portfolio };
 
   // First try with SMA over 5 periods
@@ -143,8 +143,6 @@ module.exports = async () => {
         if (this.portfolio.btc > 0) {
           this.trade(this.portfolio.btc, currentPrice, this.SELL);
         }
-      } else {
-        logger.info('[BACKTESTING] Closing SMA is equal');
       }
 
       // logger.info(`[BACKTESTING] Price Previous: ${previousPrice}`);
@@ -154,7 +152,7 @@ module.exports = async () => {
       // logger.info(`[BACKTESTING] SMA Current:  ${currentSma}`);
     }
 
-    console.log(this.trades);
+    // console.log(this.trades);
 
     logger.info('\n\n\n\n');
     logger.info('[BACKTESTING] Results');
