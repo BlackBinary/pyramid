@@ -42,8 +42,20 @@ module.exports.checkOrCreateTables = () => {
     );
   `;
 
-  dbClient.run(createImportsQuery);
-  dbClient.run(createCandlesQuery);
+  return Promise.all(
+    new Promise((resolve, reject) => {
+      dbClient.run(createImportsQuery, (err) => {
+        if (err) return reject();
+        return resolve();
+      });
+    }),
+    new Promise((resolve, reject) => {
+      dbClient.run(createCandlesQuery, (err) => {
+        if (err) return reject();
+        return resolve();
+      });
+    }),
+  );
 };
 
 const limiter = new Bottleneck({
@@ -93,7 +105,7 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
           let dates = {};
           for (let i = 0; i < divideBy; i += 1) {
             const dateToAdd = i === 0 ? start : dates.endDate;
-            dates = this.generateDates(dateToAdd, this.maxDataPointsPerRequest * granularity);
+            dates = this.generateDates(dateToAdd, granularity);
             ranges.push(dates);
           }
           this.addRanges(ranges, product, granularity);
