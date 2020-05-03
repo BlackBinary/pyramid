@@ -105,10 +105,10 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
           let dates = {};
           for (let i = 0; i < divideBy; i += 1) {
             const dateToAdd = i === 0 ? start : dates.endDate;
-            dates = this.generateDates(dateToAdd, granularity);
+            dates = this.generateDates(dateToAdd, granularity / divideBy);
             ranges.push(dates);
           }
-          this.addRanges(ranges, product, granularity);
+          this.addRanges(ranges, product, granularity, importId);
         } else if (error.response.status === 404) {
           logger.error('[IMPORTING] Couldn\'t be found. Please make sure you add an available product');
           throw new Error(error.response.data);
@@ -137,7 +137,7 @@ module.exports.createImport = (name, product, datapoints, timestamp) => {
 module.exports = async (args) => {
   logger.info('[IMPORTING] Starting import');
   // Check if the candles table exists
-  this.checkOrCreateTables();
+  await this.checkOrCreateTables();
 
   const granularity = () => {
     if (args.granularity) {
@@ -207,4 +207,9 @@ module.exports = async (args) => {
       logger.error('[IMPORTING] Import could not be done. Import name probably already exists.');
       logger.error(error);
     });
+
+  limiter.on('empty', () => {
+    logger.info('[IMPORTING] Empty queue. Exit.');
+    process.exit();
+  });
 };
