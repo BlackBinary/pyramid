@@ -5,8 +5,6 @@ const logger = require('@lib/logger');
 const candles = require('@lib/coinbase/endpoints/products/candles');
 const { client: dbClient } = require('@lib/database');
 
-// const products = require('@lib/coinbase/endpoints/products');
-
 module.exports.isoFormat = 'YYYY-MM-DDTHH:mm';
 
 module.exports.maxDataPointsPerRequest = 300;
@@ -79,9 +77,8 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity) => {
           const ranges = [];
           let dates = {};
           for (let i = 0; i < divideBy; i += 1) {
-            const newGranularity = (granularity * this.maxDataPointsPerRequest) / divideBy;
             const dateToAdd = i === 0 ? start : dates.endDate;
-            dates = this.generateDates(dateToAdd, newGranularity);
+            dates = this.generateDates(dateToAdd, this.maxDataPointsPerRequest * granularity);
             ranges.push(dates);
           }
           this.addRanges(ranges, product, granularity);
@@ -97,7 +94,7 @@ module.exports = () => {
   this.checkOrCreateTable();
 
   const granularity = 60;
-  const totalDatapoints = 20000;
+  const totalDatapoints = 30000;
   const product = 'BTC-EUR';
 
   logger.info('Importing data from Coinbase');

@@ -1,9 +1,4 @@
-const pino = require('pino');
-
-// Create a new pino logger with options
-const logger = pino({
-  prettyPrint: true,
-});
+const signale = require('signale');
 
 // Export the logger for use in other parts of the application
-module.exports = logger;
+module.exports = signale;
