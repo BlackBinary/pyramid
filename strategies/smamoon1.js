@@ -15,9 +15,9 @@ const tulind = require('tulind');
 const logger = require('@lib/logger');
 
 module.exports.config = {
-  averageOver: 4,
-  buyAt: 2,
-  sellAt: -5,
+  averageOver: 9,
+  buyAt: 10,
+  sellAt: -21,
   backtesting: {
     portfolio: {
       fiat: 1000,
