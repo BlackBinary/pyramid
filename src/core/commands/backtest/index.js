@@ -42,7 +42,7 @@ module.exports.data = {
 
 module.exports.portfolio = {
   usd: 0,
-  btc: 0,
+  crypto: 0,
 };
 
 module.exports.tradeTypes = {
@@ -73,8 +73,8 @@ module.exports.trade = (amount, price, type, timestamp) => {
     const buyingTotal = ((amount - fee) / price); // Total bitcoin
     // Remove the total of usd used to buy
     this.portfolio.usd -= amount;
-    // Add the amount of btc bought minus the fee
-    this.portfolio.btc += buyingTotal;
+    // Add the amount of crypto bought minus the fee
+    this.portfolio.crypto += buyingTotal;
     // Add the trade to the list of trades
     this.trades.push({
       type: this.tradeTypes.BUY,
@@ -90,8 +90,8 @@ module.exports.trade = (amount, price, type, timestamp) => {
     const sellingTotal = ((amount - fee) * price); // Total usd
     // Add the amount usd profit minus the fee
     this.portfolio.usd += sellingTotal - fee;
-    // Remove the amount btc sold
-    this.portfolio.btc -= amount;
+    // Remove the amount crypto sold
+    this.portfolio.crypto -= amount;
     // Add the trade to the list of trades
     this.trades.push({
       type: this.tradeTypes.SELL,
@@ -189,13 +189,13 @@ module.exports = async (args) => {
 
   logger.info('[BACKTESTING] Started With:');
   logger.info(`[BACKTESTING] USD: ${startedWith.usd}`);
-  logger.info(`[BACKTESTING] BTC: ${startedWith.btc}`);
+  logger.info(`[BACKTESTING] crypto: ${startedWith.crypto}`);
 
   logger.info('[BACKTESTING] Ended With:');
   logger.info(`[BACKTESTING] USD: ${this.portfolio.usd}`);
-  logger.info(`[BACKTESTING] BTC: ${this.portfolio.btc}`);
+  logger.info(`[BACKTESTING] crypto: ${this.portfolio.crypto}`);
 
-  const totalProfits = this.portfolio.usd + (this.portfolio.btc * this.data.close[this.data.close.length - 1]);
+  const totalProfits = this.portfolio.usd + (this.portfolio.crypto * this.data.close[this.data.close.length - 1]);
 
   logger.info('[BACKTESTING] Potential outcome:');
   logger.info(`[BACKTESTING] Total USD:  ${totalProfits}`);
