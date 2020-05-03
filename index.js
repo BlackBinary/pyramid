@@ -25,13 +25,13 @@ const main = async () => {
       // Run CPTB
       bot();
       break;
-    case args.backtest && (typeof args.strategy === 'string'):
+    case args.backtest:
       // Run backtesting
-      backtest(args.strategy);
+      backtest(args);
       break;
     case args.import:
       // Import historical data for backtesting
-      importData();
+      importData(args);
       break;
     default:
       help();

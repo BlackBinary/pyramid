@@ -5,8 +5,8 @@ const { client: dbClient } = require('@lib/database');
 
 module.exports.getMarketData = async () => {
   const query = `
-  SELECT DISTINCT
-    time,
+  SELECT
+    timestamp,
     product,
     low,
     high,
@@ -14,7 +14,8 @@ module.exports.getMarketData = async () => {
     close,
     volume
   FROM candles
-  ORDER BY time;
+  GROUP BY timestamp, product
+  ORDER BY timestamp;
   `;
 
   return new Promise((resolve, reject) => {
@@ -31,7 +32,7 @@ module.exports.data = {
   open: [],
   close: [],
   volume: [],
-  time: [],
+  timestamp: [],
 };
 
 module.exports.portfolio = {
@@ -46,16 +47,22 @@ module.exports.tradeTypes = {
 
 module.exports.loadStrategy = (strategy) => {
   // TODO: If someone has a better idea i'd love to hear it
-  // eslint-disable-next-line global-require, import/no-dynamic-require
-  this.strategy = require(`@strategies/${strategy}`);
-  this.portfolio = { ...this.portfolio, ...this.strategy.config.backtesting.portfolio };
+  try {
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    this.strategy = require(`@strategies/${strategy}`);
+    this.portfolio = { ...this.portfolio, ...this.strategy.config.backtesting.portfolio };
+  } catch (e) {
+    logger.error('[BACKTESTING] Please make sure the strategy you specified exists');
+    logger.error(e);
+    this.strategy = {};
+  }
 };
 
 module.exports.fees = 0.5 / 100;
 
 module.exports.trades = [];
 
-module.exports.trade = (amount, price, type, time) => {
+module.exports.trade = (amount, price, type, timestamp) => {
   if (type === this.tradeTypes.BUY) {
     const fee = amount * this.fees;
     const buyingTotal = ((amount - fee) / price); // Total bitcoin
@@ -70,7 +77,7 @@ module.exports.trade = (amount, price, type, time) => {
       price,
       amount,
       fee,
-      time,
+      timestamp,
     });
     logger.info(`[BACKTESTING] Buying ${buyingTotal} at ${price}`);
   } else if (type === this.tradeTypes.SELL) {
@@ -87,18 +94,46 @@ module.exports.trade = (amount, price, type, time) => {
       price,
       amount,
       fee,
-      time,
+      timestamp,
     });
     logger.info(`[BACKTESTING] Selling ${amount} at ${price}`);
   }
 };
 
-module.exports = async (strategy) => {
+module.exports = async (args) => {
   logger.info('[BACKTESTING] Starting backtesting');
 
-  this.loadStrategy(strategy);
+  const name = () => {
+    if (args.name) {
+      const type = typeof args.name;
+      if (type === 'string') {
+        return args.name;
+      }
+      logger.error(`[IMPORTING] Name must be of type string. ${type} given`);
+    }
+    return false;
+  };
 
-  const marketData = await this.getMarketData();
+  if (!name()) {
+    logger.error('[BACKTESTING] No name specified for import to run against');
+    return;
+  }
+
+  const strategy = () => {
+    if (args.strategy) {
+      return args.strategy;
+    }
+    return false;
+  };
+
+  if (!strategy()) {
+    logger.error('[BACKTESTING] No strategy specified');
+    return;
+  }
+
+  this.loadStrategy(strategy());
+
+  const marketData = await this.getMarketData(name());
 
   // Create new arrays with data
   marketData.forEach(({
@@ -107,14 +142,14 @@ module.exports = async (strategy) => {
     open,
     close,
     volume,
-    time,
+    timestamp,
   }) => {
     this.data.high.push(high);
     this.data.low.push(low);
     this.data.open.push(open);
     this.data.close.push(close);
     this.data.volume.push(volume);
-    this.data.time.push(time);
+    this.data.timestamp.push(timestamp);
   });
 
   // Copy the initial portfolio for comparison
@@ -125,14 +160,16 @@ module.exports = async (strategy) => {
     this.strategy.init(this);
   } else {
     logger.error('[BACKTESTING] Could not init strategy');
+    logger.error('[BACKTESTING] Please make sure the strategy has all the required functions');
+    return;
   }
 
   for (let i = 0; i < marketData.length; i += 1) {
     this.strategy.update(i);
   }
 
-  const startTime = moment.unix(this.data.time[0]).format();
-  const endtTime = moment.unix(this.data.time[this.data.time.length - 1]).format();
+  const startTime = moment.unix(this.data.timestamp[0]).format();
+  const endtTime = moment.unix(this.data.timestamp[this.data.timestamp.length - 1]).format();
 
   logger.info('\n\n\n\n');
 
@@ -150,6 +187,7 @@ module.exports = async (strategy) => {
 
   const totalProfits = this.portfolio.usd + (this.portfolio.btc * this.data.close[this.data.close.length - 1]);
 
-  logger.info('[BACKTESTING] Potential profits:');
-  logger.info(`[BACKTESTING] USD: ${totalProfits}`);
+  logger.info('[BACKTESTING] Potential outcome:');
+  logger.info(`[BACKTESTING] Total USD:  ${totalProfits}`);
+  logger.info(`[BACKTESTING] Profit USD: ${totalProfits - startedWith.usd}`);
 };
