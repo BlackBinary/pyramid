@@ -7,11 +7,13 @@ const { client: dbClient } = require('@lib/database');
 
 // const products = require('@lib/coinbase/endpoints/products');
 
-module.exports.isoFormat = 'YYYY-MM-DDThh:mm';
+module.exports.isoFormat = 'YYYY-MM-DDTHH:mm';
+
+module.exports.maxDataPointsPerRequest = 300;
 
 module.exports.generateDates = (start, granularity) => ({
   startDate: moment(start).format(this.isoFormat),
-  endDate: moment(start).subtract(granularity * 60, 'seconds').format(this.isoFormat),
+  endDate: moment(start).subtract(this.maxDataPointsPerRequest * granularity, 'seconds').format(this.isoFormat),
 });
 
 module.exports.checkOrCreateTable = () => {
@@ -46,6 +48,7 @@ module.exports.addRanges = (ranges, product, granularity) => {
   ranges.forEach(({ endDate, startDate }) => limiter.schedule(() => {
     logger.info(`[IMPORT] Current job count: ${limiter.counts().QUEUED}`);
     logger.info(`[IMPORT] Added range ${endDate} - ${startDate}`);
+
     return this.fetchCandlesAndSave(product, endDate, startDate, granularity);
   }));
 };
@@ -60,9 +63,9 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity) => {
         VALUES
         (?, ?, ?, ?, ?, ?, ?)
       `);
-      const dbJobs = data.map(async (candle) => {
-        prepared.run([product, ...candle]);
-      });
+
+      const dbJobs = data.map((candle) => prepared.run([product, ...candle]));
+
       return Promise.all(dbJobs).finally(() => {
         logger.info('[IMPORT] New data saved to database');
       });
@@ -71,12 +74,12 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity) => {
       logger.info('[IMPORT] Importing data failed');
       if (error.response) {
         if (error.response.status === 400) {
-          const divideBy = 3;
+          const divideBy = 2;
           logger.info(`[IMPORT] Granularity too large for start and end date. Divide by ${divideBy}`);
           const ranges = [];
           let dates = {};
           for (let i = 0; i < divideBy; i += 1) {
-            const newGranularity = (granularity / divideBy);
+            const newGranularity = (granularity * this.maxDataPointsPerRequest) / divideBy;
             const dateToAdd = i === 0 ? start : dates.endDate;
             dates = this.generateDates(dateToAdd, newGranularity);
             ranges.push(dates);
@@ -101,14 +104,12 @@ module.exports = () => {
   logger.info(`Product: ${product}`);
   logger.info(`Granularity: ${granularity} seconds`);
   logger.info(`Total datapoints: ${totalDatapoints}`);
-  logger.info(`Total requests: ${totalDatapoints / 300}`);
-
-  const yesterday = moment(new Date()).subtract(1, 'day');
+  logger.info(`Total requests: ${totalDatapoints / granularity}`);
 
   const ranges = [];
   let dates = {};
   for (let i = 0; i < totalDatapoints; i += granularity) {
-    const dateToAdd = i === 0 ? yesterday : dates.endDate;
+    const dateToAdd = i === 0 ? moment(new Date()).subtract(1, 'day') : dates.endDate;
     dates = this.generateDates(dateToAdd, granularity);
     ranges.push(dates);
   }

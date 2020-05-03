@@ -35,6 +35,7 @@ module.exports.data = {
   open: [],
   close: [],
   volume: [],
+  time: [],
 };
 
 module.exports.portfolio = {
@@ -51,7 +52,7 @@ module.exports.fees = 0.5 / 100;
 
 module.exports.trades = [];
 
-module.exports.trade = (amount, price, type) => {
+module.exports.trade = (amount, price, type, time) => {
   if (type === this.tradeTypes.BUY) {
     const fee = amount * this.fees;
     const buyingTotal = ((amount - fee) / price); // Total bitcoin
@@ -66,6 +67,7 @@ module.exports.trade = (amount, price, type) => {
       price,
       amount,
       fee,
+      time,
     });
     logger.info(`[BACKTESTING] Buying ${buyingTotal} at ${price}`);
   } else if (type === this.tradeTypes.SELL) {
@@ -82,6 +84,7 @@ module.exports.trade = (amount, price, type) => {
       price,
       amount,
       fee,
+      time,
     });
     logger.info(`[BACKTESTING] Selling ${amount} at ${price}`);
   }
@@ -90,28 +93,32 @@ module.exports.trade = (amount, price, type) => {
 module.exports = async () => {
   logger.info('[BACKTESTING] Starting backtesting');
 
-  const data = await this.getMarketData();
+  const marketData = await this.getMarketData();
 
   // Create new arrays with data
-  data.forEach(({
+  marketData.forEach(({
     high,
     low,
     open,
     close,
     volume,
+    time,
   }) => {
     this.data.high.push(high);
     this.data.low.push(low);
     this.data.open.push(open);
     this.data.close.push(close);
     this.data.volume.push(volume);
+    this.data.time.push(time);
   });
 
   this.strategy.init(this);
 
-  for (let i = 0; i < data.length; i += 1) {
-    this.strategy.update(i);
-  }
+  console.log(marketData.length);
+
+  // for (let i = 0; i < data.length; i += 1) {
+  //   this.strategy.update(i);
+  // }
 
   // // Average over set periods
   // const averageOver = 5;
