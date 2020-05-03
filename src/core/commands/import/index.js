@@ -42,7 +42,7 @@ module.exports.checkOrCreateTables = () => {
     );
   `;
 
-  return Promise.all(
+  return Promise.all([
     new Promise((resolve, reject) => {
       dbClient.run(createImportsQuery, (err) => {
         if (err) return reject();
@@ -55,7 +55,7 @@ module.exports.checkOrCreateTables = () => {
         return resolve();
       });
     }),
-  );
+  ]);
 };
 
 const limiter = new Bottleneck({
