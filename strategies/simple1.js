@@ -15,8 +15,8 @@ const logger = require('@lib/logger').scope('simple 1');
 module.exports.config = {
   buyAt: 60,
   sellAt: -80,
+  tradeSignal: 'low',
   backtesting: {
-    tradeSignal: 'low',
     portfolio: {
       fiat: 1000,
       crypto: 0,

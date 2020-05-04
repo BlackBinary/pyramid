@@ -2,6 +2,7 @@ const moment = require('moment');
 
 const logger = require('@lib/logger').scope('backtest');
 const { client: dbClient } = require('@lib/database');
+const strategyLoader = require('@lib/helpers/strategy/loader');
 
 module.exports.getMarketData = async (importName) => {
   const query = `
@@ -47,20 +48,6 @@ module.exports.portfolio = {
 module.exports.tradeTypes = {
   SELL: 'SELL',
   BUY: 'BUY',
-};
-
-module.exports.loadStrategy = (strategy) => {
-  // TODO: If someone has a better idea i'd love to hear it
-  try {
-    // eslint-disable-next-line global-require, import/no-dynamic-require
-    this.strategy = require(`@strategies/${strategy}`);
-    this.portfolio = { ...this.portfolio, ...this.strategy.config.backtesting.portfolio };
-    this.tradeSignal = this.strategy.config.backtesting.tradeSignal || this.tradeSignal;
-  } catch (e) {
-    logger.error('Please make sure the strategy you specified exists');
-    logger.error(e);
-    this.strategy = {};
-  }
 };
 
 module.exports.fees = 0.5 / 100;
@@ -129,7 +116,11 @@ module.exports = async (args) => {
 
   const strategy = () => {
     if (args.strategy) {
-      return args.strategy;
+      const type = typeof args.strategy;
+      if (type === 'string') {
+        return args.strategy;
+      }
+      return false;
     }
     return false;
   };
@@ -141,7 +132,7 @@ module.exports = async (args) => {
     return;
   }
 
-  this.loadStrategy(strategy());
+  this.strategy = strategyLoader(strategy());
 
   const marketData = await this.getMarketData(importName());
 
@@ -156,17 +147,31 @@ module.exports = async (args) => {
     this.data.timestamp.push(data.timestamp);
   });
 
-  // Copy the initial portfolio for comparison
-  const startedWith = { ...this.portfolio };
+  if (this.strategy.config) {
+    // Override the default settings with the backtesting settings from the strategy
+    this.portfolio = {
+      ...this.portfolio,
+      ...this.strategy.config.backtesting.portfolio,
+    };
+
+    this.tradeSignal = this.strategy.config.backtesting.tradeSignal || this.tradeSignal;
+  } else {
+    logger.warn('Strategy does not have a config');
+  }
 
   // Call the strategy init function
   if (this.strategy.init) {
     this.strategy.init(this);
   } else {
     logger.error('Could not init strategy');
-    logger.error('Please make sure the strategy has all the required functions');
+    logger.error('Please make sure the strategy exists and has all the required functions');
     return;
   }
+
+  // Copy the initial portfolio for comparison
+  const startedWith = {
+    ...this.portfolio,
+  };
 
   for (let i = 0; i < marketData.length; i += 1) {
     this.strategy.update(i);

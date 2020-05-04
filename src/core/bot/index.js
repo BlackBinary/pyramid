@@ -1,5 +1,6 @@
 const websocket = require('@lib/coinbase/websocket');
 const logger = require('@lib/logger').scope('cptb');
+const strategyLoader = require('@lib/helpers/strategy/loader');
 
 // This is what an update looks like
 // {
@@ -24,9 +25,9 @@ module.exports.bot = (data) => {
   const { side, time, price } = data;
   logger.info('Received a price update');
 
-  if (side === 'buy') {
-    l;
-  }
+  // if (side === 'buy') {
+  //   // l;
+  // }
 
   // logger.info(`Side: ${side}`);
   // logger.info(`Time: ${time}`);
@@ -39,6 +40,35 @@ module.exports.products = ['BTC-EUR'];
 
 module.exports = (args, test = false) => {
   logger.info('Starting CPTB! Feel free to abort while you can.');
+
+  const strategy = () => {
+    if (args.strategy) {
+      const type = typeof args.strategy;
+      if (type === 'string') {
+        return args.strategy;
+      }
+      return false;
+    }
+    return false;
+  };
+
+  if (!strategy()) {
+    logger.error('No strategy specified');
+    logger.error('Please provide the name of the import you want to run against');
+    logger.error('--strategy supermoon');
+    return;
+  }
+
+  this.strategy = strategyLoader(strategy());
+
+  // Call the strategy init function
+  if (this.strategy.init) {
+    this.strategy.init(this);
+  } else {
+    logger.error('Could not init strategy');
+    logger.error('Please make sure the strategy exists and has all the required functions');
+    return;
+  }
 
   // Display a short warning that we're running in test mode
   if (test) {
