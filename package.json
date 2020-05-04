@@ -45,7 +45,8 @@
     "moment": "^2.24.0",
     "signale": "^1.4.0",
     "sqlite3": "^4.2.0",
-    "tulind": "^0.8.18"
+    "tulind": "^0.8.18",
+    "ws": "^7.2.5"
   },
   "_moduleAliases": {
     "@root": ".",
