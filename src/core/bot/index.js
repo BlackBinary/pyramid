@@ -22,11 +22,15 @@ const logger = require('@lib/logger').scope('cptb');
 
 module.exports.bot = (data) => {
   const { side, time, price } = data;
-
   logger.info('Received a price update');
-  logger.info(`Side: ${side}`);
-  logger.info(`Time: ${time}`);
-  logger.info(`Price: ${price}`);
+
+  if (side === 'buy') {
+    l;
+  }
+
+  // logger.info(`Side: ${side}`);
+  // logger.info(`Time: ${time}`);
+  // logger.info(`Price: ${price}`);
 };
 
 module.exports.channel = 'ticker';

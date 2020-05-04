@@ -31,12 +31,11 @@ module.exports.getMarketData = async (importName) => {
   });
 };
 
+// The price to let the bot trade with
+module.exports.tradeSignal = 'high';
+
 module.exports.data = {
-  high: [],
-  low: [],
-  open: [],
-  close: [],
-  volume: [],
+  price: [],
   timestamp: [],
 };
 
@@ -56,6 +55,7 @@ module.exports.loadStrategy = (strategy) => {
     // eslint-disable-next-line global-require, import/no-dynamic-require
     this.strategy = require(`@strategies/${strategy}`);
     this.portfolio = { ...this.portfolio, ...this.strategy.config.backtesting.portfolio };
+    this.tradeSignal = this.strategy.config.backtesting.tradeSignal || this.tradeSignal;
   } catch (e) {
     logger.error('Please make sure the strategy you specified exists');
     logger.error(e);
@@ -151,20 +151,9 @@ module.exports = async (args) => {
   }
 
   // Create new arrays with data
-  marketData.forEach(({
-    high,
-    low,
-    open,
-    close,
-    volume,
-    timestamp,
-  }) => {
-    this.data.high.push(high);
-    this.data.low.push(low);
-    this.data.open.push(open);
-    this.data.close.push(close);
-    this.data.volume.push(volume);
-    this.data.timestamp.push(timestamp);
+  marketData.forEach((data) => {
+    this.data.price.push(data[this.tradeSignal]);
+    this.data.timestamp.push(data.timestamp);
   });
 
   // Copy the initial portfolio for comparison
@@ -184,13 +173,13 @@ module.exports = async (args) => {
   }
 
   const startTime = moment.unix(this.data.timestamp[0]).format();
-  const endtTime = moment.unix(this.data.timestamp[this.data.timestamp.length - 1]).format();
+  const endTime = moment.unix(this.data.timestamp[this.data.timestamp.length - 1]).format();
 
   logger.info('\n\n\n\n');
 
   logger.info('Results');
   logger.info(`Total trades done: ${this.trades.length}`);
-  logger.info(`Trades done between ${startTime} and ${endtTime}`);
+  logger.info(`Trades done between ${startTime} and ${endTime}`);
 
   logger.info('Started With:');
   logger.info(`Fiat:   ${startedWith.fiat}`);
@@ -200,7 +189,7 @@ module.exports = async (args) => {
   logger.info(`Fiat:   ${this.portfolio.fiat}`);
   logger.info(`Crypto: ${this.portfolio.crypto}`);
 
-  const totalProfits = this.portfolio.fiat + (this.portfolio.crypto * this.data.close[this.data.close.length - 1]);
+  const totalProfits = this.portfolio.fiat + (this.portfolio.crypto * this.data.price[this.data.price.length - 1]);
 
   logger.info('Potential outcome:');
   logger.info(`Total fiat:  ${totalProfits}`);

@@ -19,6 +19,7 @@ module.exports.config = {
   buyAt: 10,
   sellAt: -21,
   backtesting: {
+    // tradeSignal: 'low',
     portfolio: {
       fiat: 1000,
       crypto: 0,
@@ -31,7 +32,7 @@ module.exports.init = (_this) => {
   this.main = _this;
 
   // Get the SMA indicators
-  tulind.indicators.sma.indicator([this.main.data.close], [this.config.averageOver], (err, results) => {
+  tulind.indicators.sma.indicator([this.main.data.price], [this.config.averageOver], (err, results) => {
     // Get the results
     const [closingSma] = results;
     this.sma = closingSma;
@@ -52,7 +53,7 @@ module.exports.update = (i) => {
     const smaDifference = currentSma - previousSma;
 
     // Get the current and the previous price
-    const currentPrice = this.main.data.high[i];
+    const currentPrice = this.main.data.price[i];
 
     // If the difference is a positive number, do something (buy?)
     if (smaDifference > this.config.buyAt) {

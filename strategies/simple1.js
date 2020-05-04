@@ -16,6 +16,7 @@ module.exports.config = {
   buyAt: 60,
   sellAt: -80,
   backtesting: {
+    tradeSignal: 'low',
     portfolio: {
       fiat: 1000,
       crypto: 0,
@@ -29,25 +30,23 @@ module.exports.init = (_this) => {
 };
 
 module.exports.update = (i) => {
-  const previousClosePrice = this.main.data.close[i - 1];
-  const currentClosePrice = this.main.data.close[i];
-
-  const currentHigh = this.main.data.high[i];
+  const previousPrice = this.main.data.price[i - 1];
+  const currentPrice = this.main.data.price[i];
 
   // Make sure we actually have a price to compage against
-  if (previousClosePrice) {
-    const difference = previousClosePrice - currentClosePrice;
+  if (previousPrice) {
+    const difference = previousPrice - currentPrice;
     if (difference > this.config.buyAt) {
       logger.info('Price pos. Buy');
       logger.info(difference);
       if (this.main.portfolio.fiat > 0) {
-        this.main.trade(this.main.portfolio.fiat, currentHigh, this.main.tradeTypes.BUY);
+        this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
       }
     } else if (difference < this.config.sellAt) {
       logger.info('Price neg. Sell');
       logger.info(difference);
       if (this.main.portfolio.crypto > 0) {
-        this.main.trade(this.main.portfolio.crypto, currentHigh, this.main.tradeTypes.SELL);
+        this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
       }
     }
   }
