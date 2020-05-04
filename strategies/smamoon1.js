@@ -15,7 +15,7 @@ const tulind = require('tulind');
 const logger = require('@lib/logger');
 
 module.exports.config = {
-  averageOver: 9,
+  averageOver: 5,
   buyAt: 10,
   sellAt: -21,
   backtesting: {
@@ -41,6 +41,7 @@ module.exports.init = (_this) => {
 module.exports.update = (i) => {
   // logger.info(`Received update for index ${i}`);
   if (i < this.config.averageOver) {
+    logger.info(`[SMA MOON 1] We need at least ${this.config.averageOver} datapoints to use SMA. Please wait.`);
     logger.info(`[SMA MOON 1] Skipping index ${i} because it's out of our data range`);
   } else {
     // Get the current and the previous result
@@ -51,8 +52,7 @@ module.exports.update = (i) => {
     const smaDifference = currentSma - previousSma;
 
     // Get the current and the previous price
-    const currentPrice = this.main.data.close[i];
-    // const previousPrice = this.main.data.close[i - 1];
+    const currentPrice = this.main.data.high[i];
 
     // If the difference is a positive number, do something (buy?)
     if (smaDifference > this.config.buyAt) {
