@@ -9,21 +9,26 @@ const minimist = require('minimist');
 
 // Various commands
 const importData = require('@core/commands/import');
+const listImportData = require('@core/commands/import/list');
 const backtest = require('@core/commands/backtest');
 const help = require('@core/commands/help');
 
-// Bot
+// The main part of CPTB
 const bot = require('@core/bot');
 
-const main = async () => {
+(async () => {
   // Parse the command line args and decide on what to do next
   const args = minimist(process.argv.slice(2));
 
   // Let the switch decide
   switch (true) {
-    case args.start:
-      // Run CPTB
-      bot();
+    // case args.start:
+    //   // Run CPTB
+    //   bot(args);
+    //   break;
+    case args.test:
+      // Run CPTB in test mode
+      bot(args, true);
       break;
     case args.backtest:
       // Run backtesting
@@ -33,10 +38,12 @@ const main = async () => {
       // Import historical data for backtesting
       importData(args);
       break;
+    case args.listimports:
+      // Import historical data for backtesting
+      listImportData();
+      break;
     default:
       help();
       break;
   }
-};
-
-main();
+})();

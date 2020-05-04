@@ -24,6 +24,7 @@ module.exports.checkOrCreateTables = () => {
       name TEXT UNIQUE,
       product TEXT,
       datapoints INTEGER,
+      granularity INTEGER,
       timestamp INTEGER
     );
   `;
@@ -119,15 +120,15 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
     });
 };
 
-module.exports.createImport = (name, product, datapoints, timestamp) => {
+module.exports.createImport = (name, product, datapoints, granularity, timestamp) => {
   const query = `
   INSERT INTO imports
-  (name, product, datapoints, timestamp)
+  (name, product, datapoints, granularity, timestamp)
   VALUES
-  (?, ?, ?, ?);
+  (?, ?, ?, ?, ?);
   `;
   return new Promise((resolve, reject) => {
-    dbClient.run(query, [name, product, datapoints, timestamp], function returnId(error) {
+    dbClient.run(query, [name, product, datapoints, granularity, timestamp], function returnId(error) {
       if (error) return reject(error);
       return resolve(this.lastID);
     });
@@ -145,6 +146,7 @@ module.exports = async (args) => {
         return args.granularity;
       }
       logger.error(`[IMPORTING] Granularity must be one of: ${this.availableGranularity.join(', ')}`);
+      return false;
     }
     return 60;
   };
@@ -156,6 +158,7 @@ module.exports = async (args) => {
         return args.datapoints;
       }
       logger.error(`[IMPORTING] Datapoints must be of type number. ${type} given`);
+      return false;
     }
     return 9000;
   };
@@ -183,7 +186,17 @@ module.exports = async (args) => {
     return;
   }
 
-  this.createImport(name(), product(), datapoints(), moment().unix())
+  if (!datapoints()) {
+    logger.error('[IMPORTING] Datapoint invalid');
+    return;
+  }
+
+  if (!granularity()) {
+    logger.error('[IMPORTING] Granularity invalid');
+    return;
+  }
+
+  this.createImport(name(), product(), datapoints(), granularity(), moment().unix())
     .then((importId) => {
       logger.info('[IMPORTING] Importing data from Coinbase');
       logger.info(`[IMPORTING] Import name: ${name()}`);

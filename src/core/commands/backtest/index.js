@@ -108,19 +108,22 @@ module.exports.trade = (amount, price, type, timestamp) => {
 module.exports = async (args) => {
   logger.info('[BACKTESTING] Starting backtesting');
 
-  const name = () => {
-    if (args.name) {
-      const type = typeof args.name;
+  const importName = () => {
+    if (args.import) {
+      const type = typeof args.import;
       if (type === 'string') {
-        return args.name;
+        return args.import;
       }
       logger.error(`[BACKTESTING] Name must be of type string. ${type} given`);
+      return false;
     }
     return false;
   };
 
-  if (!name()) {
-    logger.error('[BACKTESTING] No name specified for import to run against');
+  if (!importName()) {
+    logger.error('[BACKTESTING] No import specified');
+    logger.error('[BACKTESTING] Please provide the name of the import you want to run against');
+    logger.error('[BACKTESTING] --import btc-eur-gran-300-data-12000');
     return;
   }
 
@@ -133,12 +136,14 @@ module.exports = async (args) => {
 
   if (!strategy()) {
     logger.error('[BACKTESTING] No strategy specified');
+    logger.error('[BACKTESTING] Please provide the name of the import you want to run against');
+    logger.error('[BACKTESTING] --strategy supermoon');
     return;
   }
 
   this.loadStrategy(strategy());
 
-  const marketData = await this.getMarketData(name());
+  const marketData = await this.getMarketData(importName());
 
   if (!marketData.length) {
     logger.error('[BACKTESTING] No market data to run against. Did you specify the correct import?');
@@ -200,4 +205,9 @@ module.exports = async (args) => {
   logger.info('[BACKTESTING] Potential outcome:');
   logger.info(`[BACKTESTING] Total fiat:  ${totalProfits}`);
   logger.info(`[BACKTESTING] Profit fiat: ${totalProfits - startedWith.fiat}`);
+
+  // Display a fair warning
+  logger.warn('[BACKTESTING] By no means is backtesting usefull for making guarantees about the strategies you test.');
+  logger.warn('[BACKTESTING] Keep in mind that there may be false positives and negatives in the data you test against.');
+  logger.warn('[BACKTESTING] Please always take caution and know you and only you are responsible for the financial mistakes you make.');
 };
