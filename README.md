@@ -9,7 +9,7 @@ CPTB is built as an experiment by me, for me (Daen Rebel). There is nobody who s
 The env file consists of the following contents:
 ```
 COINBASE_API_URL=https://api.pro.coinbase.com // The default api endpoint, can be interchanged with the sandbox one
-COINBASE_WS_URL=wss://ws-feed-public.pro.coinbase.com // The default websocket api endpoint, can be interchanged with the sandbox one
+COINBASE_WS_URL=wss://ws-feed.pro.coinbase.com // The default websocket api endpoint, can be interchanged with the sandbox one
 COINBASE_FIX_URL=tcp+ssl://fix.pro.coinbase.com:4198 // The default fix api endpoint, can be interchanged with the sandbox one
 COINBASE_PASSPHRASE= // Your passphrase here
 COINBASE_SECRET= // Your secret here
