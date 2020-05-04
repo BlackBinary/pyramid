@@ -15,25 +15,16 @@ const {
     console.log('Connected');
     ws.send(JSON.stringify({
       type: 'subscribe',
-      product_ids: [
-        'ETH-USD',
-        'ETH-EUR',
-      ],
       channels: [
-        'level2',
-        'heartbeat',
         {
           name: 'ticker',
-          product_ids: [
-            'ETH-BTC',
-            'ETH-USD',
-          ],
+          product_ids: ['BTC-EUR'],
         },
       ],
     }));
   });
 
   ws.on('message', (data) => {
-    console.log(data);
+    console.log(JSON.stringify(JSON.parse(data), null, 2));
   });
 })();
