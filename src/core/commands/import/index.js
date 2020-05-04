@@ -1,7 +1,7 @@
 const moment = require('moment');
 const Bottleneck = require('bottleneck');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger').scope('import');
 const candles = require('@lib/coinbase/endpoints/products/candles');
 const { client: dbClient } = require('@lib/database');
 
@@ -72,8 +72,8 @@ const limiter = new Bottleneck({
 
 module.exports.addRanges = (ranges, product, granularity, importId) => {
   ranges.forEach(({ endDate, startDate }) => limiter.schedule(() => {
-    logger.info(`[IMPORTING] Current job count: ${limiter.counts().QUEUED}`);
-    logger.info(`[IMPORTING] Added range ${endDate} - ${startDate}`);
+    logger.info(`Current job count: ${limiter.counts().QUEUED}`);
+    logger.info(`Added range ${endDate} - ${startDate}`);
 
     return this.fetchCandlesAndSave(product, endDate, startDate, granularity, importId);
   }));
@@ -82,7 +82,7 @@ module.exports.addRanges = (ranges, product, granularity, importId) => {
 module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId) => {
   candles.get(product, start, end, granularity)
     .then(({ data }) => {
-      logger.info('[IMPORTING] New data received');
+      logger.info('New data received');
       const prepared = dbClient.prepare(`
         INSERT INTO candles
         (importId, product, timestamp, low, high, open, close, volume)
@@ -93,15 +93,15 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
       const dbJobs = data.map(async (candle) => prepared.run([importId, product, ...candle]));
 
       return Promise.all(dbJobs).finally(() => {
-        logger.info('[IMPORTING] New data saved to database');
+        logger.info('New data saved to database');
       });
     })
     .catch((error) => {
-      logger.info('[IMPORTING] Importing data failed');
+      logger.info('Importing data failed');
       if (error.response) {
         if (error.response.status === 400) {
           const divideBy = 2;
-          logger.info(`[IMPORTING] Granularity too large for start and end date. Divide by ${divideBy}`);
+          logger.info(`Granularity too large for start and end date. Divide by ${divideBy}`);
           const ranges = [];
           let dates = {};
           for (let i = 0; i < divideBy; i += 1) {
@@ -111,7 +111,7 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
           }
           this.addRanges(ranges, product, granularity, importId);
         } else if (error.response.status === 404) {
-          logger.error('[IMPORTING] Couldn\'t be found. Please make sure you add an available product');
+          logger.error('Couldn\'t be found. Please make sure you add an available product');
           throw new Error(error.response.data);
         }
       } else {
@@ -136,7 +136,7 @@ module.exports.createImport = (name, product, datapoints, granularity, timestamp
 };
 
 module.exports = async (args) => {
-  logger.info('[IMPORTING] Starting import');
+  logger.info('Starting import');
   // Check if the candles table exists
   await this.checkOrCreateTables();
 
@@ -145,7 +145,7 @@ module.exports = async (args) => {
       if (this.availableGranularity.includes(args.granularity)) {
         return args.granularity;
       }
-      logger.error(`[IMPORTING] Granularity must be one of: ${this.availableGranularity.join(', ')}`);
+      logger.error(`Granularity must be one of: ${this.availableGranularity.join(', ')}`);
       return false;
     }
     return 60;
@@ -157,7 +157,7 @@ module.exports = async (args) => {
       if (type === 'number') {
         return args.datapoints;
       }
-      logger.error(`[IMPORTING] Datapoints must be of type number. ${type} given`);
+      logger.error(`Datapoints must be of type number. ${type} given`);
       return false;
     }
     return 9000;
@@ -176,35 +176,35 @@ module.exports = async (args) => {
       if (type === 'string') {
         return args.name;
       }
-      logger.error(`[IMPORTING] Name must be of type string. ${type} given`);
+      logger.error(`Name must be of type string. ${type} given`);
     }
     return false;
   };
 
   if (!name()) {
-    logger.error('[IMPORTING] No name specified for import');
+    logger.error('No name specified for import');
     return;
   }
 
   if (!datapoints()) {
-    logger.error('[IMPORTING] Datapoint invalid');
+    logger.error('Datapoint invalid');
     return;
   }
 
   if (!granularity()) {
-    logger.error('[IMPORTING] Granularity invalid');
+    logger.error('Granularity invalid');
     return;
   }
 
   this.createImport(name(), product(), datapoints(), granularity(), moment().unix())
     .then((importId) => {
-      logger.info('[IMPORTING] Importing data from Coinbase');
-      logger.info(`[IMPORTING] Import name: ${name()}`);
-      logger.info(`[IMPORTING] Import id: ${importId}`);
-      logger.info(`[IMPORTING] Product: ${product()}`);
-      logger.info(`[IMPORTING] Granularity: ${granularity()} seconds`);
-      logger.info(`[IMPORTING] Total datapoints: ${datapoints()}`);
-      logger.info(`[IMPORTING] Total requests: ${datapoints() / this.maxDataPointsPerRequest}`);
+      logger.info('Importing data from Coinbase');
+      logger.info(`Import name: ${name()}`);
+      logger.info(`Import id: ${importId}`);
+      logger.info(`Product: ${product()}`);
+      logger.info(`Granularity: ${granularity()} seconds`);
+      logger.info(`Total datapoints: ${datapoints()}`);
+      logger.info(`Total requests: ${datapoints() / this.maxDataPointsPerRequest}`);
 
       const ranges = [];
       let dates = {};
@@ -217,12 +217,12 @@ module.exports = async (args) => {
       this.addRanges(ranges, product(), granularity(), importId);
     })
     .catch((error) => {
-      logger.error('[IMPORTING] Import could not be done. Import name probably already exists.');
+      logger.error('Import could not be done. Import name probably already exists.');
       logger.error(error);
     });
 
   limiter.on('empty', () => {
-    logger.info('[IMPORTING] Empty queue. Exit.');
+    logger.info('Empty queue. Exit.');
     process.exit();
   });
 };

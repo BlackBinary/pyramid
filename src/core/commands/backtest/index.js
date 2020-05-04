@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger').scope('backtest');
 const { client: dbClient } = require('@lib/database');
 
 module.exports.getMarketData = async (importName) => {
@@ -57,7 +57,7 @@ module.exports.loadStrategy = (strategy) => {
     this.strategy = require(`@strategies/${strategy}`);
     this.portfolio = { ...this.portfolio, ...this.strategy.config.backtesting.portfolio };
   } catch (e) {
-    logger.error('[BACKTESTING] Please make sure the strategy you specified exists');
+    logger.error('Please make sure the strategy you specified exists');
     logger.error(e);
     this.strategy = {};
   }
@@ -84,7 +84,7 @@ module.exports.trade = (amount, price, type, timestamp) => {
       fee,
       timestamp,
     });
-    logger.info(`[BACKTESTING] Buying ${buyingTotal} at ${price}`);
+    logger.info(`Buying ${buyingTotal} at ${price}`);
   } else if (type === this.tradeTypes.SELL) {
     const fee = amount * this.fees;
     const sellingTotal = ((amount - fee) * price); // Total fiat
@@ -101,12 +101,12 @@ module.exports.trade = (amount, price, type, timestamp) => {
       fee,
       timestamp,
     });
-    logger.info(`[BACKTESTING] Selling ${amount} at ${price}`);
+    logger.info(`Selling ${amount} at ${price}`);
   }
 };
 
 module.exports = async (args) => {
-  logger.info('[BACKTESTING] Starting backtesting');
+  logger.info('Starting backtesting');
 
   const importName = () => {
     if (args.import) {
@@ -114,16 +114,16 @@ module.exports = async (args) => {
       if (type === 'string') {
         return args.import;
       }
-      logger.error(`[BACKTESTING] Name must be of type string. ${type} given`);
+      logger.error(`Name must be of type string. ${type} given`);
       return false;
     }
     return false;
   };
 
   if (!importName()) {
-    logger.error('[BACKTESTING] No import specified');
-    logger.error('[BACKTESTING] Please provide the name of the import you want to run against');
-    logger.error('[BACKTESTING] --import btc-eur-gran-300-data-12000');
+    logger.error('No import specified');
+    logger.error('Please provide the name of the import you want to run against');
+    logger.error('--import btc-eur-gran-300-data-12000');
     return;
   }
 
@@ -135,9 +135,9 @@ module.exports = async (args) => {
   };
 
   if (!strategy()) {
-    logger.error('[BACKTESTING] No strategy specified');
-    logger.error('[BACKTESTING] Please provide the name of the import you want to run against');
-    logger.error('[BACKTESTING] --strategy supermoon');
+    logger.error('No strategy specified');
+    logger.error('Please provide the name of the import you want to run against');
+    logger.error('--strategy supermoon');
     return;
   }
 
@@ -146,7 +146,7 @@ module.exports = async (args) => {
   const marketData = await this.getMarketData(importName());
 
   if (!marketData.length) {
-    logger.error('[BACKTESTING] No market data to run against. Did you specify the correct import?');
+    logger.error('No market data to run against. Did you specify the correct import?');
     return;
   }
 
@@ -174,8 +174,8 @@ module.exports = async (args) => {
   if (this.strategy.init) {
     this.strategy.init(this);
   } else {
-    logger.error('[BACKTESTING] Could not init strategy');
-    logger.error('[BACKTESTING] Please make sure the strategy has all the required functions');
+    logger.error('Could not init strategy');
+    logger.error('Please make sure the strategy has all the required functions');
     return;
   }
 
@@ -188,26 +188,26 @@ module.exports = async (args) => {
 
   logger.info('\n\n\n\n');
 
-  logger.info('[BACKTESTING] Results');
-  logger.info(`[BACKTESTING] Total trades done: ${this.trades.length}`);
-  logger.info(`[BACKTESTING] Trades done between ${startTime} and ${endtTime}`);
+  logger.info('Results');
+  logger.info(`Total trades done: ${this.trades.length}`);
+  logger.info(`Trades done between ${startTime} and ${endtTime}`);
 
-  logger.info('[BACKTESTING] Started With:');
-  logger.info(`[BACKTESTING] Fiat:   ${startedWith.fiat}`);
-  logger.info(`[BACKTESTING] Crypto: ${startedWith.crypto}`);
+  logger.info('Started With:');
+  logger.info(`Fiat:   ${startedWith.fiat}`);
+  logger.info(`Crypto: ${startedWith.crypto}`);
 
-  logger.info('[BACKTESTING] Ended With:');
-  logger.info(`[BACKTESTING] Fiat:   ${this.portfolio.fiat}`);
-  logger.info(`[BACKTESTING] Crypto: ${this.portfolio.crypto}`);
+  logger.info('Ended With:');
+  logger.info(`Fiat:   ${this.portfolio.fiat}`);
+  logger.info(`Crypto: ${this.portfolio.crypto}`);
 
   const totalProfits = this.portfolio.fiat + (this.portfolio.crypto * this.data.close[this.data.close.length - 1]);
 
-  logger.info('[BACKTESTING] Potential outcome:');
-  logger.info(`[BACKTESTING] Total fiat:  ${totalProfits}`);
-  logger.info(`[BACKTESTING] Profit fiat: ${totalProfits - startedWith.fiat}`);
+  logger.info('Potential outcome:');
+  logger.info(`Total fiat:  ${totalProfits}`);
+  logger.info(`Profit fiat: ${totalProfits - startedWith.fiat}`);
 
   // Display a fair warning
-  logger.warn('[BACKTESTING] By no means is backtesting usefull for making guarantees about the strategies you test.');
-  logger.warn('[BACKTESTING] Keep in mind that there may be false positives and negatives in the data you test against.');
-  logger.warn('[BACKTESTING] Please always take caution and know you and only you are responsible for the financial mistakes you make.');
+  logger.warn('By no means is backtesting usefull for making guarantees about the strategies you test.');
+  logger.warn('Keep in mind that there may be false positives and negatives in the data you test against.');
+  logger.warn('Please always take caution and know you and only you are responsible for the financial mistakes you make.');
 };

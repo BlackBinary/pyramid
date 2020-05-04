@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger').scope('list import');
 const { client: dbClient } = require('@lib/database');
 
 module.exports.getImports = async (importName) => {
@@ -24,12 +24,12 @@ module.exports.getImports = async (importName) => {
 };
 
 module.exports = async () => {
-  logger.info('[IMPORT] List of imports');
+  logger.info('List of imports');
 
   // Retrieve a list of all the imports
   const imports = await this.getImports();
 
-  logger.info(`[IMPORT] Total available imports: ${imports.length}`);
+  logger.info(`Total available imports: ${imports.length}`);
 
   for (let i = 0; i < imports.length; i += 1) {
     const {
@@ -43,11 +43,11 @@ module.exports = async () => {
 
     const date = moment.unix(timestamp).format();
 
-    logger.info('[IMPORT] ----------------------------------------------');
-    logger.info(`[IMPORT] Import ${id} imported on ${date}`);
-    logger.info(`[IMPORT] Name        ${name}`);
-    logger.info(`[IMPORT] Product     ${product}`);
-    logger.info(`[IMPORT] Datapoints  ${datapoints}`);
-    logger.info(`[IMPORT] Granularity ${granularity}`);
+    logger.info('----------------------------------------------');
+    logger.info(`Import ${id} imported on ${date}`);
+    logger.info(`Name        ${name}`);
+    logger.info(`Product     ${product}`);
+    logger.info(`Datapoints  ${datapoints}`);
+    logger.info(`Granularity ${granularity}`);
   }
 };

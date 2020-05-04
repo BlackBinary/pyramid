@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger').scope('database');
 
 const packageJson = require('@root/package.json');
 
@@ -11,8 +11,8 @@ module.exports.path = `${packageJson._moduleAliases['@data']}database.sqlite`;
 // Export a new sqlite db object
 module.exports.client = new sqlite3.Database(this.path, (err) => {
   if (err) {
-    logger.error('[DATABASE] Could not connect to database', err);
+    logger.error('Could not connect to database', err);
   } else {
-    logger.info('[DATABASE] Connected to database');
+    logger.info('Connected to database');
   }
 });

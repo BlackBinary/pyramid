@@ -12,7 +12,7 @@
 
 const tulind = require('tulind');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger').scope('sma moon 1');
 
 module.exports.config = {
   averageOver: 5,
@@ -41,8 +41,8 @@ module.exports.init = (_this) => {
 module.exports.update = (i) => {
   // logger.info(`Received update for index ${i}`);
   if (i < this.config.averageOver) {
-    logger.info(`[SMA MOON 1] We need at least ${this.config.averageOver} datapoints to use SMA. Please wait.`);
-    logger.info(`[SMA MOON 1] Skipping index ${i} because it's out of our data range`);
+    logger.info(`We need at least ${this.config.averageOver} datapoints to use SMA. Please wait.`);
+    logger.info(`Skipping index ${i} because it's out of our data range`);
   } else {
     // Get the current and the previous result
     const currentSma = this.sma[i];
@@ -56,21 +56,21 @@ module.exports.update = (i) => {
 
     // If the difference is a positive number, do something (buy?)
     if (smaDifference > this.config.buyAt) {
-      logger.info(`[SMA MOON 1] Closing SMA is up by ${smaDifference}`);
+      logger.info(`Closing SMA is up by ${smaDifference}`);
       if (this.main.portfolio.fiat > 0) {
         this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
       }
     } else if (smaDifference < this.config.sellAt) { // If the difference is a negative number, do something (sell?)
-      logger.info(`[SMA MOON 1] Closing SMA is down by ${smaDifference}`);
+      logger.info(`Closing SMA is down by ${smaDifference}`);
       if (this.main.portfolio.crypto > 0) {
         this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
       }
     }
 
-    // logger.info(`[SMA MOON 1] Price Previous: ${previousPrice}`);
-    // logger.info(`[SMA MOON 1] Price Current:  ${currentPrice}`);
+    // logger.info(`Price Previous: ${previousPrice}`);
+    // logger.info(`Price Current:  ${currentPrice}`);
 
-    // logger.info(`[SMA MOON 1] SMA Previous: ${previousSma}`);
-    // logger.info(`[SMA MOON 1] SMA Current:  ${currentSma}`);
+    // logger.info(`SMA Previous: ${previousSma}`);
+    // logger.info(`SMA Current:  ${currentSma}`);
   }
 };

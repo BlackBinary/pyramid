@@ -10,7 +10,7 @@
  * Sell if difference between current and previous price is higher than -1
  */
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger').scope('simple 1');
 
 module.exports.config = {
   buyAt: 60,

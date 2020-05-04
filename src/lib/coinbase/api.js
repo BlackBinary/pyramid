@@ -1,6 +1,7 @@
 const axios = require('axios');
+
 const auth = require('@lib/coinbase/auth');
-const logger = require('@lib/logger');
+const logger = require('@lib/logger').scope('api');
 
 // Get the coinbase api url from the env
 const {
@@ -26,7 +27,7 @@ client.interceptors.response.use(
   (response) => Promise.resolve(response),
   // Errors should always reject after being logged
   (error) => {
-    logger.error('[API] Error. Request failed');
+    logger.error('Error. Request failed');
     logger.error(error);
     return Promise.reject(error);
   },
