@@ -2,7 +2,6 @@ const moment = require('moment');
 
 const logger = require('@lib/logger').scope('backtest');
 const { client: sqlite } = require('@lib/database/sqlite');
-const { client: redis } = require('@lib/database/redis');
 const strategyLoader = require('@lib/helpers/strategy/loader');
 
 module.exports.getMarketData = async (importName) => {
@@ -85,8 +84,6 @@ module.exports.trade = (amount, price, type, timestamp) => {
   }
 };
 
-module.exports.getCandleRange = (timestamp = this.currentTimestamp, key, start = 0, stop = -1, callback) => redis.LRANGE(`${timestamp}:candle:${key}`, start, stop, callback);
-
 module.exports = async (args) => {
   logger.info('Starting backtesting');
 
@@ -152,7 +149,7 @@ module.exports = async (args) => {
     this.strategy.timestamp = this.currentTimestamp;
 
     // Call the strategy init function
-    this.strategy.init();
+    this.strategy.init(this);
 
     // Set function to get candle range
     this.strategy.getCandleRange = this.getCandleRange;
@@ -167,20 +164,11 @@ module.exports = async (args) => {
     ...this.portfolio,
   };
 
-  // Push all the data in redis
-  marketData.forEach((data) => {
-    const keys = Object.keys(data);
-    keys.forEach((key) => {
-      redis.RPUSH([`${this.currentTimestamp}:candle:${key}`, data[key]]);
-    });
-  });
-
   logger.info('Done setting data');
 
   for (let i = 0; i < marketData.length; i += 1) {
-    // console.log(marketData[i]);
-    // const { timestamp } = marketData[i];
-    this.strategy.update(i);
+    const candle = marketData[i];
+    this.strategy.update(candle);
   }
 
   const startTime = moment.unix(marketData[0].timestamp).format();

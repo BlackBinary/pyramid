@@ -10,8 +10,6 @@
  * Sell if difference between current and previous average is below -19
  */
 
-// const tulind = require('tulind');
-
 const logger = require('@lib/logger').scope('sma moon 1');
 
 module.exports.config = {
@@ -27,27 +25,46 @@ module.exports.config = {
   },
 };
 
-module.exports.init = () => {
-  // // Get the SMA indicators
-  // tulind.indicators.sma.indicator([this.main.data.price], [this.config.averageOver], (err, results) => {
-  //   // Get the results
-  //   const [closingSma] = results;
-  //   this.sma = closingSma;
-  // });
+module.exports.init = (_this) => {
+  // Find a better solution to get parrent functions
+  this.main = _this;
+
+  this.prices = [];
 
   // Log
   logger.info('Starting strategy');
 };
 
-module.exports.update = (i) => {
-  logger.info(`Received update for index ${i}`);
-  return this.getCandleRange(this.timestamp, this.config.tradeSignal, i, i + this.config.averageOver, (error, response) => {
-    if (error) logger.error(error);
-    else if (response.length > this.config.averageOver) {
-      logger.info('can do calc');
+module.exports.update = (candle) => {
+  // logger.info(`Received update for timestamp ${candle.timestamp}`);
+  this.prices.push(candle[this.config.tradeSignal]);
+
+  const { length } = this.prices;
+  if (length >= this.config.averageOver) {
+    const lastIndex = length - 1;
+    this.sma = this.prices.slice(lastIndex - this.config.averageOver, -1).reduce((a, b) => a + b, 0) / this.config.averageOver;
+    if (this.previousSma) {
+      const smaDifference = this.sma - this.previousSma;
+
+      // This is not actually the current price
+      const currentPrice = this.prices[lastIndex];
+
+      if (smaDifference > this.config.buyAt) {
+        logger.info(`Closing SMA is up by ${smaDifference}`);
+        if (this.main.portfolio.fiat > 0) {
+          this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
+        }
+      } else if (smaDifference < this.config.sellAt) { // If the difference is a negative number, do something (sell?)
+        logger.info(`Closing SMA is down by ${smaDifference}`);
+        if (this.main.portfolio.crypto > 0) {
+          this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
+        }
+      }
     }
-    return true;
-  });
+
+    this.previousSma = this.sma;
+  }
+
   // if (i < this.config.averageOver) {
   //   logger.info(`We need at least ${this.config.averageOver} datapoints to use SMA. Please wait.`);
   //   logger.info(`Skipping index ${i} because it's out of our data range`);
@@ -63,17 +80,6 @@ module.exports.update = (i) => {
   //   const currentPrice = this.main.data.price[i];
 
   //   // If the difference is a positive number, do something (buy?)
-  //   if (smaDifference > this.config.buyAt) {
-  //     logger.info(`Closing SMA is up by ${smaDifference}`);
-  //     if (this.main.portfolio.fiat > 0) {
-  //       this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
-  //     }
-  //   } else if (smaDifference < this.config.sellAt) { // If the difference is a negative number, do something (sell?)
-  //     logger.info(`Closing SMA is down by ${smaDifference}`);
-  //     if (this.main.portfolio.crypto > 0) {
-  //       this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
-  //     }
-  //   }
 
   // logger.info(`Price Previous: ${previousPrice}`);
   // logger.info(`Price Current:  ${currentPrice}`);
