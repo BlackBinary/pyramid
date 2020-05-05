@@ -3,7 +3,7 @@ const Bottleneck = require('bottleneck');
 
 const logger = require('@lib/logger').scope('import');
 const candles = require('@lib/coinbase/endpoints/products/candles');
-const { client: dbClient } = require('@lib/database');
+const { client: sqlite } = require('@lib/database/sqlite');
 
 module.exports.isoFormat = 'YYYY-MM-DDTHH:mm';
 
@@ -45,13 +45,13 @@ module.exports.checkOrCreateTables = () => {
 
   return Promise.all([
     new Promise((resolve, reject) => {
-      dbClient.run(createImportsQuery, (err) => {
+      sqlite.run(createImportsQuery, (err) => {
         if (err) return reject();
         return resolve();
       });
     }),
     new Promise((resolve, reject) => {
-      dbClient.run(createCandlesQuery, (err) => {
+      sqlite.run(createCandlesQuery, (err) => {
         if (err) return reject();
         return resolve();
       });
@@ -83,7 +83,7 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
   candles.get(product, start, end, granularity)
     .then(({ data }) => {
       logger.info('New data received');
-      const prepared = dbClient.prepare(`
+      const prepared = sqlite.prepare(`
         INSERT INTO candles
         (importId, product, timestamp, low, high, open, close, volume)
         VALUES
@@ -128,7 +128,7 @@ module.exports.createImport = (name, product, datapoints, granularity, timestamp
   (?, ?, ?, ?, ?);
   `;
   return new Promise((resolve, reject) => {
-    dbClient.run(query, [name, product, datapoints, granularity, timestamp], function returnId(error) {
+    sqlite.run(query, [name, product, datapoints, granularity, timestamp], function returnId(error) {
       if (error) return reject(error);
       return resolve(this.lastID);
     });

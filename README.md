@@ -1,8 +1,10 @@
 # CPTB
 CPTB is a trading bot for Coinbase Pro
 
-## Disclaimer
-CPTB is built as an experiment by me, for me (Daen Rebel). There is nobody who should use this bot. Especially if you're unaware of what you're doing.
+## Requirements
+CPTB requires the following dependencies to be installed:
+* Redis server
+* Node.js > V12.X
 
 ## Running CPTB
 To run CPTB, clone or download this repository. Move inside the folder and run:
@@ -22,3 +24,6 @@ node cptb
 The rest should be pretty self explainatory. If it's not, you should definetly stop right here and use another product, or wait for these docs to be updated.
 
 Either way, good luck and have fun!
+
+## Disclaimer
+CPTB is built as an experiment by me, for me (Daen Rebel). There is nobody who should use this bot. Especially if you're unaware of what you're doing.

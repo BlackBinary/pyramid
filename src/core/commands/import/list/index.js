@@ -1,7 +1,7 @@
 const moment = require('moment');
 
 const logger = require('@lib/logger').scope('list import');
-const { client: dbClient } = require('@lib/database');
+const { client: sqlite } = require('@lib/database/sqlite');
 
 module.exports.getImports = async (importName) => {
   const query = `
@@ -16,7 +16,7 @@ module.exports.getImports = async (importName) => {
   `;
 
   return new Promise((resolve, reject) => {
-    dbClient.all(query, [importName], (err, data) => {
+    sqlite.all(query, [importName], (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });

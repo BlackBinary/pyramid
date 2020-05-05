@@ -1,7 +1,8 @@
 const moment = require('moment');
 
 const logger = require('@lib/logger').scope('backtest');
-const { client: dbClient } = require('@lib/database');
+const { client: sqlite } = require('@lib/database/sqlite');
+const { client: redis } = require('@lib/database/redis');
 const strategyLoader = require('@lib/helpers/strategy/loader');
 
 module.exports.getMarketData = async (importName) => {
@@ -25,19 +26,11 @@ module.exports.getMarketData = async (importName) => {
   `;
 
   return new Promise((resolve, reject) => {
-    dbClient.all(query, [importName], (err, data) => {
+    sqlite.all(query, [importName], (err, data) => {
       if (err) reject(err);
       else resolve(data);
     });
   });
-};
-
-// The price to let the bot trade with
-module.exports.tradeSignal = 'high';
-
-module.exports.data = {
-  price: [],
-  timestamp: [],
 };
 
 module.exports.portfolio = {
@@ -92,6 +85,8 @@ module.exports.trade = (amount, price, type, timestamp) => {
   }
 };
 
+module.exports.getCandleRange = (timestamp = this.currentTimestamp, key, start = 0, stop = -1, callback) => redis.LRANGE(`${timestamp}:candle:${key}`, start, stop, callback);
+
 module.exports = async (args) => {
   logger.info('Starting backtesting');
 
@@ -141,27 +136,26 @@ module.exports = async (args) => {
     return;
   }
 
-  // Create new arrays with data
-  marketData.forEach((data) => {
-    this.data.price.push(data[this.tradeSignal]);
-    this.data.timestamp.push(data.timestamp);
-  });
-
   if (this.strategy.config) {
     // Override the default settings with the backtesting settings from the strategy
     this.portfolio = {
       ...this.portfolio,
       ...this.strategy.config.backtesting.portfolio,
     };
-
-    this.tradeSignal = this.strategy.config.backtesting.tradeSignal || this.tradeSignal;
   } else {
     logger.warn('Strategy does not have a config');
   }
 
-  // Call the strategy init function
+  // Make sure the strategy is valid
   if (this.strategy.init) {
-    this.strategy.init(this);
+    this.currentTimestamp = moment().unix();
+    this.strategy.timestamp = this.currentTimestamp;
+
+    // Call the strategy init function
+    this.strategy.init();
+
+    // Set function to get candle range
+    this.strategy.getCandleRange = this.getCandleRange;
   } else {
     logger.error('Could not init strategy');
     logger.error('Please make sure the strategy exists and has all the required functions');
@@ -173,12 +167,24 @@ module.exports = async (args) => {
     ...this.portfolio,
   };
 
+  // Push all the data in redis
+  marketData.forEach((data) => {
+    const keys = Object.keys(data);
+    keys.forEach((key) => {
+      redis.RPUSH([`${this.currentTimestamp}:candle:${key}`, data[key]]);
+    });
+  });
+
+  logger.info('Done setting data');
+
   for (let i = 0; i < marketData.length; i += 1) {
+    // console.log(marketData[i]);
+    // const { timestamp } = marketData[i];
     this.strategy.update(i);
   }
 
-  const startTime = moment.unix(this.data.timestamp[0]).format();
-  const endTime = moment.unix(this.data.timestamp[this.data.timestamp.length - 1]).format();
+  const startTime = moment.unix(marketData[0].timestamp).format();
+  const endTime = moment.unix(marketData[marketData.length - 1].timestamp).format();
 
   logger.info('\n\n\n\n');
 
@@ -194,7 +200,7 @@ module.exports = async (args) => {
   logger.info(`Fiat:   ${this.portfolio.fiat}`);
   logger.info(`Crypto: ${this.portfolio.crypto}`);
 
-  const totalProfits = this.portfolio.fiat + (this.portfolio.crypto * this.data.price[this.data.price.length - 1]);
+  const totalProfits = this.portfolio.fiat + (this.portfolio.crypto * marketData[marketData.length - 1].close);
 
   logger.info('Potential outcome:');
   logger.info(`Total fiat:  ${totalProfits}`);
@@ -204,4 +210,6 @@ module.exports = async (args) => {
   logger.warn('By no means is backtesting usefull for making guarantees about the strategies you test.');
   logger.warn('Keep in mind that there may be false positives and negatives in the data you test against.');
   logger.warn('Please always take caution and know you and only you are responsible for the financial mistakes you make.');
+
+  logger.info('Done. Exit.');
 };
