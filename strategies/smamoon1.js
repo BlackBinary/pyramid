@@ -14,8 +14,8 @@ const logger = require('@lib/logger').scope('sma moon 1');
 
 module.exports.config = {
   averageOver: 5,
-  buyAt: 10,
-  sellAt: -21,
+  buyAt: -16,
+  sellAt: 55,
   tradeSignal: 'low',
   backtesting: {
     portfolio: {
@@ -49,13 +49,13 @@ module.exports.update = (candle) => {
       // This is not actually the current price
       const currentPrice = this.prices[lastIndex];
 
-      if (smaDifference > this.config.buyAt) {
-        logger.info(`Closing SMA is up by ${smaDifference}`);
+      if (smaDifference < this.config.buyAt) {
+        logger.info(`SMA is down by ${smaDifference}`);
         if (this.main.portfolio.fiat > 0) {
           this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
         }
-      } else if (smaDifference < this.config.sellAt) { // If the difference is a negative number, do something (sell?)
-        logger.info(`Closing SMA is down by ${smaDifference}`);
+      } else if (smaDifference > this.config.sellAt) {
+        logger.info(`SMA is up by ${smaDifference}`);
         if (this.main.portfolio.crypto > 0) {
           this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
         }
