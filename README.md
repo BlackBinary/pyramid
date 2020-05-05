@@ -3,7 +3,6 @@ CPTB is a trading bot for Coinbase Pro
 
 ## Requirements
 CPTB requires the following dependencies to be installed:
-* Redis server
 * Node.js > V12.X
 
 ## Running CPTB
