@@ -64,27 +64,4 @@ module.exports.update = (candle) => {
 
     this.previousSma = this.sma;
   }
-
-  // if (i < this.config.averageOver) {
-  //   logger.info(`We need at least ${this.config.averageOver} datapoints to use SMA. Please wait.`);
-  //   logger.info(`Skipping index ${i} because it's out of our data range`);
-  // } else {
-  //   // Get the current and the previous result
-  //   const currentSma = this.sma[i];
-  //   const previousSma = this.sma[i - 1];
-
-  //   // Get the difference between
-  //   const smaDifference = currentSma - previousSma;
-
-  //   // Get the current and the previous price
-  //   const currentPrice = this.main.data.price[i];
-
-  //   // If the difference is a positive number, do something (buy?)
-
-  // logger.info(`Price Previous: ${previousPrice}`);
-  // logger.info(`Price Current:  ${currentPrice}`);
-
-  // logger.info(`SMA Previous: ${previousSma}`);
-  // logger.info(`SMA Current:  ${currentSma}`);
-  // }
 };
