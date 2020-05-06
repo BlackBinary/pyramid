@@ -14,8 +14,8 @@ const logger = require('@lib/logger').scope('sma moon 1');
 
 module.exports.config = {
   averageOver: 5,
-  buyAt: -16,
-  sellAt: 55,
+  buyAt: 2,
+  sellAt: -2,
   tradeSignal: 'low',
   backtesting: {
     portfolio: {
@@ -43,18 +43,15 @@ module.exports.update = (candle) => {
 
   const { length } = this.prices;
   if (length >= this.config.averageOver) {
-    logger.info('We have enough data to begin trading');
     const lastIndex = length - 1;
-
-    console.log(this.prices);
-    console.log(this.prices.slice(lastIndex - this.config.averageOver, -1));
-
 
     this.sma = this.prices.slice(lastIndex - this.config.averageOver, -1).reduce((a, b) => a + b, 0) / this.config.averageOver;
 
     logger.info(`sma  ${this.sma}`);
     logger.info(`prev ${this.previousSma}`);
     if (this.previousSma) {
+      logger.info('We have enough data to begin trading');
+
       const smaDifference = this.sma - this.previousSma;
 
       logger.info(`SMA DIFF ${smaDifference}`);
@@ -62,13 +59,13 @@ module.exports.update = (candle) => {
       // This is not actually the current price
       const currentPrice = this.prices[lastIndex];
 
-      if (smaDifference < this.config.buyAt) {
-        logger.info(`SMA is down by ${smaDifference}`);
+      if (smaDifference > this.config.buyAt) {
+        logger.info(`SMA is up by ${smaDifference}`);
         if (this.main.portfolio.fiat > 0) {
           this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
         }
-      } else if (smaDifference > this.config.sellAt) {
-        logger.info(`SMA is up by ${smaDifference}`);
+      } else if (smaDifference < this.config.sellAt) {
+        logger.info(`SMA is down by ${smaDifference}`);
         if (this.main.portfolio.crypto > 0) {
           this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
         }

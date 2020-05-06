@@ -34,8 +34,6 @@ module.exports.init = (_this) => {
 
 module.exports.update = (candle) => {
   this.price = candle[this.config.tradeSignal];
-  // const previousPrice = this.main.data.price[i - 1];
-  // const currentPrice = this.main.data.price[i];
 
   // Make sure we actually have a price to compage against
   if (this.previousPrice) {

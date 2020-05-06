@@ -46,7 +46,8 @@ module.exports.fees = 0.5 / 100;
 
 module.exports.trades = [];
 
-module.exports.trade = (amount, price, type, timestamp) => {
+module.exports.trade = (amount, price, type) => {
+  const timestamp = moment().unix();
   if (type === this.tradeTypes.BUY) {
     const fee = amount * this.fees;
     const buyingTotal = ((amount - fee) / price); // Total bitcoin
@@ -145,9 +146,7 @@ module.exports = async (args) => {
 
   // Make sure the strategy is valid
   if (this.strategy.init) {
-    this.currentTimestamp = moment().unix();
-    this.strategy.timestamp = this.currentTimestamp;
-
+    logger.info('Init strategy');
     // Call the strategy init function
     this.strategy.init(this);
 

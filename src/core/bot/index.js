@@ -37,7 +37,7 @@ module.exports.fees = 0.5 / 100;
 
 module.exports.trades = [];
 
-module.exports.tickerInterval = 1000 * 30;
+module.exports.tickerInterval = 1000 * 60;
 module.exports.lastTime = Date.now();
 module.exports.lastDelay = this.tickerInterval;
 
@@ -93,13 +93,16 @@ module.exports.priceUpdate = (data) => {
 
 module.exports.channel = 'ticker';
 
-module.exports.products = ['BTC-EUR'];
+module.exports.products = ['BTC-USD'];
 
-module.exports.trade = (amount, price, type, timestamp) => {
+module.exports.trade = (amount, price, type) => {
+  const timestamp = moment().unix();
   logger.info(amount);
   logger.info(price);
   logger.info(type);
   logger.info(timestamp);
+
+  // TODO: Creat a general function that allows us to test trade, trade and backtest and import in all these
 };
 
 module.exports = (args, test = false) => {
@@ -130,6 +133,8 @@ module.exports = (args, test = false) => {
 
   // Call the strategy init function
   if (this.strategy.init) {
+    logger.info('Init strategy');
+
     this.strategy.init(this);
   } else {
     logger.error('Could not init strategy');
@@ -176,8 +181,8 @@ module.exports = (args, test = false) => {
     if (body.type === this.channel) {
       this.priceUpdate(body);
     } else {
-      logger.info(`Not a ${this.channel} update`);
-      logger.info(body);
+      // logger.info(`Not a ${this.channel} update`);
+      // logger.info(body);
     }
   });
 
