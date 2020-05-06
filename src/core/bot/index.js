@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const websocket = require('@lib/coinbase/websocket');
 const logger = require('@lib/logger').scope('cptb');
 const strategyLoader = require('@lib/helpers/strategy/loader');
@@ -21,22 +23,84 @@ const strategyLoader = require('@lib/helpers/strategy/loader');
 //   "last_size": "0.08679"
 // }
 
-module.exports.bot = (data) => {
-  const { side, time, price } = data;
-  logger.info('Received a price update');
+module.exports.portfolio = {
+  fiat: 0,
+  crypto: 0,
+};
 
-  // if (side === 'buy') {
-  //   // l;
-  // }
+module.exports.tradeTypes = {
+  SELL: 'SELL',
+  BUY: 'BUY',
+};
 
-  // logger.info(`Side: ${side}`);
-  // logger.info(`Time: ${time}`);
-  // logger.info(`Price: ${price}`);
+module.exports.fees = 0.5 / 100;
+
+module.exports.trades = [];
+
+module.exports.tickerInterval = 1000 * 30;
+module.exports.lastTime = Date.now();
+module.exports.lastDelay = this.tickerInterval;
+
+module.exports.ticker = () => {
+  this.candle.timestamp = moment().unix();
+
+  this.strategy.update(this.candle);
+
+  logger.info(this.trades);
+
+  const { close } = this.candle;
+
+  // Set all the keys in candle to the close price
+  Object.keys(this.candle).forEach((key) => this.candle[key] = close);
+
+  const now = Date.now();
+  const dTime = now - this.lastTime;
+
+  this.lastTime = now;
+  this.lastDelay = this.tickerInterval + this.lastDelay - dTime;
+
+  setTimeout(this.ticker, this.lastDelay);
+};
+
+module.exports.candle = {
+  high: null,
+  low: null,
+  close: null,
+  open: null,
+  timestamp: null,
+};
+
+module.exports.priceUpdate = (data) => {
+  let { time, price } = data;
+  logger.info(`Received a price update ${time}`);
+
+  price = Number(price);
+
+  if (!this.candle.open) {
+    this.candle.open = price;
+  }
+
+  if (!this.candle.high || this.candle.high < price) {
+    this.candle.high = price;
+  }
+
+  if (!this.candle.low || this.candle.low > price) {
+    this.candle.low = price;
+  }
+
+  this.candle.close = price;
 };
 
 module.exports.channel = 'ticker';
 
 module.exports.products = ['BTC-EUR'];
+
+module.exports.trade = (amount, price, type, timestamp) => {
+  logger.info(amount);
+  logger.info(price);
+  logger.info(type);
+  logger.info(timestamp);
+};
 
 module.exports = (args, test = false) => {
   logger.info('Starting CPTB! Feel free to abort while you can.');
@@ -58,6 +122,9 @@ module.exports = (args, test = false) => {
     logger.error('--strategy supermoon');
     return;
   }
+
+  // TODO: REMOVE
+  this.portfolio.fiat = 1000;
 
   this.strategy = strategyLoader(strategy());
 
@@ -107,10 +174,13 @@ module.exports = (args, test = false) => {
     const body = JSON.parse(data);
     // Run the bot on update received
     if (body.type === this.channel) {
-      this.bot(body);
+      this.priceUpdate(body);
     } else {
       logger.info(`Not a ${this.channel} update`);
       logger.info(body);
     }
   });
+
+  // Init the ticker
+  setTimeout(this.ticker, this.tickerInterval);
 };

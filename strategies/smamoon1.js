@@ -36,15 +36,28 @@ module.exports.init = (_this) => {
 };
 
 module.exports.update = (candle) => {
-  // logger.info(`Received update for timestamp ${candle.timestamp}`);
-  this.prices.push(candle[this.config.tradeSignal]);
+  logger.info(`Received update for timestamp ${candle.timestamp}`);
+  const price = candle[this.config.tradeSignal];
+  logger.info(`Update price ${price}`);
+  this.prices.push(price);
 
   const { length } = this.prices;
   if (length >= this.config.averageOver) {
+    logger.info('We have enough data to begin trading');
     const lastIndex = length - 1;
+
+    console.log(this.prices);
+    console.log(this.prices.slice(lastIndex - this.config.averageOver, -1));
+
+
     this.sma = this.prices.slice(lastIndex - this.config.averageOver, -1).reduce((a, b) => a + b, 0) / this.config.averageOver;
+
+    logger.info(`sma  ${this.sma}`);
+    logger.info(`prev ${this.previousSma}`);
     if (this.previousSma) {
       const smaDifference = this.sma - this.previousSma;
+
+      logger.info(`SMA DIFF ${smaDifference}`);
 
       // This is not actually the current price
       const currentPrice = this.prices[lastIndex];
