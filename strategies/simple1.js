@@ -24,30 +24,36 @@ module.exports.config = {
   },
 };
 
-module.exports.init = () => {
+module.exports.init = (_this) => {
+  // Find a better solution to get parrent functions
+  this.main = _this;
+
   // Log
   logger.info('Starting strategy');
 };
 
-module.exports.update = () => {
+module.exports.update = (candle) => {
+  this.price = candle[this.config.tradeSignal];
   // const previousPrice = this.main.data.price[i - 1];
   // const currentPrice = this.main.data.price[i];
 
-  // // Make sure we actually have a price to compage against
-  // if (previousPrice) {
-  //   const difference = previousPrice - currentPrice;
-  //   if (difference > this.config.buyAt) {
-  //     logger.info('Price pos. Buy');
-  //     logger.info(difference);
-  //     if (this.main.portfolio.fiat > 0) {
-  //       this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
-  //     }
-  //   } else if (difference < this.config.sellAt) {
-  //     logger.info('Price neg. Sell');
-  //     logger.info(difference);
-  //     if (this.main.portfolio.crypto > 0) {
-  //       this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
-  //     }
-  //   }
-  // }
+  // Make sure we actually have a price to compage against
+  if (this.previousPrice) {
+    const difference = this.previousPrice - this.price;
+    if (difference > this.config.buyAt) {
+      logger.info('Price pos. Buy');
+      logger.info(difference);
+      if (this.main.portfolio.fiat > 0) {
+        this.main.trade(this.main.portfolio.fiat, this.price, this.main.tradeTypes.BUY);
+      }
+    } else if (difference < this.config.sellAt) {
+      logger.info('Price neg. Sell');
+      logger.info(difference);
+      if (this.main.portfolio.crypto > 0) {
+        this.main.trade(this.main.portfolio.crypto, this.price, this.main.tradeTypes.SELL);
+      }
+    }
+  }
+
+  this.previousPrice = this.price;
 };
