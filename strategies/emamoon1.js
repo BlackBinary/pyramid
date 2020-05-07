@@ -60,42 +60,4 @@ module.exports.update = (candle) => {
       // We have an accurate ema enough to do stuff
     }
   }
-
-  //   logger.info(`Received update for timestamp ${candle.timestamp}`);
-  //   logger.info(`Update price ${price}`);
-  //   this.prices.push(price);
-
-  //   const { length } = this.prices;
-  //   if (length >= this.config.averageOver) {
-  //     const lastIndex = length - 1;
-
-  //     this.sma =
-
-  //     logger.info(`sma  ${this.sma}`);
-  //     logger.info(`prev ${this.previousSma}`);
-  //     if (this.previousSma) {
-  //       logger.info('We have enough data to begin trading');
-
-  //       const smaDifference = this.sma - this.previousSma;
-
-  //       logger.info(`SMA DIFF ${smaDifference}`);
-
-  //       // This is not actually the current price
-  //       const currentPrice = this.prices[lastIndex];
-
-  //       if (smaDifference > this.config.buyAt) {
-  //         logger.info(`SMA is up by ${smaDifference}`);
-  //         if (this.main.portfolio.fiat > 0) {
-  //           this.main.trade(this.main.portfolio.fiat, currentPrice, this.main.tradeTypes.BUY);
-  //         }
-  //       } else if (smaDifference < this.config.sellAt) {
-  //         logger.info(`SMA is down by ${smaDifference}`);
-  //         if (this.main.portfolio.crypto > 0) {
-  //           this.main.trade(this.main.portfolio.crypto, currentPrice, this.main.tradeTypes.SELL);
-  //         }
-  //       }
-  //     }
-
-//     this.previousSma = this.sma;
-//   }
 };
