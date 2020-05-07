@@ -8,4 +8,4 @@ const api = require('@lib/coinbase/api');
  * @param {string} granularity - Desired timeslice in seconds
  * @returns {Promise}
  */
-module.exports.get = (productId, start = null, end = null, granularity = 60) => api.getRequest(`/products/${productId}/candles?start=${start}&end=${end}&granularity=${granularity}`, true);
+module.exports.get = (productId, start = '', end = '', granularity = 60) => api.getRequest(`/products/${productId}/candles?start=${start}&end=${end}&granularity=${granularity}`, true);

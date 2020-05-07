@@ -3,6 +3,7 @@ const moment = require('moment');
 const websocket = require('@lib/coinbase/websocket');
 const logger = require('@lib/logger').scope('cptb');
 const strategyLoader = require('@lib/helpers/strategy/loader');
+const candles = require('@lib/coinbase/endpoints/products/candles');
 
 // This is what an update looks like
 // {
@@ -37,7 +38,7 @@ module.exports.fees = 0.5 / 100;
 
 module.exports.trades = [];
 
-module.exports.tickerInterval = 1000 * 60;
+module.exports.tickerInterval = 1000 * 60 * 1;
 module.exports.lastTime = Date.now();
 module.exports.lastDelay = this.tickerInterval;
 
@@ -76,24 +77,32 @@ module.exports.priceUpdate = (data) => {
 
   price = Number(price);
 
-  if (!this.candle.open) {
-    this.candle.open = price;
-  }
+  if (this.botType === 'ticker') {
+    if (!this.candle.open) {
+      this.candle.open = price;
+    }
 
-  if (!this.candle.high || this.candle.high < price) {
-    this.candle.high = price;
-  }
+    if (!this.candle.high || this.candle.high < price) {
+      this.candle.high = price;
+    }
 
-  if (!this.candle.low || this.candle.low > price) {
-    this.candle.low = price;
-  }
+    if (!this.candle.low || this.candle.low > price) {
+      this.candle.low = price;
+    }
 
-  this.candle.close = price;
+    this.candle.close = price;
+  } else {
+    this.strategy.update(price);
+  }
 };
+
+module.exports.botType = 'ticker';
+
+module.exports.primeCandles = [];
 
 module.exports.channel = 'ticker';
 
-module.exports.products = ['BTC-USD'];
+module.exports.product = 'BTC-USD';
 
 module.exports.trade = (amount, price, type) => {
   const timestamp = moment().unix();
@@ -105,7 +114,7 @@ module.exports.trade = (amount, price, type) => {
   // TODO: Creat a general function that allows us to test trade, trade and backtest and import in all these
 };
 
-module.exports = (args, test = false) => {
+module.exports = async (args, test = false) => {
   logger.info('Starting CPTB! Feel free to abort while you can.');
 
   const strategy = () => {
@@ -118,6 +127,19 @@ module.exports = (args, test = false) => {
     }
     return false;
   };
+
+  const botType = () => {
+    if (args.botType) {
+      const type = typeof args.botType;
+      if (type === 'string') {
+        return args.botType;
+      }
+      return 'ticker';
+    }
+    return 'ticker';
+  };
+
+  this.botType = botType();
 
   if (!strategy()) {
     logger.error('No strategy specified');
@@ -134,6 +156,12 @@ module.exports = (args, test = false) => {
   // Call the strategy init function
   if (this.strategy.init) {
     logger.info('Init strategy');
+
+    if (this.strategy.config.prime) {
+      logger.info('Priming strategy with 300 datapoints');
+      // Prime the strategy with 300 datapoints
+      this.primeCandles = (await candles.get(this.product, '', '', this.tickerInterval / 1000)).data;
+    }
 
     this.strategy.init(this);
   } else {
@@ -169,7 +197,7 @@ module.exports = (args, test = false) => {
       channels: [
         {
           name: this.channel,
-          product_ids: this.products,
+          product_ids: [this.product],
         },
       ],
     }));
@@ -186,6 +214,8 @@ module.exports = (args, test = false) => {
     }
   });
 
-  // Init the ticker
-  setTimeout(this.ticker, this.tickerInterval);
+  if (this.botType === 'ticker') {
+    // Init the ticker
+    setTimeout(this.ticker, this.tickerInterval);
+  }
 };
