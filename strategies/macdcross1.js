@@ -15,7 +15,7 @@ module.exports.config = {
   prime: true,
   fastAverage: 12,
   slowAverage: 26,
-  //   buyAt: 2,
+  // buyAt: 20,
   //   sellAt: -2,
   startAt: 9,
   tradeSignal: 'close',
@@ -76,15 +76,21 @@ module.exports.update = (candle) => {
       this.slowAverage = this.calculateEma(price, this.slowAverage, this.config.slowAverage);
     }
 
-    logger.info(`Fast average ${this.fastAverage}`);
-    logger.info(`Slow average ${this.slowAverage}`);
+    // logger.info(`Fast average ${this.fastAverage}`);
+    // logger.info(`Slow average ${this.slowAverage}`);
 
     const macd = this.fastAverage - this.slowAverage;
 
-    if (macd > 0) {
-      logger.info('We should buy');
-    } else {
-      logger.info('We should sell');
+    if (macd > 22) {
+      if (this.main.portfolio.fiat > 0) {
+        logger.info('We should buy');
+        this.main.trade(this.main.portfolio.fiat, price, this.main.tradeTypes.BUY);
+      }
+    } else if (macd < -4) {
+      if (this.main.portfolio.crypto > 0) {
+        logger.info('We should sell');
+        this.main.trade(this.main.portfolio.crypto, price, this.main.tradeTypes.SELL);
+      }
     }
   }
 };
