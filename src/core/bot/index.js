@@ -47,8 +47,6 @@ module.exports.ticker = () => {
 
   this.strategy.update(this.candle);
 
-  logger.info(this.trades);
-
   const { close } = this.candle;
 
   // Set all the keys in candle to the close price
@@ -73,46 +71,79 @@ module.exports.candle = {
 
 module.exports.priceUpdate = (data) => {
   let { time, price } = data;
-  logger.info(`Received a price update ${time}`);
+  // logger.info(`Received a price update ${time}`);
+
+  // console.log(this.portfolio);
 
   price = Number(price);
 
-  if (this.botType === 'ticker') {
-    if (!this.candle.open) {
-      this.candle.open = price;
-    }
-
-    if (!this.candle.high || this.candle.high < price) {
-      this.candle.high = price;
-    }
-
-    if (!this.candle.low || this.candle.low > price) {
-      this.candle.low = price;
-    }
-
-    this.candle.close = price;
-  } else {
-    this.strategy.update(price);
+  if (!this.candle.open) {
+    this.candle.open = price;
   }
-};
 
-module.exports.botType = 'ticker';
+  if (!this.candle.high || this.candle.high < price) {
+    this.candle.high = price;
+  }
+
+  if (!this.candle.low || this.candle.low > price) {
+    this.candle.low = price;
+  }
+
+  this.candle.close = price;
+};
 
 module.exports.primeCandles = [];
 
 module.exports.channel = 'ticker';
 
-module.exports.product = 'BTC-USD';
+module.exports.product = 'BTC-EUR';
 
 module.exports.trade = (amount, price, type) => {
   const timestamp = moment().unix();
-  logger.info(amount);
-  logger.info(price);
-  logger.info(type);
-  logger.info(timestamp);
+  if (type === this.tradeTypes.BUY) {
+    const fee = amount * this.fees;
+    const buyingTotal = ((amount - fee) / price); // Total bitcoin
+    // Remove the total of fiat used to buy
+    this.portfolio.fiat -= amount;
+    // Add the amount of crypto bought minus the fee
+    this.portfolio.crypto += buyingTotal;
+    // Add the trade to the list of trades
+    this.trades.push({
+      type: this.tradeTypes.BUY,
+      total: buyingTotal,
+      price,
+      amount,
+      fee,
+      timestamp,
+    });
+    logger.info(`Buying ${buyingTotal} at ${price}`);
+  } else if (type === this.tradeTypes.SELL) {
+    const fee = amount * this.fees;
+    const sellingTotal = ((amount - fee) * price); // Total fiat
+    // Add the amount fiat profit minus the fee
+    this.portfolio.fiat += sellingTotal - fee;
+    // Remove the amount crypto sold
+    this.portfolio.crypto -= amount;
+    // Add the trade to the list of trades
+    this.trades.push({
+      type: this.tradeTypes.SELL,
+      total: sellingTotal,
+      price,
+      amount,
+      fee,
+      timestamp,
+    });
+    logger.info(`Selling ${amount} at ${price}`);
+  }
 
-  // TODO: Creat a general function that allows us to test trade, trade and backtest and import in all these
+  logger.info('----------TRADES----------');
+  logger.info(this.trades);
+  logger.info('----------TRADES----------');
 };
+
+// TODO: Creat a general function that allows us to test trade, trade and backtest and import in all these
+
+module.exports.requiredArguments = ['strategy', 'product'];
 
 module.exports = async (args, test = false) => {
   logger.info('Starting CPTB! Feel free to abort while you can.');
@@ -128,28 +159,12 @@ module.exports = async (args, test = false) => {
     return false;
   };
 
-  const botType = () => {
-    if (args.botType) {
-      const type = typeof args.botType;
-      if (type === 'string') {
-        return args.botType;
-      }
-      return 'ticker';
-    }
-    return 'ticker';
-  };
-
-  this.botType = botType();
-
   if (!strategy()) {
     logger.error('No strategy specified');
     logger.error('Please provide the name of the import you want to run against');
     logger.error('--strategy supermoon');
     return;
   }
-
-  // TODO: REMOVE
-  this.portfolio.fiat = 1000;
 
   this.strategy = strategyLoader(strategy());
 
@@ -214,8 +229,6 @@ module.exports = async (args, test = false) => {
     }
   });
 
-  if (this.botType === 'ticker') {
-    // Init the ticker
-    setTimeout(this.ticker, this.tickerInterval);
-  }
+  // Init the ticker
+  setTimeout(this.ticker, this.tickerInterval);
 };

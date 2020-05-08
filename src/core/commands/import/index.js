@@ -59,20 +59,9 @@ module.exports.checkOrCreateTables = () => {
   ]);
 };
 
-const limiter = new Bottleneck({
-  reservoir: 30, // initial value
-  reservoirIncreaseMaximum: 30,
-  reservoirRefreshAmount: 100,
-  reservoirRefreshInterval: 30 * 1000, // must be divisible by 250
-
-  // also use maxConcurrent and/or minTime for safety
-  maxConcurrent: 1,
-  minTime: 1000,
-});
-
 module.exports.addRanges = (ranges, product, granularity, importId) => {
-  ranges.forEach(({ endDate, startDate }) => limiter.schedule(() => {
-    logger.info(`Current job count: ${limiter.counts().QUEUED}`);
+  ranges.forEach(({ endDate, startDate }) => this.limiter.schedule(() => {
+    logger.info(`Current job count: ${this.limiter.counts().QUEUED}`);
     logger.info(`Added range ${endDate} - ${startDate}`);
 
     return this.fetchCandlesAndSave(product, endDate, startDate, granularity, importId);
@@ -115,7 +104,7 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
           throw new Error(error.response.data);
         }
       } else {
-        limiter.schedule(() => this.fetchCandlesAndSave(product, end, start, granularity));
+        this.limiter.schedule(() => this.fetchCandlesAndSave(product, end, start, granularity));
       }
     });
 };
@@ -135,94 +124,58 @@ module.exports.createImport = (name, product, datapoints, granularity, timestamp
   });
 };
 
-module.exports = async (args) => {
+module.exports = async ({
+  save,
+  product,
+  datapoints,
+  granularity,
+}) => {
+  // Check if granularity is available
+  if (!this.availableGranularity.includes(granularity)) {
+    logger.error(`Granularity must be one of ${this.availableGranularity.join(', ')}`);
+
+    return false;
+  }
+
   logger.info('Starting import');
+
   // Check if the candles table exists
   await this.checkOrCreateTables();
 
-  const granularity = () => {
-    if (args.granularity) {
-      if (this.availableGranularity.includes(args.granularity)) {
-        return args.granularity;
-      }
-      logger.error(`Granularity must be one of: ${this.availableGranularity.join(', ')}`);
-      return false;
-    }
-    return 60;
-  };
+  const now = moment().unix();
 
-  const datapoints = () => {
-    if (args.datapoints) {
-      const type = typeof args.datapoints;
-      if (type === 'number') {
-        return args.datapoints;
-      }
-      logger.error(`Datapoints must be of type number. ${type} given`);
-      return false;
-    }
-    return 9000;
-  };
+  this.limiter = new Bottleneck({
+    reservoir: 30, // initial value
+    reservoirIncreaseMaximum: 30,
+    reservoirRefreshAmount: 100,
 
-  const product = () => {
-    if (args.product) {
-      return args.product;
-    }
-    return 'BTC-EUR';
-  };
+    // also use maxConcurrent and/or minTime for safety
+    maxConcurrent: 1,
+    minTime: 1000,
+  });
 
-  const name = () => {
-    if (args.name) {
-      const type = typeof args.name;
-      if (type === 'string') {
-        return args.name;
-      }
-      logger.error(`Name must be of type string. ${type} given`);
-    }
-    return false;
-  };
-
-  if (!name()) {
-    logger.error('No name specified for import');
-    return;
-  }
-
-  if (!datapoints()) {
-    logger.error('Datapoint invalid');
-    return;
-  }
-
-  if (!granularity()) {
-    logger.error('Granularity invalid');
-    return;
-  }
-
-  this.createImport(name(), product(), datapoints(), granularity(), moment().unix())
+  this.createImport(save, product, datapoints, granularity, now)
     .then((importId) => {
       logger.info('Importing data from Coinbase');
-      logger.info(`Import name: ${name()}`);
+      logger.info(`Import name: ${save}`);
       logger.info(`Import id: ${importId}`);
-      logger.info(`Product: ${product()}`);
-      logger.info(`Granularity: ${granularity()} seconds`);
-      logger.info(`Total datapoints: ${datapoints()}`);
-      logger.info(`Total requests: ${datapoints() / this.maxDataPointsPerRequest}`);
+      logger.info(`Product: ${product}`);
+      logger.info(`Granularity: ${granularity} seconds`);
+      logger.info(`Total datapoints: ${datapoints}`);
+      logger.info(`Total requests: ${datapoints / this.maxDataPointsPerRequest}`);
 
       const ranges = [];
       let dates = {};
-      for (let i = 0; i < datapoints(); i += this.maxDataPointsPerRequest) {
-        const dateToAdd = i === 0 ? moment(new Date()).subtract(1, 'day') : dates.endDate;
-        dates = this.generateDates(dateToAdd, granularity());
+      for (let i = 0; i < datapoints; i += this.maxDataPointsPerRequest) {
+        const dateToAdd = i === 0 ? moment().subtract(1, 'day') : dates.endDate;
+        dates = this.generateDates(dateToAdd, granularity);
         ranges.push(dates);
       }
 
-      this.addRanges(ranges, product(), granularity(), importId);
+      this.addRanges(ranges, product, granularity, importId);
     })
     .catch((error) => {
       logger.error('Import could not be done. Import name probably already exists.');
       logger.error(error);
     });
-
-  limiter.on('empty', () => {
-    logger.info('Empty queue. Exit.');
-    process.exit();
-  });
 };

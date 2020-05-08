@@ -38,6 +38,8 @@ module.exports.init = (_this) => {
   // Find a better solution to get parrent functions
   this.main = _this;
 
+  this.main.portfolio.fiat = 50;
+
   // If we're trading with primer
   if (this.main.primeCandles) {
     this.prices = this.main.primeCandles

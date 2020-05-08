@@ -34,10 +34,6 @@ const bot = require('@core/bot');
       // Run backtesting
       backtest(args);
       break;
-    case args.import:
-      // Import historical data for backtesting
-      importData(args);
-      break;
     case args.listimports:
       // Import historical data for backtesting
       listImportData();

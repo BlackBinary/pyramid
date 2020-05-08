@@ -13,6 +13,7 @@
 const logger = require('@lib/logger').scope('sma moon 1');
 
 module.exports.config = {
+  prime: true,
   averageOver: 5,
   buyAt: 2,
   sellAt: -2,
@@ -25,11 +26,21 @@ module.exports.config = {
   },
 };
 
+module.exports.prices = [];
+
 module.exports.init = (_this) => {
   // Find a better solution to get parrent functions
   this.main = _this;
 
-  this.prices = [];
+  // If we're trading with primer
+  if (this.main.primeCandles) {
+    this.prices = this.main.primeCandles
+      .reverse()
+      .map(([time, low, high, open, close, volume]) => ({
+        time, low, high, open, close, volume,
+      }))
+      .map((obj) => obj[this.config.tradeSignal]);
+  }
 
   // Log
   logger.info('Starting strategy');
