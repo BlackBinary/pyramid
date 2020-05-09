@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger').scope('trader');
+const logger = require('@lib/logger');
 
 class Trader {
   constructor(test = false) {

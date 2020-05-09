@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
-const logger = require('@lib/logger').scope('strategy loader');
+const logger = require('@lib/logger');
 
 class Loader {
   constructor() {

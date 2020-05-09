@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const auth = require('@lib/coinbase/auth');
-const logger = require('@lib/logger').scope('api');
+const logger = require('@lib/logger');
 
 // Get the coinbase api url from the env
 const {

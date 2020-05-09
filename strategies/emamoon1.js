@@ -8,9 +8,7 @@
  * NONE
  */
 
-const name = 'ema moon 1';
-
-const logger = require('@lib/logger').scope(name);
+const logger = require('@lib/logger');
 const BaseStrategy = require('@lib/strategy/base');
 
 const ema = require('@lib/indicators/ema');
@@ -20,7 +18,7 @@ class Strategy extends BaseStrategy {
   constructor(test = false) {
     super(test);
 
-    this.name = name;
+    this.name = 'ema moon 1';
 
     this.config = {
       prime: true,

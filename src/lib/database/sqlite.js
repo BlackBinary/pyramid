@@ -1,6 +1,6 @@
 const { Database } = require('sqlite3');
 
-const logger = require('@lib/logger').scope('sqlite');
+const logger = require('@lib/logger');
 
 const packageJson = require('@root/package.json');
 

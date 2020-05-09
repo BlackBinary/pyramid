@@ -1,8 +1,10 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger').scope('backtest');
+const logger = require('@lib/logger');
 const { client: sqlite } = require('@lib/database/sqlite');
-const StrategyLoader = require('@root/src/lib/strategy/loader');
+const StrategyLoader = require('@lib/strategy/loader');
+
+module.exports.strategy = () => {};
 
 module.exports.getMarketData = async (importName) => {
   const query = `
@@ -33,7 +35,7 @@ module.exports.getMarketData = async (importName) => {
 };
 
 module.exports = async ({ strategy, importName }) => {
-  logger.info('Starting backtesting');
+  logger.info('Start backtesting');
 
   const Loader = new StrategyLoader();
 
@@ -47,7 +49,7 @@ module.exports = async ({ strategy, importName }) => {
     logger.error('No market data to run against. Did you specify the correct import?');
   }
 
-  // // Make sure the strategy is valid
+  // Make sure the strategy is valid
   if (this.strategy.init) {
     logger.info('Init strategy');
     // Call the strategy init function

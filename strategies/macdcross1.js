@@ -9,9 +9,7 @@
  * When MACD pos buy. When MACD neg sell
  */
 
-const name = 'macd cross 1';
-
-const logger = require('@lib/logger').scope(name);
+const logger = require('@lib/logger');
 const BaseStrategy = require('@lib/strategy/base');
 
 const ema = require('@lib/indicators/ema');
@@ -21,7 +19,7 @@ class Strategy extends BaseStrategy {
   constructor(test = false) {
     super(test);
 
-    this.name = name;
+    this.name = 'macd cross 1';
 
     this.config = {
       prime: true,

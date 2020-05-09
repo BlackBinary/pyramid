@@ -1,7 +1,7 @@
 const moment = require('moment');
 const Bottleneck = require('bottleneck');
 
-const logger = require('@lib/logger').scope('import');
+const logger = require('@lib/logger');
 const candles = require('@lib/coinbase/endpoints/products/candles');
 const { client: sqlite } = require('@lib/database/sqlite');
 
