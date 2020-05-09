@@ -15,8 +15,8 @@ module.exports.config = {
   prime: true,
   fastAverage: 12,
   slowAverage: 26,
-  // buyAt: 20,
-  //   sellAt: -2,
+  buyAt: 20,
+  sellAt: -1,
   startAt: 9,
   tradeSignal: 'close',
   backtesting: {
@@ -84,12 +84,12 @@ module.exports.update = (candle) => {
     logger.info(`Slow average ${this.slowAverage}`);
     logger.info(`MACD         ${macd}`);
 
-    if (macd > 22) {
+    if (macd > this.config.buyAt) {
       if (this.main.portfolio.fiat > 0) {
         logger.info('We should buy');
         this.main.trade(this.main.portfolio.fiat, price, this.main.tradeTypes.BUY);
       }
-    } else if (macd < -4) {
+    } else if (macd < this.config.sellAt) {
       if (this.main.portfolio.crypto > 0) {
         logger.info('We should sell');
         this.main.trade(this.main.portfolio.crypto, price, this.main.tradeTypes.SELL);

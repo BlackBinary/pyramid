@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger').scope('list import');
+const logger = require('@lib/logger').scope('list');
 const { client: sqlite } = require('@lib/database/sqlite');
 
 module.exports.getImports = async (importName) => {

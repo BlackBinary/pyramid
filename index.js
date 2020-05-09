@@ -6,6 +6,7 @@ require('dotenv').config();
 const { Command } = require('commander');
 
 const importCommand = require('@core/commands/import');
+const listCommand = require('@core/commands/list');
 
 const program = new Command();
 
@@ -46,7 +47,10 @@ program
   .alias('l')
   .description('Show list of CPTB data')
   .option('-i, --imports', 'show imports')
-  .option('-p, --portfolio', 'show portfolio');
+  // .option('-p, --portfolio', 'show portfolio') // Currently not implemented
+  .action((options) => {
+    listCommand(options);
+  });
 
 // Parse process.args using commander
 program.parse(process.argv);
