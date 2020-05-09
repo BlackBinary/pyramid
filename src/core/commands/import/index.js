@@ -64,11 +64,11 @@ module.exports.addRanges = (ranges, product, granularity, importId) => {
     logger.info(`Current job count: ${this.limiter.counts().QUEUED}`);
     logger.info(`Added range ${endDate} - ${startDate}`);
 
-    return this.fetchCandlesAndSave(product, endDate, startDate, granularity, importId);
+    return this.fetchCandlesAndimportName(product, endDate, startDate, granularity, importId);
   }));
 };
 
-module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId) => {
+module.exports.fetchCandlesAndimportName = (product, start, end, granularity, importId) => {
   candles.get(product, start, end, granularity)
     .then(({ data }) => {
       logger.info('New data received');
@@ -82,7 +82,7 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
       const dbJobs = data.map(async (candle) => prepared.run([importId, product, ...candle]));
 
       return Promise.all(dbJobs).finally(() => {
-        logger.info('New data saved to database');
+        logger.info('New data importNamed to database');
       });
     })
     .catch((error) => {
@@ -104,7 +104,7 @@ module.exports.fetchCandlesAndSave = (product, start, end, granularity, importId
           throw new Error(error.response.data);
         }
       } else {
-        this.limiter.schedule(() => this.fetchCandlesAndSave(product, end, start, granularity));
+        this.limiter.schedule(() => this.fetchCandlesAndimportName(product, end, start, granularity));
       }
     });
 };
@@ -125,7 +125,7 @@ module.exports.createImport = (name, product, datapoints, granularity, timestamp
 };
 
 module.exports = async ({
-  save,
+  importName,
   product,
   datapoints,
   granularity,
@@ -154,10 +154,10 @@ module.exports = async ({
     minTime: 1000,
   });
 
-  this.createImport(save, product, datapoints, granularity, now)
+  this.createImport(importName, product, datapoints, granularity, now)
     .then((importId) => {
       logger.info('Importing data from Coinbase');
-      logger.info(`Import name: ${save}`);
+      logger.info(`Import name: ${importName}`);
       logger.info(`Import id: ${importId}`);
       logger.info(`Product: ${product}`);
       logger.info(`Granularity: ${granularity} seconds`);

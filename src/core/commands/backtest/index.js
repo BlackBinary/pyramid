@@ -85,56 +85,22 @@ module.exports.trade = (amount, price, type) => {
   }
 };
 
-module.exports = async (args) => {
+module.exports = async ({ strategy, importName }) => {
   logger.info('Starting backtesting');
 
-  const importName = () => {
-    if (args.import) {
-      const type = typeof args.import;
-      if (type === 'string') {
-        return args.import;
-      }
-      logger.error(`Name must be of type string. ${type} given`);
-      return false;
-    }
-    return false;
-  };
+  logger.info(strategy);
+  logger.info(importName);
 
-  if (!importName()) {
-    logger.error('No import specified');
-    logger.error('Please provide the name of the import you want to run against');
-    logger.error('--import btc-eur-gran-300-data-12000');
-    return;
-  }
+  this.strategy = strategyLoader(strategy);
 
-  const strategy = () => {
-    if (args.strategy) {
-      const type = typeof args.strategy;
-      if (type === 'string') {
-        return args.strategy;
-      }
-      return false;
-    }
-    return false;
-  };
-
-  if (!strategy()) {
-    logger.error('No strategy specified');
-    logger.error('Please provide the name of the import you want to run against');
-    logger.error('--strategy supermoon');
-    return;
-  }
-
-  this.strategy = strategyLoader(strategy());
-
-  const marketData = await this.getMarketData(importName());
+  const marketData = await this.getMarketData(importName);
 
   if (!marketData.length) {
     logger.error('No market data to run against. Did you specify the correct import?');
-    return;
   }
 
   if (this.strategy.config) {
+    logger.info('Loading strategy configuration');
     // Override the default settings with the backtesting settings from the strategy
     this.portfolio = {
       ...this.portfolio,
@@ -155,7 +121,6 @@ module.exports = async (args) => {
   } else {
     logger.error('Could not init strategy');
     logger.error('Please make sure the strategy exists and has all the required functions');
-    return;
   }
 
   // Copy the initial portfolio for comparison
@@ -193,7 +158,7 @@ module.exports = async (args) => {
   logger.info(`Total fiat:  ${totalProfits}`);
   logger.info(`Profit fiat: ${totalProfits - startedWith.fiat}`);
 
-  // Display a fair warning
+  // Display a warning
   logger.warn('By no means is backtesting usefull for making guarantees about the strategies you test.');
   logger.warn('Keep in mind that there may be false positives and negatives in the data you test against.');
   logger.warn('Please always take caution and know you and only you are responsible for the financial mistakes you make.');
