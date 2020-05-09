@@ -8,59 +8,75 @@
  * NONE
  */
 
-const logger = require('@lib/logger').scope('ema moon 1');
+const name = 'ema moon 1';
 
-module.exports.config = {
-  prime: true,
-  averageOver: 5,
-  //   buyAt: 2,
-  //   sellAt: -2,
-  startAt: 9,
-  tradeSignal: 'close',
-  backtesting: {
-    portfolio: {
-      fiat: 1000,
-      crypto: 0,
-    },
-  },
-};
+const logger = require('@lib/logger').scope(name);
+const BaseStrategy = require('@lib/strategy/base');
 
-module.exports.weightingMultiplier = 2 / (this.config.averageOver + 1);
+const ema = require('@lib/indicators/ema');
+const sma = require('@lib/indicators/sma');
 
-module.exports.init = (_this) => {
-  // Find a better solution to get parrent functions
-  this.main = _this;
+class Strategy extends BaseStrategy {
+  constructor(test = false) {
+    super(test);
 
-  this.main.primeCandles.map(({ }));
+    this.name = name;
 
-  this.prices = [];
+    this.config = {
+      prime: true,
+      averageOver: 5,
+      //   buyAt: 2,
+      //   sellAt: -2,
+      startAt: 9,
+      tradeSignal: 'close',
+      backtesting: {
+        portfolio: {
+          fiat: 1000,
+          crypto: 0,
+        },
+      },
+    };
 
-  this.ema = null;
-  this.emaIndex = 0;
+    this.prices = [];
 
-  // Log
-  logger.info('Starting strategy');
-};
+    this.ema = 0;
+    this.emaIndex = 0;
+  }
 
-module.exports.update = (candle) => {
-  const price = candle[this.config.tradeSignal];
-  this.prices.push(price);
+  priceCount() {
+    return this.prices.length;
+  }
 
-  const { length } = this.prices;
-  if (length >= this.config.averageOver) {
-    const lastIndex = length - 1;
-    // We have no ema yet
-    if (!this.ema) {
-      // Set the ema to the sma for the first time
-      this.ema = this.prices.slice(lastIndex - this.config.averageOver, -1).reduce((a, b) => a + b, 0) / this.config.averageOver;
-    } else {
-      const currentEma = this.ema;
-      this.ema = (price - currentEma) * this.weightingMultiplier + currentEma;
-      this.emaIndex += 1;
-    }
+  init(primeCandles = []) {
+    logger.info('Starting strategy');
 
-    if (this.emaIndex >= this.config.startAt) {
-      // We have an accurate ema enough to do stuff
+    if (primeCandles.length) {
+      this.prices = primeCandles.reverse()
+        .map(([time, low, high, open, close, volume]) => ({
+          time, low, high, open, close, volume,
+        }))
+        .map((obj) => obj[this.config.tradeSignal]);
     }
   }
-};
+
+  update(candle = {}) {
+    this.prices.push(candle[this.config.tradeSignal]);
+
+    if (this.priceCount() >= this.config.averageOver) {
+      if (!this.ema) {
+        // Set the ema to the sma for the first time
+        this.ema = sma(this.config.averageOver, this.prices);
+      } else {
+        this.ema = ema(this.config.averageOver, this.prices[this.prices.length - 1], this.ema);
+        this.emaIndex += 1;
+      }
+
+      if (this.emaIndex >= this.config.startAt) {
+        console.log(this.ema);
+        // We have an accurate ema enough to do stuff
+      }
+    }
+  }
+}
+
+module.exports = Strategy;

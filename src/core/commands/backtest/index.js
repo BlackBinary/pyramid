@@ -2,7 +2,7 @@ const moment = require('moment');
 
 const logger = require('@lib/logger').scope('backtest');
 const { client: sqlite } = require('@lib/database/sqlite');
-const strategyLoader = require('@lib/helpers/strategy/loader');
+const StrategyLoader = require('@root/src/lib/strategy/loader');
 
 module.exports.getMarketData = async (importName) => {
   const query = `
@@ -32,66 +32,14 @@ module.exports.getMarketData = async (importName) => {
   });
 };
 
-module.exports.portfolio = {
-  fiat: 0,
-  crypto: 0,
-};
-
-module.exports.tradeTypes = {
-  SELL: 'SELL',
-  BUY: 'BUY',
-};
-
-module.exports.fees = 0.5 / 100;
-
-module.exports.trades = [];
-
-module.exports.trade = (amount, price, type) => {
-  const timestamp = moment().unix();
-  if (type === this.tradeTypes.BUY) {
-    const fee = amount * this.fees;
-    const buyingTotal = ((amount - fee) / price); // Total bitcoin
-    // Remove the total of fiat used to buy
-    this.portfolio.fiat -= amount;
-    // Add the amount of crypto bought minus the fee
-    this.portfolio.crypto += buyingTotal;
-    // Add the trade to the list of trades
-    this.trades.push({
-      type: this.tradeTypes.BUY,
-      total: buyingTotal,
-      price,
-      amount,
-      fee,
-      timestamp,
-    });
-    logger.info(`Buying ${buyingTotal} at ${price}`);
-  } else if (type === this.tradeTypes.SELL) {
-    const fee = amount * this.fees;
-    const sellingTotal = ((amount - fee) * price); // Total fiat
-    // Add the amount fiat profit minus the fee
-    this.portfolio.fiat += sellingTotal - fee;
-    // Remove the amount crypto sold
-    this.portfolio.crypto -= amount;
-    // Add the trade to the list of trades
-    this.trades.push({
-      type: this.tradeTypes.SELL,
-      total: sellingTotal,
-      price,
-      amount,
-      fee,
-      timestamp,
-    });
-    logger.info(`Selling ${amount} at ${price}`);
-  }
-};
-
 module.exports = async ({ strategy, importName }) => {
   logger.info('Starting backtesting');
 
-  logger.info(strategy);
-  logger.info(importName);
+  const Loader = new StrategyLoader();
 
-  this.strategy = strategyLoader(strategy);
+  Loader.load(strategy);
+
+  this.strategy = new Loader.Strategy(true);
 
   const marketData = await this.getMarketData(importName);
 
@@ -99,49 +47,32 @@ module.exports = async ({ strategy, importName }) => {
     logger.error('No market data to run against. Did you specify the correct import?');
   }
 
-  if (this.strategy.config) {
-    logger.info('Loading strategy configuration');
-    // Override the default settings with the backtesting settings from the strategy
-    this.portfolio = {
-      ...this.portfolio,
-      ...this.strategy.config.backtesting.portfolio,
-    };
-  } else {
-    logger.warn('Strategy does not have a config');
-  }
-
-  // Make sure the strategy is valid
+  // // Make sure the strategy is valid
   if (this.strategy.init) {
     logger.info('Init strategy');
     // Call the strategy init function
-    this.strategy.init(this);
-
-    // Set function to get candle range
-    this.strategy.getCandleRange = this.getCandleRange;
+    this.strategy.init();
   } else {
     logger.error('Could not init strategy');
     logger.error('Please make sure the strategy exists and has all the required functions');
   }
 
-  // Copy the initial portfolio for comparison
-  const startedWith = {
-    ...this.portfolio,
-  };
+  const startedWith = { ...this.strategy.Trader.portfolio };
 
   logger.info('Done setting data');
 
   for (let i = 0; i < marketData.length; i += 1) {
-    const candle = marketData[i];
-    this.strategy.update(candle);
+    // Update the strategy with one candle
+    this.strategy.update(marketData[i]);
   }
 
   const startTime = moment.unix(marketData[0].timestamp).format();
   const endTime = moment.unix(marketData[marketData.length - 1].timestamp).format();
 
-  logger.info('\n\n\n\n');
+  logger.info('-----------------------------------------------------------------------------');
 
   logger.info('Results');
-  logger.info(`Total trades done: ${this.trades.length}`);
+  logger.info(`Total trades done: ${this.strategy.Trader.trades.length}`);
   logger.info(`Trades done between ${startTime} and ${endTime}`);
 
   logger.info('Started With:');
@@ -149,10 +80,10 @@ module.exports = async ({ strategy, importName }) => {
   logger.info(`Crypto: ${startedWith.crypto}`);
 
   logger.info('Ended With:');
-  logger.info(`Fiat:   ${this.portfolio.fiat}`);
-  logger.info(`Crypto: ${this.portfolio.crypto}`);
+  logger.info(`Fiat:   ${this.strategy.Trader.portfolio.fiat}`);
+  logger.info(`Crypto: ${this.strategy.Trader.portfolio.crypto}`);
 
-  const totalProfits = this.portfolio.fiat + (this.portfolio.crypto * marketData[marketData.length - 1].close);
+  const totalProfits = this.strategy.Trader.portfolio.fiat + (this.strategy.Trader.portfolio.crypto * marketData[marketData.length - 1].close);
 
   logger.info('Potential outcome:');
   logger.info(`Total fiat:  ${totalProfits}`);

@@ -35,7 +35,7 @@ client.interceptors.response.use(
 
 /**
  * Create the options to be passed with the request
- * @param {boolean} requriresAuth - Should the request be authenticated
+ * @param {boolean} requiresAuth - Should the request be authenticated
  * @param {string} method - One of [delete, post, patch, put, get]
  * @param {string} path - Which path to request
  * @param {Object|string} body - The request body

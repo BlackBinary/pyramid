@@ -9,91 +9,91 @@
  * When MACD pos buy. When MACD neg sell
  */
 
-const logger = require('@lib/logger').scope('macd cross 1');
+const name = 'macd cross 1';
 
-module.exports.config = {
-  prime: true,
-  fastAverage: 12,
-  slowAverage: 26,
-  buyAt: 20,
-  sellAt: -1,
-  startAt: 9,
-  tradeSignal: 'close',
-  backtesting: {
-    portfolio: {
-      fiat: 1000,
-      crypto: 0,
-    },
-  },
-};
+const logger = require('@lib/logger').scope(name);
+const BaseStrategy = require('@lib/strategy/base');
 
-module.exports.weightingMultiplier = (over) => 2 / (over + 1);
+const ema = require('@lib/indicators/ema');
+const sma = require('@lib/indicators/sma');
 
-module.exports.prices = [];
+class Strategy extends BaseStrategy {
+  constructor(test = false) {
+    super(test);
 
-module.exports.fastAverage = null;
-module.exports.slowAverage = null;
+    this.name = name;
 
-module.exports.init = (_this) => {
-  // Find a better solution to get parrent functions
-  this.main = _this;
+    this.config = {
+      prime: true,
+      fastAverageOver: 12,
+      slowAverageOver: 26,
+      buyAt: 20,
+      sellAt: -1,
+      startAt: 9,
+      tradeSignal: 'close',
+      backtesting: {
+        portfolio: {
+          fiat: 1000,
+          crypto: 0,
+        },
+      },
+    };
 
-  this.main.portfolio.fiat = 50;
+    this.prices = [];
 
-  // If we're trading with primer
-  if (this.main.primeCandles) {
-    this.prices = this.main.primeCandles
-      .reverse()
-      .map(([time, low, high, open, close, volume]) => ({
-        time, low, high, open, close, volume,
-      }))
-      .map((obj) => obj[this.config.tradeSignal]);
+    this.fastAverage = null;
+    this.slowAverage = null;
+
+    this.macdIndex = 0;
   }
 
-  this.fast = null;
-  this.slow = null;
-  this.signal = null;
+  priceCount() {
+    return this.prices.length;
+  }
 
-  this.macdIndex = 0;
+  init(primeCandles = []) {
+    logger.info('Starting strategy');
 
-  // Log
-  logger.info('Starting strategy');
-};
-
-module.exports.calculateSma = (prices, over) => prices.slice((prices.length - 1) - over, -1).reduce((a, b) => a + b, 0) / over;
-
-module.exports.calculateEma = (price, currentEma, over) => (price - currentEma) * this.weightingMultiplier(over) + currentEma;
-
-module.exports.update = (candle) => {
-  const price = candle[this.config.tradeSignal];
-  this.prices.push(price);
-
-  const { length } = this.prices;
-  if (length >= this.config.slowAverage && length >= this.config.fastAverage) {
-    if (!this.fastAverage && !this.slowAverage) {
-      this.fastAverage = this.calculateSma(this.prices, this.config.fastAverage);
-      this.slowAverage = this.calculateSma(this.prices, this.config.slowAverage);
-    } else {
-      this.fastAverage = this.calculateEma(price, this.fastAverage, this.config.fastAverage);
-      this.slowAverage = this.calculateEma(price, this.slowAverage, this.config.slowAverage);
+    if (primeCandles.length) {
+      this.prices = primeCandles.reverse()
+        .map(([time, low, high, open, close, volume]) => ({
+          time, low, high, open, close, volume,
+        }))
+        .map((obj) => obj[this.config.tradeSignal]);
     }
+  }
 
-    const macd = this.fastAverage - this.slowAverage;
+  update(candle) {
+    this.prices.push(candle[this.config.tradeSignal]);
 
-    logger.info(`Fast average ${this.fastAverage}`);
-    logger.info(`Slow average ${this.slowAverage}`);
-    logger.info(`MACD         ${macd}`);
-
-    if (macd > this.config.buyAt) {
-      if (this.main.portfolio.fiat > 0) {
-        logger.info('We should buy');
-        this.main.trade(this.main.portfolio.fiat, price, this.main.tradeTypes.BUY);
+    if (this.priceCount() >= this.config.slowAverageOver && this.priceCount() >= this.config.fastAverageOver) {
+      if (!this.fastAverage && !this.slowAverage) {
+        this.fastAverage = sma(this.config.fastAverageOver, this.prices);
+        this.slowAverage = sma(this.config.slowAverageOver, this.prices);
+      } else {
+        this.fastAverage = ema(this.config.fastAverageOver, this.prices[this.prices.length - 1], this.fastAverage);
+        this.slowAverage = ema(this.config.slowAverageOver, this.prices[this.prices.length - 1], this.slowAverage);
       }
-    } else if (macd < this.config.sellAt) {
-      if (this.main.portfolio.crypto > 0) {
-        logger.info('We should sell');
-        this.main.trade(this.main.portfolio.crypto, price, this.main.tradeTypes.SELL);
+
+      const macd = this.fastAverage - this.slowAverage;
+
+      logger.info(`Fast average ${this.fastAverage}`);
+      logger.info(`Slow average ${this.slowAverage}`);
+      logger.info(`MACD         ${macd}`);
+
+      if (macd > this.config.buyAt) {
+        if (this.Trader.portfolio.fiat > 0) {
+          logger.info('We should buy');
+          this.Trader.trade(this.Trader.portfolio.fiat, this.prices[this.priceCount() - 1], this.Trader.tradeTypes.BUY);
+        }
+      } else if (macd < this.config.sellAt) {
+        if (this.Trader.portfolio.crypto > 0) {
+          logger.info('We should sell');
+          this.Trader.trade(this.Trader.portfolio.crypto, this.prices[this.priceCount() - 1], this.Trader.tradeTypes.SELL);
+        }
       }
     }
   }
-};
+}
+
+module.exports = Strategy;
