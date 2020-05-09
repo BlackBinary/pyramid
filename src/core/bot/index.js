@@ -50,7 +50,7 @@ module.exports.ticker = () => {
   const { close } = this.candle;
 
   // Set all the keys in candle to the close price
-  Object.keys(this.candle).forEach((key) => this.candle[key] = close);
+  Object.keys(this.candle).forEach((key) => { this.candle[key] = close; });
 
   const now = Date.now();
   const dTime = now - this.lastTime;
@@ -98,6 +98,7 @@ module.exports.channel = 'ticker';
 
 module.exports.product = 'BTC-EUR';
 
+// TODO: Creat a general function that allows us to test trade, trade and backtest and import in all these
 module.exports.trade = (amount, price, type) => {
   const timestamp = moment().unix();
   if (type === this.tradeTypes.BUY) {
@@ -141,32 +142,26 @@ module.exports.trade = (amount, price, type) => {
   logger.info('----------TRADES----------');
 };
 
-// TODO: Creat a general function that allows us to test trade, trade and backtest and import in all these
+module.exports.heartbeatTimeout = 1000 * 15;
 
-module.exports.requiredArguments = ['strategy', 'product'];
+module.exports.subscribeMessage = JSON.stringify({
+  type: 'subscribe',
+  channels: [
+    {
+      name: 'heartbeat',
+      product_ids: [this.product],
+    },
+    {
+      name: this.channel,
+      product_ids: [this.product],
+    },
+  ],
+});
 
-module.exports = async (args, test = false) => {
+module.exports = async () => {
   logger.info('Starting CPTB! Feel free to abort while you can.');
 
-  const strategy = () => {
-    if (args.strategy) {
-      const type = typeof args.strategy;
-      if (type === 'string') {
-        return args.strategy;
-      }
-      return false;
-    }
-    return false;
-  };
-
-  if (!strategy()) {
-    logger.error('No strategy specified');
-    logger.error('Please provide the name of the import you want to run against');
-    logger.error('--strategy supermoon');
-    return;
-  }
-
-  this.strategy = strategyLoader(strategy());
+  this.strategy = strategyLoader('macdcross1');
 
   // Call the strategy init function
   if (this.strategy.init) {
@@ -186,9 +181,7 @@ module.exports = async (args, test = false) => {
   }
 
   // Display a short warning that we're running in test mode
-  if (test) {
-    logger.warn('Starting CPTB in test mode.');
-  }
+  logger.warn('Starting CPTB in test mode.');
 
   // Fun quote from Jordan Belfort
   logger.info('------------------------------------------------------');
@@ -203,19 +196,11 @@ module.exports = async (args, test = false) => {
   // Create a new websocket client
   const client = websocket();
 
-  // On opening the websocket client, keep eye open with ticket
+  // On opening the websocket client, keep eye open with ticker
   // (for now. level 2 might be more accurate)
   client.on('open', () => {
     // Send a subscribe message to the api
-    client.send(JSON.stringify({
-      type: 'subscribe',
-      channels: [
-        {
-          name: this.channel,
-          product_ids: [this.product],
-        },
-      ],
-    }));
+    client.send(this.subscribeMessage);
   });
 
   client.on('message', (data) => {
@@ -223,10 +208,20 @@ module.exports = async (args, test = false) => {
     // Run the bot on update received
     if (body.type === this.channel) {
       this.priceUpdate(body);
-    } else {
-      // logger.info(`Not a ${this.channel} update`);
-      // logger.info(body);
     }
+
+    if (body.type === 'heartbeat') {
+      clearTimeout(this.heartbeat);
+
+      this.heartbeat = setTimeout(() => {
+        logger.warn(`We have not received a hearbeat for about ${this.heartbeatTimeout}`);
+        client.send(this.subscribeMessage);
+      }, this.heartbeatTimeout);
+    }
+    // else {
+    //   logger.info(`Not a ${this.channel} update`);
+    //   logger.info(body);
+    // }
   });
 
   // Init the ticker

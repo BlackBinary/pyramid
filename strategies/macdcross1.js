@@ -78,10 +78,11 @@ module.exports.update = (candle) => {
       this.slowAverage = this.calculateEma(price, this.slowAverage, this.config.slowAverage);
     }
 
-    // logger.info(`Fast average ${this.fastAverage}`);
-    // logger.info(`Slow average ${this.slowAverage}`);
-
     const macd = this.fastAverage - this.slowAverage;
+
+    logger.info(`Fast average ${this.fastAverage}`);
+    logger.info(`Slow average ${this.slowAverage}`);
+    logger.info(`MACD         ${macd}`);
 
     if (macd > 22) {
       if (this.main.portfolio.fiat > 0) {
