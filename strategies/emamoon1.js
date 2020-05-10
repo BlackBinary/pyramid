@@ -8,7 +8,7 @@
  * NONE
  */
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger')(false);
 const BaseStrategy = require('@lib/strategy/base');
 
 const ema = require('@lib/indicators/ema');

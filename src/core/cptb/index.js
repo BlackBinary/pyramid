@@ -1,7 +1,7 @@
 const moment = require('moment');
 const EventEmitter = require('events');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger')(true);
 const websocket = require('@lib/coinbase/websocket');
 
 const initMessage = require('./initMessage');

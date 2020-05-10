@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger')(true);
 
 class Trader {
   constructor(test = false) {
@@ -58,7 +58,7 @@ class Trader {
         timestamp,
       });
 
-      logger.info(`Buying ${amount} at ${price} for ${buyingCost}`);
+      logger.info(`Buying ${buyingCost} at ${price} for ${amount}`);
     } else if (type === this.tradeTypes.SELL) {
       const sellingProfit = this.calculateTotal(amount) * price; // Total fiat
 

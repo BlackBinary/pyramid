@@ -1,6 +1,6 @@
 const CPTB = require('@core/cptb');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger')(true);
 const candles = require('@lib/coinbase/endpoints/products/candles');
 const StrategyLoader = require('@lib/strategy/loader');
 

@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger')(false);
 const { client: sqlite } = require('@lib/database/sqlite');
 const StrategyLoader = require('@lib/strategy/loader');
 

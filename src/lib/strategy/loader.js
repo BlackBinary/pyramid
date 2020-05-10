@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
-const logger = require('@lib/logger');
+const logger = require('@lib/logger')(false);
 
 class Loader {
   constructor() {

@@ -2,14 +2,14 @@
  * MACD CROSS 1
  * Author: Daen Rebel
  *
- * This strategy works
+ * This strategy works in backtesting
  *
  * Strategy
  * Calc MACD over primed datapoints, and wait for at least 1 real datapoint
  * When MACD pos buy. When MACD neg sell
  */
 
-const logger = require('@lib/logger');
+const logger = require('@lib/logger')(false);
 const BaseStrategy = require('@lib/strategy/base');
 
 const ema = require('@lib/indicators/ema');
@@ -23,10 +23,11 @@ class Strategy extends BaseStrategy {
 
     this.config = {
       prime: true,
+      signalAverageOver: 9,
       fastAverageOver: 12,
       slowAverageOver: 26,
-      buyAt: 20,
-      sellAt: -1,
+      buyAt: 0,
+      sellAt: -4,
       startAt: 9,
       tradeSignal: 'close',
       backtesting: {
@@ -42,7 +43,7 @@ class Strategy extends BaseStrategy {
     this.fastAverage = null;
     this.slowAverage = null;
 
-    this.macdIndex = 0;
+    this.signal = null;
   }
 
   priceCount() {
@@ -68,23 +69,23 @@ class Strategy extends BaseStrategy {
       if (!this.fastAverage && !this.slowAverage) {
         this.fastAverage = sma(this.config.fastAverageOver, this.prices);
         this.slowAverage = sma(this.config.slowAverageOver, this.prices);
+        this.signal = this.fastAverage - this.slowAverage;
       } else {
         this.fastAverage = ema(this.config.fastAverageOver, this.prices[this.prices.length - 1], this.fastAverage);
         this.slowAverage = ema(this.config.slowAverageOver, this.prices[this.prices.length - 1], this.slowAverage);
+        this.signal = ema(this.config.signalAverageOver, this.fastAverage - this.slowAverage, this.macd);
       }
 
-      const macd = this.fastAverage - this.slowAverage;
+      // logger.info(`Fast average ${this.fastAverage}`);
+      // logger.info(`Slow average ${this.slowAverage}`);
+      // logger.info(`MACD signal  ${this.signal}`);
 
-      logger.info(`Fast average ${this.fastAverage}`);
-      logger.info(`Slow average ${this.slowAverage}`);
-      logger.info(`MACD         ${macd}`);
-
-      if (macd > this.config.buyAt) {
+      if (this.signal > this.config.buyAt) {
         if (this.Trader.portfolio.fiat > 0) {
           logger.info('We should buy');
           this.Trader.trade(this.Trader.portfolio.fiat, this.prices[this.priceCount() - 1], this.Trader.tradeTypes.BUY);
         }
-      } else if (macd < this.config.sellAt) {
+      } else if (this.signal < this.config.sellAt) {
         if (this.Trader.portfolio.crypto > 0) {
           logger.info('We should sell');
           this.Trader.trade(this.Trader.portfolio.crypto, this.prices[this.priceCount() - 1], this.Trader.tradeTypes.SELL);
