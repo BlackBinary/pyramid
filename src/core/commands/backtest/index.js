@@ -77,6 +77,11 @@ module.exports = async ({ strategy, importName }) => {
   logger.info(`Total trades done: ${this.strategy.Trader.trades.length}`);
   logger.info(`Trades done between ${startTime} and ${endTime}`);
 
+  // TODO: Do some info about pos and neg trades
+  // this.strategy.Trader.trades.forEach((trade) => {
+  //   console.log(trade);
+  // });
+
   logger.info('Started With:');
   logger.info(`Fiat:   ${startedWith.fiat}`);
   logger.info(`Crypto: ${startedWith.crypto}`);
