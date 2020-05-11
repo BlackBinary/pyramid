@@ -11,7 +11,7 @@ To run CPTB, clone or download this repository. Move inside the folder and run:
 npm install
 ```
 
-Copy the .env.example file to .env and edit the env file to match your Coinbase Pro API credentials
+Copy the .env.example file to .env and edit the env file to match your API credentials
 
 You should be good to go! But proceed with caution. Run CPTB in the following manner:
 
