@@ -1,6 +1,5 @@
 # CPTB
-CPTB is a trading bot for Coinbase Pro
-
+Candle Pro is an automated trading bot
 ## Requirements
 CPTB requires the following dependencies to be installed:
 * Node.js > V12.X
