@@ -2,41 +2,32 @@
   "name": "pyramid",
   "version": "0.0.1",
   "description": "Pyramid is a trading framework",
-  "main": "index.js",
+  "author": "Daen Rebel",
   "scripts": {
-    "frontend:serve": "vue-cli-service serve",
+    "lint": "vue-cli-service lint",
     "frontend:build": "vue-cli-service build",
+    "frontend:serve": "vue-cli-service serve",
     "frontend:test:unit": "vue-cli-service test:unit frontend/tests/**/*.spec.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/BlackBinary/pyramid.git"
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bottleneck": "^2.19.5",
+    "commander": "^5.1.0",
+    "core-js": "^3.6.4",
+    "dotenv": "^8.2.0",
+    "minimist": "^1.2.5",
+    "module-alias": "^2.2.2",
+    "moment": "^2.24.0",
+    "signale": "^1.4.0",
+    "sqlite3": "^4.2.0",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.6",
+    "vuex": "^3.1.3",
+    "winston": "^3.2.1",
+    "ws": "^7.2.5"
   },
-  "keywords": [
-    "Coinbase",
-    "Pro",
-    "Bitcoin",
-    "BTC",
-    "Ethereum",
-    "ETC",
-    "Trading",
-    "Bot"
-  ],
-  "author": "Daen Rebel",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/BlackBinary/pyramid/issues"
-  },
-  "homepage": "https://github.com/BlackBinary/pyramid#readme",
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.1.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-router": "~4.3.0",
     "@vue/cli-plugin-unit-mocha": "~4.3.0",
@@ -48,23 +39,6 @@
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"
   },
-  "dependencies": {
-    "axios": "^0.19.2",
-    "bottleneck": "^2.19.5",
-    "commander": "^5.1.0",
-    "dotenv": "^8.2.0",
-    "minimist": "^1.2.5",
-    "module-alias": "^2.2.2",
-    "moment": "^2.24.0",
-    "signale": "^1.4.0",
-    "sqlite3": "^4.2.0",
-    "winston": "^3.2.1",
-    "ws": "^7.2.5",
-    "core-js": "^3.6.4",
-    "vue": "^2.6.11",
-    "vue-router": "^3.1.6",
-    "vuex": "^3.1.3"
-  },
   "_moduleAliases": {
     "@root": ".",
     "@data": "data/",
@@ -73,5 +47,24 @@
     "@lib": "backend/src/lib/",
     "@core": "backend/src/core/",
     "@strategies": "strategies/"
+  },
+  "bugs": {
+    "url": "https://github.com/BlackBinary/pyramid/issues"
+  },
+  "homepage": "https://github.com/BlackBinary/pyramid#readme",
+  "keywords": [
+    "Coinbase",
+    "Pro",
+    "Bitcoin",
+    "BTC",
+    "Ethereum",
+    "ETC",
+    "Trading",
+    "Bot"
+  ],
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/BlackBinary/pyramid.git"
   }
 }
