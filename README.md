@@ -1,6 +1,8 @@
 # Pyramid Project
 The Pyramid Project is a trading framework
 
+![Image description](https://github.com/BlackBinary/pyramid/blob/master/frontend/src/assets/logo.png)
+
 ## Requirements
 Pyramid requires the following dependencies to be installed:
 * Node.js > V12.X
