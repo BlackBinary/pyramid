@@ -1,7 +1,7 @@
 {
   "name": "pyramid",
   "version": "0.0.1",
-  "description": "Pyramid is a trading framework",
+  "description": "Pyramid Project trading framework",
   "author": "Daen Rebel",
   "scripts": {
     "lint": "vue-cli-service lint",
