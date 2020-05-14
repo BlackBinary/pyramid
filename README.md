@@ -4,8 +4,12 @@
 </p>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
-  <img alt="Issues" src="https://img.shields.io/github/issues/BlackBinary/pyramid" />
-  <img alt="Stars" src="https://img.shields.io/github/stars/BlackBinary/pyramid" />
+  <a href="https://github.com/BlackBinary/pyramid/issues" target="_blank">
+    <img alt="Issues" src="https://img.shields.io/github/issues/BlackBinary/pyramid" />
+  </a>
+  <a href="https://github.com/BlackBinary/pyramid/stargazers" target="_blank">
+    <img alt="Stars" src="https://img.shields.io/github/stars/BlackBinary/pyramid" />
+  </a>
   <a href="https://github.com/BlackBinary/pyramid/wiki" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
