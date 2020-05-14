@@ -4,14 +4,13 @@
 </p>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
+  <img alt="Issues" src="https://img.shields.io/github/issues/BlackBinary/pyramid" />
+  <img alt="Stars" src="https://img.shields.io/github/stars/BlackBinary/pyramid" />
   <a href="https://github.com/BlackBinary/pyramid/wiki" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
-  <a href="#" target="_blank">
-    <img alt="License: GPL--3.0" src="https://img.shields.io/badge/License-GPL--3.0-yellow.svg" />
-  </a>
-  <a href="https://twitter.com/daenrebel" target="_blank">
-    <img alt="Twitter: daenrebel" src="https://img.shields.io/twitter/follow/daenrebel.svg?style=social" />
+  <a href="https://github.com/BlackBinary/pyramid/blob/master/LICENSE" target="_blank">
+    <img alt="License" src="https://img.shields.io/github/license/BlackBinary/pyramid" />
   </a>
 </p>
 
