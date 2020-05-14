@@ -12,6 +12,6 @@ export default {
 
 <style lang="scss">
 .home {
-  background: $dark;
+  background: $raisinBlack;
 }
 </style>
