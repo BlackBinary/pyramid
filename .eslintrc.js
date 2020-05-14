@@ -22,18 +22,40 @@ module.exports = {
       node: {
         extensions: ['.js', '.jsx', '.vue'],
       },
-      alias: {
-        map: [
-          ['@root', './'],
-          ['@frontend', path.resolve(__dirname, 'frontend/src/')],
-          ['@backend', path.resolve(__dirname, 'backend/src/')],
-          ['@lib', path.resolve(__dirname, 'backend/src/lib')],
-          ['@core', path.resolve(__dirname, 'backend/src/core')],
-          ['@strategies', path.resolve(__dirname, 'strategies')],
-        ],
+      webpack: {
+        config: {
+          resolve: {
+            extensions: ['.js', '.vue', '.json'],
+            alias: {
+              '@root': './',
+              '@frontend': path.resolve(__dirname, 'frontend/src/'),
+              '@backend': path.resolve(__dirname, 'backend/src/'),
+              '@lib': path.resolve(__dirname, 'backend/src/lib'),
+              '@core': path.resolve(__dirname, 'backend/src/core'),
+              '@strategies': path.resolve(__dirname, 'strategies'),
+            },
+          },
+        },
       },
     },
   },
+  // settings: {
+  //   'import/resolver': {
+  //     node: {
+  //       extensions: ['.js', '.jsx', '.vue'],
+  //     },
+  //     alias: {
+  //       map: [
+  //         [],
+  //         ['@frontend', path.resolve(__dirname, 'frontend/src/')],
+  //         ['@backend', path.resolve(__dirname, 'backend/src/')],
+  //         ['@lib', path.resolve(__dirname, 'backend/src/lib')],
+  //         ['@core', path.resolve(__dirname, 'backend/src/core')],
+  //         ['@strategies', path.resolve(__dirname, 'strategies')],
+  //       ],
+  //     },
+  //   },
+  // },
   overrides: [
     {
       files: [
