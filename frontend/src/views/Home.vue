@@ -9,3 +9,9 @@ export default {
   components: {},
 };
 </script>
+
+<style lang="scss">
+.home {
+  background: $dark;
+}
+</style>
