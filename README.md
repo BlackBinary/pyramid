@@ -1,5 +1,7 @@
 <h1 align="center">Welcome to Pyramid Project 👋</h1>
-<div style="text-align:center"><img alt="Pyramid Project Logo" src="https://github.com/BlackBinary/pyramid/blob/master/assets/logo.png" /> </div>
+<p align="center">
+  <img alt="Pyramid Project Logo" src="https://github.com/BlackBinary/pyramid/blob/master/assets/logo.png" />
+</p>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/BlackBinary/pyramid/wiki" target="_blank">
