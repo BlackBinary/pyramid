@@ -13,6 +13,7 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
+        '@root': path.resolve(__dirname),
         '@frontend': path.resolve(__dirname, 'frontend/src'),
       },
     },

@@ -27,7 +27,7 @@ module.exports = {
           resolve: {
             extensions: ['.js', '.vue', '.json'],
             alias: {
-              '@root': './',
+              '@root': path.resolve(__dirname),
               '@frontend': path.resolve(__dirname, 'frontend/src/'),
               '@backend': path.resolve(__dirname, 'backend/src/'),
               '@lib': path.resolve(__dirname, 'backend/src/lib'),

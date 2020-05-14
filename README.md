@@ -1,4 +1,4 @@
-![Image description](https://github.com/BlackBinary/pyramid/blob/master/frontend/src/assets/logo.png)
+![Image description](https://github.com/BlackBinary/pyramid/blob/master/assets/logo.png)
 
 # Pyramid Project
 The Pyramid Project is a trading framework
