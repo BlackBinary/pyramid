@@ -3,8 +3,10 @@
     "baseUrl": ".",
     "paths": {
       "@root/*": ["./*"],
-      "@lib/*": ["src/lib/*"],
-      "@core/*": ["src/core/*"],
+      "@lib/*": ["backend/src/lib/*"],
+      "@core/*": ["backend/src/core/*"],
+      "@backend/*": ["backend/src/*"],
+      "@frontend/*": ["frontend/src/*"],
       "@data/*": ["data/*"],
       "@strategies/*": ["strategies/*"],
     }

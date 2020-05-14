@@ -71,9 +71,21 @@ class Strategy extends BaseStrategy {
         this.slowAverage = sma(this.config.slowAverageOver, this.prices);
         this.signal = this.fastAverage - this.slowAverage;
       } else {
-        this.fastAverage = ema(this.config.fastAverageOver, this.prices[this.prices.length - 1], this.fastAverage);
-        this.slowAverage = ema(this.config.slowAverageOver, this.prices[this.prices.length - 1], this.slowAverage);
-        this.signal = ema(this.config.signalAverageOver, this.fastAverage - this.slowAverage, this.macd);
+        this.fastAverage = ema(
+          this.config.fastAverageOver,
+          this.prices[this.prices.length - 1],
+          this.fastAverage,
+        );
+        this.slowAverage = ema(
+          this.config.slowAverageOver,
+          this.prices[this.prices.length - 1],
+          this.slowAverage,
+        );
+        this.signal = ema(
+          this.config.signalAverageOver,
+          this.fastAverage - this.slowAverage,
+          this.macd,
+        );
       }
 
       // logger.info(`Fast average ${this.fastAverage}`);
@@ -83,12 +95,20 @@ class Strategy extends BaseStrategy {
       if (this.signal > this.config.buyAt) {
         if (this.Trader.portfolio.fiat > 0) {
           logger.info('We should buy');
-          this.Trader.trade(this.Trader.portfolio.fiat, this.prices[this.priceCount() - 1], this.Trader.tradeTypes.BUY);
+          this.Trader.trade(
+            this.Trader.portfolio.fiat,
+            this.prices[this.priceCount() - 1],
+            this.Trader.tradeTypes.BUY,
+          );
         }
       } else if (this.signal < this.config.sellAt) {
         if (this.Trader.portfolio.crypto > 0) {
           logger.info('We should sell');
-          this.Trader.trade(this.Trader.portfolio.crypto, this.prices[this.priceCount() - 1], this.Trader.tradeTypes.SELL);
+          this.Trader.trade(
+            this.Trader.portfolio.crypto,
+            this.prices[this.priceCount() - 1],
+            this.Trader.tradeTypes.SELL,
+          );
         }
       }
     }
