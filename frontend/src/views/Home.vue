@@ -1,6 +1,6 @@
 <template lang="pug">
   .home
-    img(alt="Pyramid Project Logo" src="@root/assets/logo.png")
+    img(alt="Pyramid Project Logo" src="@assets/logo.png")
 </template>
 
 <script>
