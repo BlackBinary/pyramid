@@ -1,5 +1,5 @@
-# Pyramid
-Candle Pro is an automated trading bot
+# Pyramid Project
+The Pyramid Project is a trading framework
 
 ## Requirements
 Pyramid requires the following dependencies to be installed:
@@ -25,4 +25,4 @@ The rest should be pretty self explainatory. If it's not, you should definetly s
 Either way, good luck and have fun!
 
 ## Disclaimer
-Pyramid is built as an experiment by me, for me (Daen Rebel). There is nobody who should use this bot. Especially if you're unaware of what you're doing.
+Pyramid is built as an experiment. There is nobody who should use this framework, especially if you're unaware of what you're doing.
