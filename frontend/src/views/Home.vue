@@ -1,7 +1,6 @@
-<template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-  </div>
+<template lang="pug">
+  .home
+    img(alt="Pyramid Project Logo" src="@frontend/assets/logo.png")
 </template>
 
 <script>
