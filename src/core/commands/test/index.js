@@ -1,4 +1,4 @@
-const CPTB = require('@core/cptb');
+const Pyramid = require('@core/pyramid');
 
 const logger = require('@lib/logger')(true);
 const candles = require('@lib/coinbase/endpoints/products/candles');
@@ -28,7 +28,7 @@ module.exports = async ({ strategy, pairs }) => {
   this.strategy = new Loader.Strategy(true);
 
   // Create a new bot
-  this.bot = new CPTB(pairs);
+  this.bot = new Pyramid(pairs);
 
   // Make sure the strategy is valid
   if (this.strategy.init) {

@@ -57,7 +57,7 @@ program
 program
   .command('list')
   .alias('l')
-  .description('Show list of CPTB data')
+  .description('Show list of Pyramid data')
   .option('-i, --imports', 'show imports')
   // .option('-p, --portfolio', 'show portfolio') // Currently not implemented
   .action((options) => {

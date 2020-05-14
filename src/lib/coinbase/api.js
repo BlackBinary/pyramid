@@ -16,7 +16,7 @@ const client = axios.create({
     'Content-type': 'application/json',
     Accept: 'application/json',
     'Accept-Charset': 'utf-8',
-    'User-Agent': 'CPTB Client',
+    'User-Agent': 'Pyramid Client',
   },
   json: true,
 });

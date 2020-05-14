@@ -6,7 +6,7 @@ const websocket = require('@lib/coinbase/websocket');
 
 const initMessage = require('./initMessage');
 
-class CPTB extends EventEmitter {
+class Pyramid extends EventEmitter {
   constructor(pairs = [], minutes = 1) {
     super();
     // Display the init message
@@ -90,7 +90,7 @@ class CPTB extends EventEmitter {
   }
 
   start() {
-    logger.info('Starting CPTB');
+    logger.info('Starting Pyramid');
 
     const client = websocket();
 
@@ -126,4 +126,4 @@ class CPTB extends EventEmitter {
   }
 }
 
-module.exports = CPTB;
+module.exports = Pyramid;

@@ -12,7 +12,7 @@ module.exports = (file = false) => {
   const transports = [new winston.transports.Console()];
 
   if (file) {
-    transports.push(new winston.transports.File({ filename: `${this.path}/${moment().unix()}-cptb.log` }));
+    transports.push(new winston.transports.File({ filename: `${this.path}/${moment().unix()}-pyramid.log` }));
   }
 
   return winston.createLogger({

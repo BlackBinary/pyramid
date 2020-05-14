@@ -1,14 +1,14 @@
 {
-  "name": "cptb",
+  "name": "pyramid",
   "version": "0.0.1",
-  "description": "CPTB is a Coinbase Pro Trading Bot written in Node.JS",
+  "description": "Pyramid is a Coinbase Pro Trading Bot written in Node.JS",
   "main": "index.js",
   "scripts": {
     "test": " echo \"No test specified\""
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/BlackBinary/cptb.git"
+    "url": "git+ssh://git@github.com/BlackBinary/pyramid.git"
   },
   "keywords": [
     "Coinbase",
@@ -23,9 +23,9 @@
   "author": "Daen Rebel",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/BlackBinary/cptb/issues"
+    "url": "https://github.com/BlackBinary/pyramid/issues"
   },
-  "homepage": "https://github.com/BlackBinary/cptb#readme",
+  "homepage": "https://github.com/BlackBinary/pyramid#readme",
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
