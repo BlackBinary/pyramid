@@ -4,10 +4,11 @@
     "paths": {
       "@root/*": ["./*"],
       "@lib/*": ["backend/src/lib/*"],
+      "@data/*": ["data/*"],
       "@core/*": ["backend/src/core/*"],
+      "@assets/*": ["assets/*"],
       "@backend/*": ["backend/src/*"],
       "@frontend/*": ["frontend/src/*"],
-      "@data/*": ["data/*"],
       "@strategies/*": ["strategies/*"],
     }
   }

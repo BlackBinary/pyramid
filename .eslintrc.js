@@ -28,10 +28,11 @@ module.exports = {
             extensions: ['.js', '.vue', '.json'],
             alias: {
               '@root': path.resolve(__dirname),
-              '@frontend': path.resolve(__dirname, 'frontend/src/'),
-              '@backend': path.resolve(__dirname, 'backend/src/'),
               '@lib': path.resolve(__dirname, 'backend/src/lib'),
               '@core': path.resolve(__dirname, 'backend/src/core'),
+              '@assets': path.resolve(__dirname, 'assets'),
+              '@frontend': path.resolve(__dirname, 'frontend/src/'),
+              '@backend': path.resolve(__dirname, 'backend/src/'),
               '@strategies': path.resolve(__dirname, 'strategies'),
             },
           },

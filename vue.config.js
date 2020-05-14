@@ -14,6 +14,7 @@ module.exports = {
     resolve: {
       alias: {
         '@root': path.resolve(__dirname),
+        '@assets': path.resolve(__dirname, 'assets'),
         '@frontend': path.resolve(__dirname, 'frontend/src'),
       },
     },
