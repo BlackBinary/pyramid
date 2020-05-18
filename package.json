@@ -11,6 +11,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@fortawesome/fontawesome-pro": "^5.13.0",
     "axios": "^0.19.2",
     "bottleneck": "^2.19.5",
     "commander": "^5.1.0",
