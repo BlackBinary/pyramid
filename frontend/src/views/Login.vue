@@ -16,7 +16,7 @@
           type="password"
           placeholder="Your password"
         )
-    .button.round
+    router-link.button.round(to="Home")
       .far.fa-arrow-right
     img.login-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
 </template>
@@ -79,6 +79,8 @@ export default {
 }
 
 .button.round {
+  display: block;
+  color: $white;
   width: 54px;
   height: 54px;
   line-height: 54px;
