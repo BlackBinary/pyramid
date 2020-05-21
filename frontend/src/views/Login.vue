@@ -16,7 +16,7 @@
           type="password"
           placeholder="Your password"
         )
-    router-link.button.round(to="Home")
+    router-link.button.round(:to="{ name: 'Home' }")
       .far.fa-arrow-right
     img.login-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
 </template>
