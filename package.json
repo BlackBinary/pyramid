@@ -4,7 +4,6 @@
   "description": "Pyramid Project trading framework",
   "author": "Daen Rebel",
   "scripts": {
-    "lint": "vue-cli-service lint",
     "frontend:build": "vue-cli-service build",
     "frontend:serve": "vue-cli-service serve",
     "frontend:test:unit": "vue-cli-service test:unit frontend/tests/**/*.spec.js"
@@ -20,6 +19,7 @@
     "minimist": "^1.2.5",
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
+    "node-binance-api": "^0.11.4",
     "signale": "^1.4.0",
     "sqlite3": "^4.2.0",
     "vue": "^2.6.11",
@@ -78,7 +78,7 @@
   "license": "GPL-3.0",
   "lint-staged": {
     "*.{js,jsx,vue}": [
-      "vue-cli-service lint",
+      "eslint --fix",
       "git add"
     ]
   },

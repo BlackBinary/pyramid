@@ -1,8 +1,8 @@
 const Pyramid = require('@core/pyramid');
 
 const logger = require('@lib/logger')(true);
-const candles = require('@lib/coinbase/endpoints/products/candles');
 const StrategyLoader = require('@lib/strategy/loader');
+// const binance = require('@lib/binance');
 
 module.exports.strategy = () => {};
 module.exports.bot = () => {};
@@ -34,10 +34,12 @@ module.exports = async ({ strategy, pairs }) => {
   if (this.strategy.init) {
     logger.info('Init strategy');
 
-    // Check if we need to prime the strategy
-    if (this.strategy.config.prime) {
-      this.primeCandles = (await candles.get(pairs[0], '', '', this.bot.tickerInterval / 1000)).data;
-    }
+    // // Check if we need to prime the strategy
+    // if (this.strategy.config.prime) {
+    //   this.primeCandles = (
+    //      await candles.get(pairs[0], '', '', this.bot.tickerInterval / 1000)
+    //   ).data;
+    // }
 
     // Call the strategy init function
     this.strategy.init(this.primeCandles);

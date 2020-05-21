@@ -7,8 +7,8 @@ const { Command } = require('commander');
 
 const importCommand = require('@core/commands/import');
 const listCommand = require('@core/commands/list');
-const backtestCommand = require('@core/commands/backtest');
-const testCommand = require('@core/commands/test');
+const backpaperCommand = require('@core/commands/backtest');
+const paperCommand = require('@root/backend/src/core/commands/paper');
 
 const program = new Command();
 
@@ -39,7 +39,7 @@ program
   .requiredOption('-p, --pairs <pairs>', 'comma seperated trading pairs', (value) => value.split(','))
   .description('Test strategy against live data')
   .action((options) => {
-    testCommand(options);
+    paperCommand(options);
   });
 
 // Backtest command
@@ -50,7 +50,7 @@ program
   .requiredOption('-i, --importName <name>', 'name of the import')
   .requiredOption('-s, --strategy <strategy>', 'strategy to test')
   .action((options) => {
-    backtestCommand(options);
+    backpaperCommand(options);
   });
 
 // List command
