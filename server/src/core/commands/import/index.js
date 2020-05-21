@@ -1,9 +1,9 @@
 const moment = require('moment');
 // const Bottleneck = require('bottleneck');
 
-const logger = require('@lib/logger')(false);
+const logger = require('@root/server/src/lib/logger')(false);
 // const binance = require('@lib/binance');
-const { client: sqlite } = require('@lib/database/sqlite');
+// const { client: sqlite } = require('@root/server/src/lib/database/sqlite');
 
 module.exports.isoFormat = 'YYYY-MM-DDTHH:mm';
 
@@ -16,48 +16,48 @@ module.exports.generateDates = (start, granularity) => ({
   endDate: moment(start).subtract(this.maxDataPointsPerRequest * granularity, 'seconds').format(this.isoFormat),
 });
 
-module.exports.checkOrCreateTables = () => {
-  const createImportsQuery = `
-    CREATE TABLE IF NOT EXISTS imports
-    (
-      id INTEGER PRIMARY KEY,
-      name TEXT UNIQUE,
-      product TEXT,
-      datapoints INTEGER,
-      granularity INTEGER,
-      timestamp INTEGER
-    );
-  `;
-  const createCandlesQuery = `
-    CREATE TABLE IF NOT EXISTS candles
-    (
-      id INTEGER PRIMARY KEY,
-      importId INTEGER NOT NULL,
-      product TEXT,
-      timestamp INTEGER,
-      low INTEGER,
-      high INTEGER,
-      open INTEGER,
-      close INTEGER,
-      volume INTEGER
-    );
-  `;
+// module.exports.checkOrCreateTables = () => {
+//   const createImportsQuery = `
+//     CREATE TABLE IF NOT EXISTS imports
+//     (
+//       id INTEGER PRIMARY KEY,
+//       name TEXT UNIQUE,
+//       product TEXT,
+//       datapoints INTEGER,
+//       granularity INTEGER,
+//       timestamp INTEGER
+//     );
+//   `;
+//   const createCandlesQuery = `
+//     CREATE TABLE IF NOT EXISTS candles
+//     (
+//       id INTEGER PRIMARY KEY,
+//       importId INTEGER NOT NULL,
+//       product TEXT,
+//       timestamp INTEGER,
+//       low INTEGER,
+//       high INTEGER,
+//       open INTEGER,
+//       close INTEGER,
+//       volume INTEGER
+//     );
+//   `;
 
-  return Promise.all([
-    new Promise((resolve, reject) => {
-      sqlite.run(createImportsQuery, (err) => {
-        if (err) return reject();
-        return resolve();
-      });
-    }),
-    new Promise((resolve, reject) => {
-      sqlite.run(createCandlesQuery, (err) => {
-        if (err) return reject();
-        return resolve();
-      });
-    }),
-  ]);
-};
+//   return Promise.all([
+//     new Promise((resolve, reject) => {
+//       sqlite.run(createImportsQuery, (err) => {
+//         if (err) return reject();
+//         return resolve();
+//       });
+//     }),
+//     new Promise((resolve, reject) => {
+//       sqlite.run(createCandlesQuery, (err) => {
+//         if (err) return reject();
+//         return resolve();
+//       });
+//     }),
+//   ]);
+// };
 
 module.exports.addRanges = (ranges, product, granularity, importId) => {
   ranges.forEach(({ endDate, startDate }) => this.limiter.schedule(() => {
@@ -110,26 +110,26 @@ module.exports.addRanges = (ranges, product, granularity, importId) => {
 //     });
 // };
 
-module.exports.createImport = (name, product, datapoints, granularity, timestamp) => {
-  const query = `
-  INSERT INTO imports
-  (name, product, datapoints, granularity, timestamp)
-  VALUES
-  (?, ?, ?, ?, ?);
-  `;
-  return new Promise((resolve, reject) => {
-    sqlite.run(query, [
-      name,
-      product,
-      datapoints,
-      granularity,
-      timestamp,
-    ], function returnId(error) {
-      if (error) return reject(error);
-      return resolve(this.lastID);
-    });
-  });
-};
+// module.exports.createImport = (name, product, datapoints, granularity, timestamp) => {
+//   const query = `
+//   INSERT INTO imports
+//   (name, product, datapoints, granularity, timestamp)
+//   VALUES
+//   (?, ?, ?, ?, ?);
+//   `;
+//   return new Promise((resolve, reject) => {
+//     sqlite.run(query, [
+//       name,
+//       product,
+//       datapoints,
+//       granularity,
+//       timestamp,
+//     ], function returnId(error) {
+//       if (error) return reject(error);
+//       return resolve(this.lastID);
+//     });
+//   });
+// };
 
 module.exports = async ({
   importName,

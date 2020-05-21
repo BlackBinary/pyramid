@@ -8,11 +8,11 @@
  * NONE
  */
 
-const logger = require('@lib/logger')(false);
-const BaseStrategy = require('@lib/strategy/base');
+const logger = require('@root/server/src/lib/logger')(false);
+const BaseStrategy = require('@root/server/src/lib/strategy/base');
 
-const ema = require('@lib/indicators/ema');
-const sma = require('@lib/indicators/sma');
+const ema = require('@root/server/src/lib/indicators/ema');
+const sma = require('@root/server/src/lib/indicators/sma');
 
 class Strategy extends BaseStrategy {
   constructor(test = false) {

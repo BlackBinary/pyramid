@@ -9,11 +9,11 @@
  * When MACD pos buy. When MACD neg sell
  */
 
-const logger = require('@lib/logger')(false);
-const BaseStrategy = require('@lib/strategy/base');
+const logger = require('@root/server/src/lib/logger')(false);
+const BaseStrategy = require('@root/server/src/lib/strategy/base');
 
-const ema = require('@lib/indicators/ema');
-const sma = require('@lib/indicators/sma');
+const ema = require('@root/server/src/lib/indicators/ema');
+const sma = require('@root/server/src/lib/indicators/sma');
 
 class Strategy extends BaseStrategy {
   constructor(test = false) {
@@ -65,7 +65,10 @@ class Strategy extends BaseStrategy {
   update(candle) {
     this.prices.push(candle[this.config.tradeSignal]);
 
-    if (this.priceCount() >= this.config.slowAverageOver && this.priceCount() >= this.config.fastAverageOver) {
+    if (
+      this.priceCount() >= this.config.slowAverageOver
+      && this.priceCount() >= this.config.fastAverageOver
+    ) {
       if (!this.fastAverage && !this.slowAverage) {
         this.fastAverage = sma(this.config.fastAverageOver, this.prices);
         this.slowAverage = sma(this.config.slowAverageOver, this.prices);

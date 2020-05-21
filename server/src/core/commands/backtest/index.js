@@ -1,38 +1,38 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger')(false);
-const { client: sqlite } = require('@lib/database/sqlite');
-const StrategyLoader = require('@lib/strategy/loader');
+const logger = require('@root/server/src/lib/logger')(false);
+// const { client: sqlite } = require('@root/server/src/lib/database/sqlite');
+const StrategyLoader = require('@root/server/src/lib/strategy/loader');
 
 module.exports.strategy = () => {};
 
-module.exports.getMarketData = async (importName) => {
-  const query = `
-  SELECT
-    timestamp,
-    product,
-    low,
-    high,
-    open,
-    close,
-    volume
-  FROM candles
-  WHERE importId = (
-    SELECT id
-    FROM imports
-    WHERE name = ?
-  )
-  GROUP BY timestamp, product
-  ORDER BY timestamp;
-  `;
+// module.exports.getMarketData = async (importName) => {
+//   const query = `
+//   SELECT
+//     timestamp,
+//     product,
+//     low,
+//     high,
+//     open,
+//     close,
+//     volume
+//   FROM candles
+//   WHERE importId = (
+//     SELECT id
+//     FROM imports
+//     WHERE name = ?
+//   )
+//   GROUP BY timestamp, product
+//   ORDER BY timestamp;
+//   `;
 
-  return new Promise((resolve, reject) => {
-    sqlite.all(query, [importName], (err, data) => {
-      if (err) reject(err);
-      else resolve(data);
-    });
-  });
-};
+//   return new Promise((resolve, reject) => {
+//     sqlite.all(query, [importName], (err, data) => {
+//       if (err) reject(err);
+//       else resolve(data);
+//     });
+//   });
+// };
 
 module.exports = async ({ strategy, importName }) => {
   logger.info('Start backtesting');
@@ -90,7 +90,9 @@ module.exports = async ({ strategy, importName }) => {
   logger.info(`Fiat:   ${this.strategy.Trader.portfolio.fiat}`);
   logger.info(`Crypto: ${this.strategy.Trader.portfolio.crypto}`);
 
-  const totalProfits = this.strategy.Trader.portfolio.fiat + (this.strategy.Trader.portfolio.crypto * marketData[marketData.length - 1].close);
+  const totalProfits = this.strategy.Trader.portfolio.fiat + (
+    this.strategy.Trader.portfolio.crypto * marketData[marketData.length - 1].close
+  );
 
   logger.info('Potential outcome:');
   logger.info(`Total fiat:  ${totalProfits}`);

@@ -1,8 +1,8 @@
 const moment = require('moment');
 const EventEmitter = require('events');
 
-const logger = require('@lib/logger')(true);
-const websocket = require('@lib/coinbase/websocket');
+const logger = require('@root/server/src/lib/logger')(true);
+// const websocket = require('@root/server/src/lib/coinbase/websocket');
 
 const initMessage = require('./initMessage');
 
@@ -92,35 +92,35 @@ class Pyramid extends EventEmitter {
   start() {
     logger.info('Starting Pyramid');
 
-    const client = websocket();
+    //   const client = websocket();
 
-    // On opening the websocket client, keep eye open with ticker
-    // (for now. level 2 might be more accurate)
-    client.on('open', () => {
-      // Send a subscribe message to the api
-      client.send(this.subscribeMessage);
-    });
+    //   // On opening the websocket client, keep eye open with ticker
+    //   // (for now. level 2 might be more accurate)
+    //   client.on('open', () => {
+    //     // Send a subscribe message to the api
+    //     client.send(this.subscribeMessage);
+    //   });
 
-    client.on('message', (data) => {
-      const body = JSON.parse(data);
+    //   client.on('message', (data) => {
+    //     const body = JSON.parse(data);
 
-      // Run the update function
-      if (body.type === 'ticker') {
-        this.update(body);
-      }
+    //     // Run the update function
+    //     if (body.type === 'ticker') {
+    //       this.update(body);
+    //     }
 
-      // Process the heartbeat
-      if (body.type === 'heartbeat') {
-        // Remove the previous heartbeat
-        clearTimeout(this.heartbeat);
+    //     // Process the heartbeat
+    //     if (body.type === 'heartbeat') {
+    //       // Remove the previous heartbeat
+    //       clearTimeout(this.heartbeat);
 
-        // Set a new one
-        this.heartbeat = setTimeout(() => {
-          logger.warn(`We have not received a hearbeat for about ${this.heartbeatTimeout}`);
-          client.send(this.subscribeMessage);
-        }, this.heartbeatTimeout);
-      }
-    });
+    //       // Set a new one
+    //       this.heartbeat = setTimeout(() => {
+    //         logger.warn(`We have not received a hearbeat for about ${this.heartbeatTimeout}`);
+    //         client.send(this.subscribeMessage);
+    //       }, this.heartbeatTimeout);
+    //     }
+    //   });
 
     setTimeout(this.ticker.bind(this), this.tickerInterval);
   }

@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger')(true);
+const logger = require('@root/server/src/lib/logger')(true);
 
 class Trader {
   constructor(test = false) {

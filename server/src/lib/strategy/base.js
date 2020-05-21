@@ -1,4 +1,4 @@
-const Trader = require('@lib/trader');
+const Trader = require('@root/server/src/lib/trader');
 
 class BaseStrategy {
   constructor(test = false) {

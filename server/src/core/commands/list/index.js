@@ -1,27 +1,27 @@
 const moment = require('moment');
 
-const logger = require('@lib/logger')(false);
-const { client: sqlite } = require('@lib/database/sqlite');
+const logger = require('@root/server/src/lib/logger')(false);
+// const { client: sqlite } = require('@root/server/src/lib/database/sqlite');
 
-module.exports.getImports = async (importName) => {
-  const query = `
-  SELECT
-    id,
-    name,
-    product,
-    timestamp,
-    datapoints,
-    granularity
-  FROM imports;
-  `;
+// module.exports.getImports = async (importName) => {
+//   const query = `
+//   SELECT
+//     id,
+//     name,
+//     product,
+//     timestamp,
+//     datapoints,
+//     granularity
+//   FROM imports;
+//   `;
 
-  return new Promise((resolve, reject) => {
-    sqlite.all(query, [importName], (err, data) => {
-      if (err) reject(err);
-      else resolve(data);
-    });
-  });
-};
+//   return new Promise((resolve, reject) => {
+//     sqlite.all(query, [importName], (err, data) => {
+//       if (err) reject(err);
+//       else resolve(data);
+//     });
+//   });
+// };
 
 module.exports = async () => {
   logger.info('List of imports');

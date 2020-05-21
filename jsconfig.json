@@ -3,11 +3,9 @@
     "baseUrl": ".",
     "paths": {
       "@root/*": ["./*"],
-      "@lib/*": ["backend/src/lib/*"],
       "@data/*": ["data/*"],
-      "@core/*": ["backend/src/core/*"],
+      "@server/*": ["server/*"],
       "@assets/*": ["assets/*"],
-      "@backend/*": ["backend/src/*"],
       "@frontend/*": ["frontend/src/*"],
       "@strategies/*": ["strategies/*"],
     }

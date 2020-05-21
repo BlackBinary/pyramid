@@ -1,7 +1,7 @@
-const Pyramid = require('@core/pyramid');
+const Pyramid = require('@root/server/src/core/pyramid');
 
-const logger = require('@lib/logger')(true);
-const StrategyLoader = require('@lib/strategy/loader');
+const logger = require('@root/server/src/lib/logger')(true);
+const StrategyLoader = require('@root/server/src/lib/strategy/loader');
 // const binance = require('@lib/binance');
 
 module.exports.strategy = () => {};
