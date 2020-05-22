@@ -8,6 +8,7 @@
         .strategy-card(@click="openStrategy(strategy)")
           h2 {{ strategy.title }}
             .far.fa-arrow-right
+          p {{ strategy.description }}
 </template>
 
 <script>
@@ -29,6 +30,7 @@ export default {
     openStrategy(strategy) {
       console.log(strategy);
       console.log(`open strategy ${strategy.id}`);
+      this.$router.push({ name: 'StrategyView', params: { strategyId: strategy.id } });
     },
     addStrategy() {
       console.log('Add strategy');

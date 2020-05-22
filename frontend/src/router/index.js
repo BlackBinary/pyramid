@@ -29,6 +29,11 @@ const routes = [
             name: 'Strategies',
             component: () => import(/* webpackChunkName: "strategiesOverview" */ '@frontend/views/Strategies/Overview.vue'),
           },
+          {
+            path: ':strategyId',
+            name: 'StrategyView',
+            component: () => import(/* webpackChunkName: "strategyView" */ '@frontend/views/Strategies/View.vue'),
+          },
         ],
       },
       {
