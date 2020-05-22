@@ -83,7 +83,7 @@
   "license": "GPL-3.0",
   "lint-staged": {
     "*.{js,jsx,vue}": [
-      "eslint",
+      "eslint --fix",
       "git add"
     ]
   },
