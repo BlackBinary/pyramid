@@ -43,6 +43,9 @@ const generateAuthPayload = (user) => {
 };
 
 module.exports = {
+  User: {
+    strategies: (parent) => parent.getStrategies(),
+  },
   Query: {
     users: (parent, args, { dataSources }) => dataSources.models.User.findAll(),
     account: async (parent, args, { dataSources, user }) => {

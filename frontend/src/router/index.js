@@ -20,8 +20,16 @@ const routes = [
       },
       {
         path: 'strategies',
-        name: 'Strategies',
-        component: () => import(/* webpackChunkName: "strategies" */ '@frontend/views/Strategies.vue'),
+        component: {
+          render(c) { return c('router-view'); },
+        },
+        children: [
+          {
+            path: '/',
+            name: 'Strategies',
+            component: () => import(/* webpackChunkName: "strategiesOverview" */ '@frontend/views/Strategies/Overview.vue'),
+          },
+        ],
       },
       {
         path: 'papertrader',

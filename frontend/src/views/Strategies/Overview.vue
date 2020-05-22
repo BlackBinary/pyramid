@@ -1,0 +1,62 @@
+<template lang="pug">
+  div
+    h2 Strategies
+    p Here you'll find all your strategies
+    button.button(@click="addStrategy") Create Strategy
+    .row
+      .col-xs-3(v-for="strategy in myStrategies")
+        .strategy-card(@click="openStrategy(strategy)")
+          h2 {{ strategy.title }}
+            .far.fa-arrow-right
+</template>
+
+<script>
+import { CreateStrategy } from '@frontend/apollo/strategies/mutations.gql';
+import { getMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+
+export default {
+  data() {
+    return {
+      myStrategies: [],
+    };
+  },
+  apollo: {
+    myStrategies: {
+      query: getMyStrategies,
+    },
+  },
+  methods: {
+    openStrategy(strategy) {
+      console.log(strategy);
+      console.log(`open strategy ${strategy.id}`);
+    },
+    addStrategy() {
+      console.log('Add strategy');
+      this.$apollo
+        .mutate({
+          mutation: CreateStrategy,
+          variables: { title: 'test', type: 1 },
+        });
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+  .strategy-card {
+    h2 {
+      font-size: 28px;
+      .far {
+        padding-left: 8px;
+      }
+    }
+    min-height: 200px;
+    background: lighten($blackCoral, 20%);
+    margin: 10px;
+    padding: 10px;
+    &:hover {
+      cursor: pointer;
+      background: lighten($blackCoral, 40%);
+    }
+  }
+</style>

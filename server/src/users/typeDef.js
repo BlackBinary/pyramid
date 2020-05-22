@@ -6,6 +6,7 @@ module.exports = gql`
     email: String!
     firstName: String
     lastName: String
+    strategies: [Strategy]
     createdAt: String
     updatedAt: String
   }
@@ -22,7 +23,7 @@ module.exports = gql`
 
   extend type Mutation {
     registerAccount(email: String!, firstName: String!, lastName: String!, password: String!, passwordConfirmation: String!): AuthPayLoad!
-    updateAccount(email: String!, firstName: String!, lastName: String!): User!
     loginUser(email: String!, password: String!): AuthPayLoad!
+    updateAccount(email: String!, firstName: String!, lastName: String!): User!
   }
 `;

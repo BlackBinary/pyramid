@@ -1,0 +1,6 @@
+mutation CreateStrategy($title: String!, $type: Int!) {
+    createStrategy(title: $title, type: $type) {
+        id
+        title
+    }
+}

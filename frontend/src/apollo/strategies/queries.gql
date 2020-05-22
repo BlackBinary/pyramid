@@ -1,0 +1,7 @@
+query getMyStrategies {
+    myStrategies {
+        id
+        title
+        description
+    }
+}
