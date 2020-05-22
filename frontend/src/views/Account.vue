@@ -29,18 +29,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
-
-const accountQuery = gql`
-  {
-    account {
-      id
-      firstName
-      lastName
-      email
-    }
-  },
-`;
+import { getAccount } from '@frontend/apollo/users/queries.gql';
+import { UpdateAccount } from '@frontend/apollo/users/mutations.gql';
 
 export default {
   data() {
@@ -51,7 +41,7 @@ export default {
   },
   apollo: {
     account: {
-      query: accountQuery,
+      query: getAccount,
     },
   },
   methods: {
@@ -67,19 +57,13 @@ export default {
 
       this.$apollo
         .mutate({
-          mutation: gql`
-          mutation UpdateAccount($email: String!, $firstName: String!, $lastName: String!) {
-            updateAccount(email: $email, firstName: $firstName, lastName: $lastName) {
-              id
-              firstName
-              lastName
-              email
-            }
-          }
-        `,
+          mutation: UpdateAccount,
           variables: { firstName, lastName, email },
-          update: (store, { data: { updateAccount } }) => {
-            store.writeQuery({ query: accountQuery, data: { account: updateAccount } });
+          update: (store, { data: { updateAccount: account } }) => {
+            store.writeQuery({
+              query: getAccount,
+              data: { account },
+            });
           },
         })
         .catch((error) => {

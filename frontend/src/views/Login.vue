@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import gql from 'graphql-tag';
+import { LoginUser } from '@frontend/apollo/users/mutations.gql';
 
 export default {
   name: 'Login',
@@ -49,17 +49,11 @@ export default {
 
       this.$apollo
         .mutate({
-          mutation: gql`
-            mutation LoginUser($email: String!, $password: String!) {
-              loginUser(email: $email, password: $password) {
-                token
-              }
-            }
-          `,
+          mutation: LoginUser,
           variables: this.credentials,
         })
         .then(async (response) => {
-          await this.$store.commit('setAuthToken', response.data.login.token);
+          await this.$store.commit('setAuthToken', response.data.loginUser.token);
           this.$router.push({ name: 'Home' });
         })
         .catch((error) => {
