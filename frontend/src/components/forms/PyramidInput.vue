@@ -31,7 +31,7 @@ export default {
       },
       set(value) {
         this.newValue = value;
-        this.$emit('value', value);
+        this.$emit('input', value);
       },
     },
   },

@@ -17,4 +17,4 @@ app.use((req, res, next) => {
 
 schema.applyMiddleware({ app });
 
-app.listen({ port: 3000 }, () => console.log(`🚀 Server ready at http://localhost:3000${schema.graphqlPath}`));
+app.listen({ port: 4000 }, () => console.log(`🚀 Server ready at http://localhost:4000${schema.graphqlPath}`));

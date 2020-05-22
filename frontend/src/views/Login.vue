@@ -6,31 +6,72 @@
       .field
         .fal.fa-user
         PyramidInput(
-          v-model="loginCredentials.email"
+          @input="resetErrors"
+          v-model="credentials.email"
           placeholder="Your Email"
         )
       .field
         .fal.fa-key
         PyramidInput(
-          v-model="loginCredentials.password"
+          @input="resetErrors"
+          v-model="credentials.password"
           type="password"
           placeholder="Your password"
         )
-    router-link.button.round(:to="{ name: 'Home' }")
+      .field(v-for="error in errors")
+        .fal.fa-exclamation
+        p {{ error }}
+    button.button.round(@click="submitLogin")
       .far.fa-arrow-right
     img.login-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
 </template>
 
 <script>
+import gql from 'graphql-tag';
+
 export default {
   name: 'Login',
   data() {
     return {
-      loginCredentials: {
+      errors: [],
+      credentials: {
         email: '',
         password: '',
       },
     };
+  },
+  methods: {
+    resetErrors() {
+      this.errors = [];
+    },
+    submitLogin() {
+      this.resetErrors();
+      this.$apollo
+        .mutate({
+          mutation: gql`
+            mutation LoginUser($email: String!, $password: String!) {
+              login(email: $email, password: $password) {
+                token
+              }
+            }
+          `,
+          variables: {
+            email: this.credentials.email,
+            password: this.credentials.password,
+          },
+        })
+        .then(async (response) => {
+          await this.$store.commit('setAuthToken', response.data.login.token);
+          this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          if (error.graphQLErrors) {
+            this.errors = error.graphQLErrors.map((e) => e.message);
+          } else {
+            console.error(error);
+          }
+        });
+    },
   },
   components: {
     PyramidInput: () => import('@frontend/components/forms/PyramidInput'),
