@@ -55,10 +55,7 @@ export default {
               }
             }
           `,
-          variables: {
-            email: this.credentials.email,
-            password: this.credentials.password,
-          },
+          variables: this.credentials,
         })
         .then(async (response) => {
           await this.$store.commit('setAuthToken', response.data.login.token);
