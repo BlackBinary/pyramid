@@ -1,4 +1,7 @@
 const jwt = require('jsonwebtoken');
+const {
+  AuthenticationError,
+} = require('apollo-server-express');
 
 const auth = require('@server/src/lib/auth');
 
@@ -31,7 +34,12 @@ const generateAuthPayload = (user) => {
 
 module.exports = {
   Query: {
-    users: (parent, args, { models }) => models.User.findAll(),
+    users: (parent, args, { dataSources }) => dataSources.models.User.findAll(),
+    account: async (parent, args, { dataSources, user }) => {
+      if (!user) throw new AuthenticationError();
+
+      return dataSources.models.User.findOne({ where: { id: user.sub } });
+    },
   },
   Mutation: {
     register: async (parent, args, { dataSources }) => {

@@ -35,7 +35,9 @@ export default {
           class: 'fa-scroll',
         },
         {
-          to: {},
+          to: {
+            name: 'Account',
+          },
           title: 'Account',
           class: 'fa-user',
         },

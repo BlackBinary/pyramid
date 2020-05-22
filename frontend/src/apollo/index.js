@@ -8,10 +8,13 @@ import { setContext } from 'apollo-link-context';
 
 Vue.use(VueApollo);
 
+const {
+  VUE_APP_API_URL,
+} = process.env;
+
 // HTTP connection to the API
 const httpLink = createHttpLink({
-  // You should use an absolute URL here
-  uri: 'http://localhost:4000/graphql',
+  uri: VUE_APP_API_URL,
 });
 
 const authLink = setContext((_, { headers }) => {
