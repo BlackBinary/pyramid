@@ -36,6 +36,14 @@ export default {
         .mutate({
           mutation: CreateStrategy,
           variables: { title: 'test', type: 1 },
+          update: (store, { data: { createStrategy } }) => {
+            // Read the data from our cache for this query.
+            const data = store.readQuery({ query: getMyStrategies });
+            // Add our tag from the mutation to the end
+            data.myStrategies.push(createStrategy);
+            // Write our data back to the cache.
+            store.writeQuery({ query: getMyStrategies, data });
+          },
         });
     },
   },
