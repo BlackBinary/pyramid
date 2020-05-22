@@ -50,7 +50,7 @@ export default {
         .mutate({
           mutation: gql`
             mutation LoginUser($email: String!, $password: String!) {
-              login(email: $email, password: $password) {
+              loginUser(email: $email, password: $password) {
                 token
               }
             }

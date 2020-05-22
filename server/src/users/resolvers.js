@@ -42,7 +42,26 @@ module.exports = {
     },
   },
   Mutation: {
-    register: async (parent, args, { dataSources }) => {
+    updateAccount: async (parent, args, { dataSources, user }) => {
+      const {
+        email,
+        firstName,
+        lastName,
+      } = args;
+
+      if (!user) throw new AuthenticationError();
+
+      const userData = await dataSources.models.User.findOne({ where: { id: user.sub } });
+
+      await userData.update({
+        email,
+        firstName,
+        lastName,
+      });
+
+      return userData;
+    },
+    registerAccount: async (parent, args, { dataSources }) => {
       const {
         email,
         firstName,
@@ -51,9 +70,9 @@ module.exports = {
         passwordConfirmation,
       } = args;
 
-      let user = await dataSources.models.User.findOne({ where: { email } });
+      let userData = await dataSources.models.User.findOne({ where: { email } });
 
-      if (user) {
+      if (userData) {
         throw new UserAlreadyExistsError('User with that email already exists');
       }
 
@@ -63,32 +82,32 @@ module.exports = {
 
       const passwordHash = auth.generatePasswordHash(password);
 
-      user = await dataSources.models.User.create({
+      userData = await dataSources.models.User.create({
         email,
         firstName,
         lastName,
         password: passwordHash,
       });
 
-      return generateAuthPayload(user);
+      return generateAuthPayload(userData);
     },
-    login: async (parent, args, { dataSources }) => {
+    loginUser: async (parent, args, { dataSources }) => {
       const { email, password } = args;
 
-      const user = await dataSources.models.User.findOne({ where: { email } });
+      const userData = await dataSources.models.User.findOne({ where: { email } });
 
       // TODO: Differentiate between users without password and invalid combinations
-      if (!user || !user.password) {
+      if (!userData || !userData.password) {
         throw new EmailOrPasswordUnknownError('Email or password unknown');
       }
 
-      const passwordValid = auth.comparePasswordHash(password, user.password);
+      const passwordValid = auth.comparePasswordHash(password, userData.password);
 
       if (!passwordValid) {
         throw new EmailOrPasswordUnknownError('Email or password unknown');
       }
 
-      return generateAuthPayload(user);
+      return generateAuthPayload(userData);
     },
   },
 };
