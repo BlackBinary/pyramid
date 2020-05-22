@@ -2,11 +2,14 @@ const { ApolloServer } = require('apollo-server-express');
 
 const models = require('@server/src/models');
 
-const typeDefs = require('@server/src/types');
-const resolvers = require('@server/src/resolvers');
+const users = require('@server/src/users');
 
 module.exports = new ApolloServer({
-  typeDefs,
-  resolvers,
+  typeDefs: [
+    users.typeDef,
+  ],
+  resolvers: [
+    users.resolvers,
+  ],
   context: () => ({ models }),
 });
