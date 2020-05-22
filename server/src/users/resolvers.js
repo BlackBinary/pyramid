@@ -15,10 +15,8 @@ const {
 const generateAuthPayload = (user) => {
   const token = jwt.sign(
     {
-      'https://pyramid.scheme/graphql': {
-        roles: [],
-        permissions: [],
-      },
+      roles: [],
+      permissions: [],
     },
     JWT_SECRET,
     {
