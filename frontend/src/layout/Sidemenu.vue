@@ -51,22 +51,20 @@ export default {
   .layout-basic {
     min-height: 100vh;
     .sidemenu {
-      background: linear-gradient(to right, $cerise, $qocuelicot);
-      -webkit-mask-image: linear-gradient(white,transparent);
-      mask-image: linear-gradient(white,transparent);
+      background: $blackCoral;
       padding-top: 10px;
       .nav-item {
         text-decoration: none;
         display: flex;
         margin: 5px;
         padding: 16px;
-        background: $blackCoral;
+        background: $gunMetal;
         border-radius: 12px;
         font-family: $baseFont;
         color: $white;
         display: flex;
         &:hover {
-          background: $gunMetal;
+          background: lighten($gunMetal, 50%);
         }
         i {
           margin-right: 10px;
