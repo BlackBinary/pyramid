@@ -5,21 +5,27 @@
     .form-wapper(v-if="account")
       .field
         PyramidInput(
+          @input="resetErrors"
           v-model="account.email"
           placeholder="Your Email"
         )
       .field
         PyramidInput(
+          @input="resetErrors"
           v-model="account.firstName"
           placeholder="Firstname"
         )
       .field
         PyramidInput(
+          @input="resetErrors"
           v-model="account.lastName"
           placeholder="Lastname"
         )
       .field
         button.button(@click="updateAccount") Update Information
+      .field(v-for="error in errors")
+        .fal.fa-exclamation
+        p {{ error }}
 </template>
 
 <script>
@@ -39,6 +45,7 @@ const accountQuery = gql`
 export default {
   data() {
     return {
+      errors: [],
       account: null,
     };
   },
@@ -48,6 +55,9 @@ export default {
     },
   },
   methods: {
+    resetErrors() {
+      this.errors = [];
+    },
     updateAccount() {
       const {
         firstName,
@@ -55,8 +65,9 @@ export default {
         email,
       } = this.account;
 
-      this.$apollo.mutate({
-        mutation: gql`
+      this.$apollo
+        .mutate({
+          mutation: gql`
           mutation UpdateAccount($email: String!, $firstName: String!, $lastName: String!) {
             updateAccount(email: $email, firstName: $firstName, lastName: $lastName) {
               id
@@ -66,11 +77,18 @@ export default {
             }
           }
         `,
-        variables: { firstName, lastName, email },
-        update: (store, { data: { updateAccount } }) => {
-          store.writeQuery({ query: accountQuery, data: { account: updateAccount } });
-        },
-      });
+          variables: { firstName, lastName, email },
+          update: (store, { data: { updateAccount } }) => {
+            store.writeQuery({ query: accountQuery, data: { account: updateAccount } });
+          },
+        })
+        .catch((error) => {
+          if (error.graphQLErrors) {
+            this.errors = error.graphQLErrors.map((e) => e.message);
+          } else {
+            console.error(error);
+          }
+        });
     },
   },
   components: {

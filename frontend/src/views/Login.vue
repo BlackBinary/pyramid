@@ -46,6 +46,7 @@ export default {
     },
     submitLogin() {
       this.resetErrors();
+
       this.$apollo
         .mutate({
           mutation: gql`

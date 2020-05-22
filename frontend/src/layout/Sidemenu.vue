@@ -1,12 +1,15 @@
 <template lang="pug">
-  .row.layout-basic
-    .col-xs-2.sidemenu
-      router-link.nav-item(v-for="item in menuItems" :to="item.to" :key="item.title")
-        i.fa.fal(:class="item.class")
-        p {{ item.title }}
-      img.sidemenu-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
-    .col-xs-10
-      router-view
+  div.layout-basic
+    .row.topbar
+      img.topbar-logo(alt="Pyramid Project Logo" src="@assets/logo-login.png")
+    .row
+      .col-xs-2.sidemenu
+        router-link.nav-item(v-for="item in menuItems" :to="item.to" :key="item.title")
+          i.fa.fal(:class="item.class")
+          p {{ item.title }}
+        img.sidemenu-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
+      .col-xs-10
+        router-view
 </template>
 
 <script>
@@ -50,8 +53,18 @@ export default {
 
 <style lang="scss">
   .layout-basic {
-    min-height: 100vh;
+    .topbar {
+      height: 62px;
+      background: lighten($gunMetal, 20%);;
+      .topbar-logo {
+        object-fit: scale-down;
+        padding: 6px;
+        height: 50px;
+        width: 50px;
+      }
+    }
     .sidemenu {
+      min-height: calc(100vh - 62px);
       background: $gunMetal;
       padding-top: 10px;
       .nav-item {
