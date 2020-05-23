@@ -9,6 +9,8 @@
           h2 {{ strategy.title }}
             .far.fa-arrow-right
           p {{ strategy.description }}
+          button.button(@click="deleteStrategy(strategy)")
+            .far.fa-trash
 </template>
 
 <script>
@@ -31,6 +33,10 @@ export default {
       console.log(strategy);
       console.log(`open strategy ${strategy.id}`);
       this.$router.push({ name: 'StrategyView', params: { strategyId: strategy.id } });
+    },
+    deleteStrategy(strategy) {
+      console.log('Delete strategy');
+      console.log(strategy);
     },
     addStrategy() {
       console.log('Add strategy');
