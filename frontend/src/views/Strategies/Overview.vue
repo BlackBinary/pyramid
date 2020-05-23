@@ -1,16 +1,14 @@
 <template lang="pug">
   div
-    h2 Strategies
-    p Here you'll find all your strategies
-    button.button(@click="addStrategy") Create Strategy
-    .row
-      .col-xs-3(v-for="strategy in myStrategies")
-        .strategy-card(@click="openStrategy(strategy)")
-          h2 {{ strategy.title }}
-            .far.fa-arrow-right
-          p {{ strategy.description }}
-          button.button(@click="deleteStrategy(strategy)")
-            .far.fa-trash
+    .row.m-b-xl
+      .col-xs-6
+        h2 Strategies
+        p Here you'll find all your strategies
+      .col-xs-6.has-text-right
+        button.button(@click="addStrategy") Create Strategy
+    transition-group.row(tag="div" name="list")
+      .col-xs-3(v-for="(strategy, index) in myStrategies" :key="`${strategy.id}`")
+        PyramidStrategyCard(:value="strategy")
 </template>
 
 <script>
@@ -29,22 +27,13 @@ export default {
     },
   },
   methods: {
-    openStrategy(strategy) {
-      console.log(strategy);
-      console.log(`open strategy ${strategy.id}`);
-      this.$router.push({ name: 'StrategyView', params: { strategyId: strategy.id } });
-    },
-    deleteStrategy(strategy) {
-      console.log('Delete strategy');
-      console.log(strategy);
-    },
     addStrategy() {
       console.log('Add strategy');
       this.$store.dispatch('addToaster', { message: 'Strategy added', type: 'success' });
       this.$apollo
         .mutate({
           mutation: CreateStrategy,
-          variables: { title: 'test', type: 1 },
+          variables: { title: 'test', description: 'BTC SMA', type: 1 },
           update: (store, { data: { createStrategy } }) => {
             // Read the data from our cache for this query.
             const data = store.readQuery({ query: getMyStrategies });
@@ -56,24 +45,12 @@ export default {
         });
     },
   },
+  components: {
+    PyramidStrategyCard: () => import('@frontend/components/cards/PyramidStrategyCard'),
+  },
 };
 </script>
 
 <style lang="scss">
-  .strategy-card {
-    h2 {
-      font-size: 28px;
-      .far {
-        padding-left: 8px;
-      }
-    }
-    min-height: 200px;
-    background: lighten($blackCoral, 20%);
-    margin: 10px;
-    padding: 10px;
-    &:hover {
-      cursor: pointer;
-      background: lighten($blackCoral, 40%);
-    }
-  }
+
 </style>

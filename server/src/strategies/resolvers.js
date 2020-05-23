@@ -65,5 +65,21 @@ module.exports = {
       // Return the newly generated strategy
       return strategyData;
     },
+    deleteStrategy: async (parent, args, { dataSources, user }) => {
+      // Get the user data sent by the client
+      const {
+        id,
+      } = args;
+
+      // User is not logged in
+      if (!user) throw new AuthenticationError();
+
+      // Find and Delete strategyData object
+      await dataSources.models.Strategy.destroy({
+        where: {
+          id,
+        },
+      });
+    },
   },
 };

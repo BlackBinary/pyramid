@@ -5,3 +5,8 @@ mutation CreateStrategy($title: String!, $type: Int!) {
         description
     }
 }
+mutation DeleteStrategy($id: ID!) {
+    deleteStrategy(id: $id) {
+        id
+    }
+}

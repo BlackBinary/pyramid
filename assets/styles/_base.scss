@@ -61,7 +61,7 @@ a {
 }
 
 .button {
-  display: block;
+  display: inline-block;
   color: $white;
   height: 35px;
   line-height: 35px;
@@ -94,6 +94,16 @@ a {
     width: 54px;
     height: 54px;
     line-height: 54px;
-    border-radius: 50%;
+    border-radius: 5px;
+  }
+
+  @each $n, $c in $pyramid-colors { // $n is the key, $c is the value
+    &.is-#{$n} {
+      background: #{$c};
+
+      &:hover {
+        background: darken($c, 5%);
+      }
+    }
   }
 }

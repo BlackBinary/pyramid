@@ -1,27 +1,32 @@
 <template lang="pug">
   div
-    h2 Account
-    p Here you'll find your information
-    .form-wapper(v-if="account")
-      PyramidField(icon="fa-at")
-        PyramidInput(
-          @input="resetErrors"
-          v-model="account.email"
-          placeholder="Your Email"
-        )
-      PyramidField(icon="fa-user")
-        PyramidInput(
-          @input="resetErrors"
-          v-model="account.firstName"
-          placeholder="Firstname"
-        )
-      PyramidField(icon="fa-user")
-        PyramidInput(
-          @input="resetErrors"
-          v-model="account.lastName"
-          placeholder="Lastname"
-        )
-      button.button(@click="updateAccount") Update Information
+    .row.m-b-lg
+      .col-xs-12
+        h1 Account
+        p Here you'll find your information
+    .row
+      .col-xs-3
+        .form-wapper(v-if="account")
+          h3.m-b-md Personal
+          PyramidField(icon="fa-at")
+            PyramidInput(
+              @input="resetErrors"
+              v-model="account.email"
+              placeholder="Your Email"
+            )
+          PyramidField(icon="fa-user")
+            PyramidInput(
+              @input="resetErrors"
+              v-model="account.firstName"
+              placeholder="Firstname"
+            )
+          PyramidField(icon="fa-user")
+            PyramidInput(
+              @input="resetErrors"
+              v-model="account.lastName"
+              placeholder="Lastname"
+            )
+          button.button.m-t-lg(@click="updateAccount") Update Information
 </template>
 
 <script>

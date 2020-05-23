@@ -12,10 +12,27 @@ $shadowColor: #202025;
 $cerise: #F0035E;
 $qocuelicot: #FE3A00;
 $blue: #3C48FF;
+$neonBlue: #4E5CFF;
 $caribbeanGreen: #09CEA4;
 
 $baseFont: 'Montserrat', sans-serif;
 
+// Lists and maps
+$pyramid-colors: (
+  'raisin-black': $raisinBlack, 
+  'gun-metal': $gunMetal,
+  'black-coral': $blackCoral,
+  'cerise': $cerise,
+  'qocuelicot': $qocuelicot, 
+  'blue': $blue,
+  'neon-blue': $neonBlue,
+  'caribbean-green': $caribbeanGreen
+) !default;
+
+
 @import '@assets/styles/_grid.scss';
 @import '@assets/styles/_base.scss';
 @import '@assets/styles/_transitions.scss';
+
+@import '@assets/styles/utilities/_spacings.scss';
+@import '@assets/styles/utilities/_alignments.scss';
