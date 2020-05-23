@@ -65,6 +65,8 @@ export default {
     playPauseStrategy(strategy) {
       console.log(strategy);
       this.strategyIsPaused = !this.strategyIsPaused;
+      const message = this.strategyIsPaused ? `Strategy ${this.strategy.title} Paused` : `Strategy ${this.strategy.title} Started`;
+      this.$store.dispatch('addToaster', { message, type: 'success' });
     },
   },
 };
@@ -91,7 +93,7 @@ export default {
 
   &--hitarea {
     cursor: pointer;
-    padding: 23px 23px 23px 30px;
+    padding: 23px 150px 23px 30px;
 
     h3 {
       font-size: 15px;

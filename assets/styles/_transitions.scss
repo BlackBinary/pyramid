@@ -36,3 +36,23 @@
   transform: scaleY(0);
   transform-origin: center top;
 }
+
+.modal-transition-enter,
+.modal-transition-leave-active {
+	opacity: 0;
+}
+
+.modal-transition-enter-active,
+.modal-transition-leave-active {
+	transition: opacity .2s ease;
+}
+
+.modal-transition-enter .pyramid-modal--card,
+.modal-transition-leave-active .pyramid-modal--card{
+	margin-bottom: -100px;
+}
+
+.modal-transition-enter-active .pyramid-modal--card,
+.modal-transition-leave-active .pyramid-modal--card{
+	transition: margin-bottom .2s ease;
+}
