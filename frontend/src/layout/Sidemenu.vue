@@ -21,21 +21,21 @@ export default {
             name: 'Home',
           },
           title: 'Home',
-          class: 'fa-home',
+          class: 'fa-tachometer-fast',
         },
         {
           to: {
             name: 'Strategies',
           },
           title: 'Strategies',
-          class: 'fa-lightbulb',
+          class: 'fa-chess',
         },
         {
           to: {
             name: 'PaperTrader',
           },
           title: 'PaperTrader',
-          class: 'fa-scroll',
+          class: 'fa-toilet-paper',
         },
         {
           to: {
@@ -110,6 +110,9 @@ export default {
           margin-top: -13px;
           margin-left: 20px;
           color: $white;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 600;
 
           transition: left 0.3s 0.1s ease, opacity 0.1s 0s ease;
         }
