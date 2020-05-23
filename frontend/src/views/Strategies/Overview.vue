@@ -40,6 +40,7 @@ export default {
     },
     addStrategy() {
       console.log('Add strategy');
+      this.$store.dispatch('addToaster', { message: 'Strategy added', type: 'success' });
       this.$apollo
         .mutate({
           mutation: CreateStrategy,
