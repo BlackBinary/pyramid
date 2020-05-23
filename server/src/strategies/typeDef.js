@@ -4,12 +4,27 @@ module.exports = gql`
   type Strategy {
     id: ID!
     title: String!
-    type: Int!
     description: String
     userId: ID!
     user: User
     createdAt: String
     updatedAt: String
+  }
+
+  enum Signal {
+    BUY
+    SELL
+  }
+
+  scalar Period
+
+  type StrategyIndicator {
+    id: ID!
+    name: String!
+    type: Signal!
+    params: JSONObject
+    chartPeriod: Period!
+    required: Boolean!
   }
 
   extend type Query {

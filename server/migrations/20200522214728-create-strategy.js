@@ -11,10 +11,6 @@ module.exports = {
       type: Sequelize.STRING,
       required: true,
     },
-    type: {
-      type: Sequelize.INTEGER,
-      required: true,
-    },
     description: {
       type: Sequelize.STRING,
     },

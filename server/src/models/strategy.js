@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
     },
     title: DataTypes.STRING,
-    type: DataTypes.INTEGER,
     description: DataTypes.STRING,
     userId: DataTypes.UUID,
   }, {});
