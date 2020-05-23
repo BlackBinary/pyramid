@@ -49,6 +49,7 @@ export default {
         })
         .then(async (response) => {
           await this.$store.commit('setAuthToken', response.data.loginUser.token);
+          this.$store.dispatch('addToaster', { message: 'Loggedin succesfully', type: 'success' });
           this.$router.push({ name: 'Home' });
         })
         .catch((error) => {
