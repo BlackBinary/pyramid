@@ -110,22 +110,4 @@ export default {
     margin-bottom: 10px;
   }
 }
-
-.button.round {
-  display: block;
-  color: $white;
-  width: 54px;
-  height: 54px;
-  line-height: 54px;
-  border-radius: 50%;
-  background-image: linear-gradient(to right, $blue 0%, #0085FF 51%, $blue 100%);
-  background-size: 200%;
-  background-position: left center;
-  transition: background 0.2s 0s ease;
-  cursor: pointer;
-
-  &:hover {
-    background-position: right center;
-  }
-}
 </style>

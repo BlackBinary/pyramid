@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="70px" height="62px" viewBox="0 0 70 62" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FE3A00" offset="0%"></stop>
+            <stop stop-color="#EF0064" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#FE3A00" offset="0%"></stop>
+            <stop stop-color="#EF0064" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Login" transform="translate(-683.000000, -302.000000)">
+            <g id="Group-3" transform="translate(561.000000, 234.000000)">
+                <g id="Group-2" transform="translate(124.000000, 71.000000)">
+                    <g id="Group-4">
+                        <g id="Group" transform="translate(1.000000, 0.000000)">
+                            <polygon id="Path" stroke="url(#linearGradient-1)" stroke-width="4.25" stroke-linejoin="round" points="32.1714715 0 64.5 56 0 56"></polygon>
+                            <path d="M0,56 L22.5404117,37.5913037 L64.5,56 M22.5404117,37.5913037 L32.25,2.30626578" id="Combined-Shape" stroke="url(#linearGradient-2)" stroke-width="1.5"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

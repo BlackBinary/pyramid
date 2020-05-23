@@ -1,15 +1,14 @@
 <template lang="pug">
   div.layout-basic
-    .row.topbar
-      img.topbar-logo(alt="Pyramid Project Logo" src="@assets/logo-login.png")
-    .row
-      .col-xs-2.sidemenu
+    .sidemenu
+      img.logo(alt="Pyramid Project Logo" src="@assets/logo-white.svg")
+      span.pyramid-name Pyramid
+      div.navigation
         router-link.nav-item(v-for="item in menuItems" :to="item.to" :key="item.title")
-          .far(:class="item.class")
-          p {{ item.title }}
-        img.sidemenu-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
-      .col-xs-10
-        router-view
+          .fal.nav-item--icon(:class="item.class")
+          span.nav-item--title {{ item.title }}
+    .content
+      router-view
 </template>
 
 <script>
@@ -52,44 +51,91 @@ export default {
 </script>
 
 <style lang="scss">
-  .layout-basic {
-    .topbar {
-      height: 62px;
-      background: lighten($gunMetal, 20%);;
-      .topbar-logo {
-        object-fit: scale-down;
-        padding: 6px;
-        height: 50px;
-        width: 50px;
-      }
+.layout-basic {
+  background: $raisinBlack;
+
+  .sidemenu {
+    min-height: 100vh;
+    background: $gunMetal;
+    width: 108px;
+    text-align: center;
+    padding: 15px 15px;
+    box-sizing: border-box;
+    position: fixed;
+
+    .pyramid-name {
+      font-weight: 600;
+      font-size: 10.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
-    .sidemenu {
-      min-height: calc(100vh - 62px);
-      background: $gunMetal;
-      padding-top: 10px;
+
+    .logo {
+      object-fit: scale-down;
+      padding: 6px;
+      height: 50px;
+      width: 50px;
+    }
+
+    .navigation {
+      margin-top: 25px;
+      padding: 25px 0;
+      border-top: 1px solid $blackCoral;
+
       .nav-item {
-        text-decoration: none;
-        display: flex;
-        margin: 5px;
-        padding: 16px;
-        background: $blackCoral;
-        border-radius: 12px;
-        font-family: $baseFont;
-        color: $white;
-        display: flex;
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 55px;
+        line-height: 55px;
+        color: $blackCoral;
+        transition: all 0.3s 0s ease;
+
+        .nav-item--icon {
+          font-size: 18px;
+        }
+
+        .nav-item--title {
+          position: absolute;
+          display: block;
+          opacity: 0;
+          top: 50%;
+          left: -200%;
+          line-height: 20px;
+          font-size: 12px;
+          background: $black;
+          border-radius: 2px;
+          padding: 0 6px;
+          font-size: 9px;
+          margin-top: -10px;
+          margin-left: 20px;
+          color: $white;
+
+          transition: left 0.3s 0.1s ease, opacity 0.1s 0s ease;
+        }
+
         &:hover {
-          background: lighten($blackCoral, 20%);
+          color: $white;
+
+          .nav-item--title {
+            display: block;
+            left: 50%;
+            opacity: 1;
+
+            transition: left 0.3s 0s ease, opacity 0.1s 0.2s ease;
+          }
         }
-        .far {
-          margin-right: 10px;
+
+        &.router-link-exact-active {
+          color: $white;
         }
-      }
-      .sidemenu-background {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
       }
     }
   }
+
+  .content {
+    margin-left: 108px;
+    padding: 93px 114px;
+  }
+}
 </style>

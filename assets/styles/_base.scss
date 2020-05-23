@@ -8,3 +8,92 @@ html, body {
   margin: 0;
   overflow-x: hidden;
 }
+
+h1 {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 9px;
+}
+
+h5 {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+h6 {
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 7px;
+}
+
+p {
+  margin-bottom: 15px;
+}
+
+
+a {
+  color: $white;
+  text-decoration: none;
+
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.button {
+  display: block;
+  color: $white;
+  height: 35px;
+  line-height: 35px;
+  padding: 0 15px;
+  border-radius: 5px;
+  background-image: linear-gradient(to right, $blue 0%, #0085FF 51%, $blue 100%);
+  background-size: 200%;
+  background-position: left center;
+  transition: background 0.2s 0s ease;
+  cursor: pointer;
+  border: 0;
+  font-weight: 600;
+
+  &:hover {
+    background-position: right center;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.round {
+    width: 54px;
+    height: 54px;
+    line-height: 54px;
+    border-radius: 50%;
+  }
+  
+  &.square {
+    width: 54px;
+    height: 54px;
+    line-height: 54px;
+    border-radius: 50%;
+  }
+}
