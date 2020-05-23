@@ -16,9 +16,6 @@
           type="password"
           placeholder="Your password"
         )
-      .field(v-for="error in errors")
-        .fal.fa-exclamation
-        p {{ error }}
     button.button.round(@click="submitLogin")
       .far.fa-arrow-right
     img.login-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
@@ -57,6 +54,7 @@ export default {
         .catch((error) => {
           if (error.graphQLErrors) {
             this.errors = error.graphQLErrors.map((e) => e.message);
+            this.$store.dispatch('addToaster', { message: this.errors[0], type: 'error' });
           } else {
             console.error(error);
           }
