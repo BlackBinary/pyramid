@@ -53,5 +53,14 @@ export default {
     outline: none;
     border-color: $white;
   }
+
+  &:-webkit-autofill {
+    background: transparent;
+    border: 0px solid transparent;
+    border-bottom: 1px solid $blackCoral;
+    line-height: 35px;
+    color: $white;
+    width: 100%;
+  }
 }
 </style>
