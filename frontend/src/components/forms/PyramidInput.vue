@@ -54,13 +54,21 @@ export default {
     border-color: $white;
   }
 
-  &:-webkit-autofill {
-    background: transparent;
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
     border: 0px solid transparent;
     border-bottom: 1px solid $blackCoral;
-    line-height: 35px;
-    color: $white;
-    width: 100%;
+    background-color: transparent;
+    -webkit-text-fill-color: $white;
+    -webkit-box-shadow: 0 0 transparent inset;
+    transition: background-color 5000s ease-in-out 0s;
   }
 }
 </style>
