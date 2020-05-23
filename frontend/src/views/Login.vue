@@ -3,15 +3,13 @@
   .login-body
     img(alt="Pyramid Project Logo" src="@assets/logo-login.png")
     .form-wapper
-      .field
-        .fal.fa-user
+      PyramidField(icon="fa-user")
         PyramidInput(
           @input="resetErrors"
           v-model="credentials.email"
           placeholder="Your Email"
         )
-      .field
-        .fal.fa-key
+      PyramidField(icon="fa-key")
         PyramidInput(
           @input="resetErrors"
           v-model="credentials.password"
@@ -67,6 +65,7 @@ export default {
   },
   components: {
     PyramidInput: () => import('@frontend/components/forms/PyramidInput'),
+    PyramidField: () => import('@frontend/components/forms/PyramidField'),
   },
 };
 </script>
@@ -95,19 +94,5 @@ export default {
 
 .form-wapper {
   padding: 60px 0 20px;
-}
-
-.field {
-  display: flex;
-  .fal {
-    margin-right: 10px;
-    font-size: 16px;
-    line-height: 38px;
-    color: $blackCoral;
-  }
-
-  .input {
-    margin-bottom: 10px;
-  }
 }
 </style>

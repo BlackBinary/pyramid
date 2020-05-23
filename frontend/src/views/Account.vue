@@ -3,29 +3,25 @@
     h2 Account
     p Here you'll find your information
     .form-wapper(v-if="account")
-      .field
+      PyramidField(icon="fa-at")
         PyramidInput(
           @input="resetErrors"
           v-model="account.email"
           placeholder="Your Email"
         )
-      .field
+      PyramidField(icon="fa-user")
         PyramidInput(
           @input="resetErrors"
           v-model="account.firstName"
           placeholder="Firstname"
         )
-      .field
+      PyramidField(icon="fa-user")
         PyramidInput(
           @input="resetErrors"
           v-model="account.lastName"
           placeholder="Lastname"
         )
-      .field
-        button.button(@click="updateAccount") Update Information
-      .field(v-for="error in errors")
-        .fal.fa-exclamation
-        p {{ error }}
+      button.button(@click="updateAccount") Update Information
 </template>
 
 <script>
@@ -64,11 +60,13 @@ export default {
               query: getAccount,
               data: { account },
             });
+            this.$store.dispatch('addToaster', { message: 'Saved', type: 'success' });
           },
         })
         .catch((error) => {
           if (error.graphQLErrors) {
             this.errors = error.graphQLErrors.map((e) => e.message);
+            this.$store.dispatch('addToaster', { message: this.errors[0], type: 'error' });
           } else {
             console.error(error);
           }
@@ -77,6 +75,7 @@ export default {
   },
   components: {
     PyramidInput: () => import('@frontend/components/forms/PyramidInput'),
+    PyramidField: () => import('@frontend/components/forms/PyramidField'),
   },
 };
 </script>
