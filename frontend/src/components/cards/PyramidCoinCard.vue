@@ -35,6 +35,13 @@ export default {
   background: $gunMetal;
   position: relative;
   cursor: pointer;
+  box-shadow: 0 0 0 rgba($shadowColor, 0);
+  transition: all 0.2s 0s ease-in-out;
+
+  &:hover {
+    box-shadow: 0px 5px 15px $shadowColor;
+    background: lighten($gunMetal, 2%);
+  }
 
   &.is-active {
     background: $blue;

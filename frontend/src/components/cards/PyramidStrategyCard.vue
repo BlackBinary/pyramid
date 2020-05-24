@@ -79,6 +79,12 @@ export default {
   position: relative;
   border-radius: 5px;
 
+  transition: all 0.2s 0s ease-in-out;
+
+  &:hover {
+    background: lighten($gunMetal, 2%);
+  }
+
   &:before {
     content: '';
     position: absolute;
