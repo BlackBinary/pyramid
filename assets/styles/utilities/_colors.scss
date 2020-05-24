@@ -1,0 +1,5 @@
+@each $n, $c in $pyramid-colors { // $n is the key, $c is the value
+  .has-text-#{$n} {
+    color: #{$c};
+  }
+}
