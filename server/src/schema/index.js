@@ -3,8 +3,8 @@ const { GraphQLJSON, GraphQLJSONObject } = require('graphql-type-json');
 
 const models = require('@server/src/models');
 
-const users = require('@server/src/users');
-const strategies = require('@server/src/strategies');
+const users = require('@server/src/schema/users');
+const strategies = require('@server/src/schema/strategies');
 
 const defaultDef = gql`
   # Custom scalar JSON type see https://www.npmjs.com/package/graphql-type-json

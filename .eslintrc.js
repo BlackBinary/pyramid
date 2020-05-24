@@ -27,12 +27,12 @@ module.exports = {
           resolve: {
             extensions: ['.js', '.vue', '.json'],
             alias: {
-              '@root': path.resolve(__dirname),
               '@data': path.resolve(__dirname, 'data'),
               '@server': path.resolve(__dirname, 'server'),
               '@assets': path.resolve(__dirname, 'assets'),
               '@frontend': path.resolve(__dirname, 'frontend/src'),
               '@indicators': path.resolve(__dirname, 'indicators'),
+              '@root': path.resolve(__dirname),
             },
           },
         },

@@ -2,12 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@root/*": ["./*"],
       "@data/*": ["data/*"],
       "@server/*": ["server/*"],
       "@assets/*": ["assets/*"],
       "@frontend/*": ["frontend/src/*"],
       "@indicators/*": ["indicators/*"],
+      "@root/*": ["./*"],
     }
   }
 }

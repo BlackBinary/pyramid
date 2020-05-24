@@ -66,12 +66,12 @@
     "vue-template-compiler": "^2.6.11"
   },
   "_moduleAliases": {
-    "@root": ".",
     "@data": "data/",
     "@server": "server/",
     "@assets": "assets/",
     "@frontend": "frontend/src",
-    "@indicators": "indicators/"
+    "@indicators": "indicators/",
+    "@root": "."
   },
   "bugs": {
     "url": "https://github.com/BlackBinary/pyramid/issues"
