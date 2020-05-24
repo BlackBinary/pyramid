@@ -3,7 +3,11 @@ div
   .row.m-b-xl
     h1 Dashboard
   .row.m-b-xl
-    .col-xs-9 test
+    .col-xs-9
+      PyramidTabs
+        PyramidTab(name="Trade History" :selected="true") lalalalala
+        PyramidTab(name="Order Book") lalalalalal 2
+        PyramidTab(name="Active Orders") lalalalalal 2
     .col-xs-3
       .row.m-b-lg
         .col-xs-6
@@ -38,6 +42,8 @@ export default {
   },
   components: {
     PyramidStrategyCard: () => import('@frontend/components/cards/PyramidStrategyCard'),
+    PyramidTabs: () => import('@frontend/components/tabs/PyramidTabs'),
+    PyramidTab: () => import('@frontend/components/tabs/PyramidTab'),
     StrategyModal: () => import('@frontend/views/Strategies/modals/StrategyModal'),
   },
 };
