@@ -1,4 +1,4 @@
-query getMyStrategies {
+query GetMyStrategies {
     myStrategies {
         id
         name

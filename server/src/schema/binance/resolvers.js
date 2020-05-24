@@ -2,11 +2,10 @@ const binance = require('@server/src/lib/binance');
 
 module.exports = {
   Query: {
-    getHistoricCandles: async (parent, args) => {
-      console.log(args.input);
+    historicCandles: async (parent, args) => {
       const {
         input: {
-          pair,
+          symbol,
           interval,
           limit,
           startTime,
@@ -14,9 +13,11 @@ module.exports = {
         },
       } = args;
 
+      const parsedSymbol = symbol.toUpperCase();
+
       const ticksData = await new Promise((resolve, reject) => {
-        binance.candlesticks(pair, interval, (error, ticks, symbol) => {
-          console.log(symbol);
+        binance.candlesticks(parsedSymbol, interval, (error, ticks, rSymbol) => {
+          console.log(rSymbol);
           if (error) {
             reject(error);
           }

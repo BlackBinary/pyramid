@@ -16,7 +16,7 @@ module.exports = gql`
   }
 
   input HistoricCandleInput {
-    pair: String!
+    symbol: String!
     interval: String! = "5m"
     limit: Int! = 500
     startTime: Int
@@ -24,6 +24,6 @@ module.exports = gql`
   }
 
   extend type Query {
-    getHistoricCandles(input: HistoricCandleInput): [Tick]
+    historicCandles(input: HistoricCandleInput): [Tick]
   }
 `;

@@ -1,6 +1,6 @@
 <template lang="pug">
 TradingVue(
-  :data="this.$data"
+  :data="chartData"
   :color-back="colors.colorBack"
   :color-grid="colors.colorGrid"
   :color-text="colors.colorText"
@@ -21,14 +21,18 @@ import TradingVue from 'trading-vue-js';
 export default {
   name: 'PyramidCandleChart',
   props: {
-    value: {
+    data: {
       type: Array,
       default: () => [],
+    },
+    timeframe: {
+      type: String,
+      default: '1m',
     },
   },
   data() {
     return {
-      ohlcv: [],
+      ohlcv: null,
       colors: {
         colorBack: '#272731',
         colorGrid: '#454554',
@@ -42,10 +46,18 @@ export default {
       font: '12px "Montserrat", sans-serif',
     };
   },
-  mounted() {
-    this.ohlcv = this.value.map(({
-      time, close, high, low, open, volume,
-    }) => ([time, open, high, low, close, volume]));
+  computed: {
+    chartData() {
+      return {
+        chart: {
+          type: 'Candles',
+          data: this.data.map(({
+            time, close, high, low, open, volume,
+          }) => ([time, open, high, low, close, volume])),
+          tf: this.timeframe,
+        },
+      };
+    },
   },
   components: {
     TradingVue,

@@ -2,10 +2,13 @@
 div
   .row.m-b-xl
     .col-xs-2(v-for="(coinCard, index) in coinCards")
-      PyramidCoinCard(:data="coinCard" @click.native="setChartWithCoinData(index)")
+      PyramidCoinCard(
+        :data="coinCardData(coinCard, index)"
+        @click.native="activeCardIndex = index"
+      )
   .row.m-b-xl
     .col-xs-12
-      PyramidCandleChart(v-model="getHistoricCandles")
+      PyramidCandleChart(:data="historicCandles")
   .row.m-b-xl
     .col-xs-12
   .row.m-b-xl
@@ -42,30 +45,34 @@ div
 </template>
 
 <script>
-import { getMyStrategies } from '@frontend/apollo/strategies/queries.gql';
-import { HistoricCandles } from '@frontend/apollo/chart/queries.gql';
+import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+import { GetHistoricCandles } from '@frontend/apollo/chart/queries.gql';
 
 export default {
   data() {
     return {
+      activeCardIndex: 0,
       myStrategies: [],
-      getHistoricCandles: [],
+      historicCandles: [],
       addStrategyModal: false,
       coinCards: [
         {
-          title: 'euro / btc',
+          title: 'btc / eur',
+          symbol: 'btceur',
           value: '9,803.12',
           goingUp: true,
           isActive: true,
         },
         {
-          title: 'EUR / ETH',
+          title: 'eth / btc',
+          symbol: 'ethbtc',
           value: '9,803.12',
           goingUp: true,
           isActive: false,
         },
         {
-          title: 'EUR / LTC',
+          title: 'ltc / btc',
+          symbol: 'ltcbtc',
           value: '9,803.12',
           goingUp: false,
           isActive: false,
@@ -177,16 +184,30 @@ export default {
   },
   apollo: {
     myStrategies: {
-      query: getMyStrategies,
+      query: GetMyStrategies,
     },
-    getHistoricCandles: {
-      query: HistoricCandles,
-      variables: {
-        pair: 'BNBBTC',
+    historicCandles: {
+      query: GetHistoricCandles,
+      pollInterval: 1000 * 60,
+      variables() {
+        return {
+          symbol: this.activeCardData.symbol,
+        };
       },
     },
   },
+  computed: {
+    activeCardData() {
+      return this.coinCards[this.activeCardIndex];
+    },
+  },
   methods: {
+    coinCardData(coinCard, index) {
+      return {
+        ...coinCard,
+        isActive: this.activeCardIndex === index,
+      };
+    },
     addStrategy() {
       this.addStrategyModal = true;
     },
