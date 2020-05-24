@@ -71,7 +71,7 @@
     "@server": "server/",
     "@assets": "assets/",
     "@frontend": "frontend/src",
-    "@strategies": "strategies/"
+    "@indicators": "indicators/"
   },
   "bugs": {
     "url": "https://github.com/BlackBinary/pyramid/issues"
