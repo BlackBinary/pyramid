@@ -1,8 +1,9 @@
 <template lang="pug">
 div
   .row.m-b-xl
-    .col-xs-12
-      h1 Dashboard
+    .col-xs-2(v-for="(coinCard, index) in coinCards")
+      PyramidCoinCard(:data="coinCard" @click.native="setChartWithCoinData(index)")
+  .row.m-b-xl
     .col-xs-12
       PyramidCandleChart(v-model="chartData")
   .row.m-b-xl
@@ -48,6 +49,26 @@ export default {
     return {
       myStrategies: [],
       addStrategyModal: false,
+      coinCards: [
+        {
+          title: 'euro / btc',
+          value: '9,803.12',
+          goingUp: true,
+          isActive: true,
+        },
+        {
+          title: 'EUR / ETH',
+          value: '9,803.12',
+          goingUp: true,
+          isActive: false,
+        },
+        {
+          title: 'EUR / LTC',
+          value: '9,803.12',
+          goingUp: false,
+          isActive: false,
+        },
+      ],
       chartData: [
         [1551128400000, 33, 37.1, 14, 14, 196],
         [1551132000000, 13.7, 30, 6.6, 30, 206],
@@ -171,6 +192,15 @@ export default {
     completeOrErrorClass(int) {
       return int === 0 ? 'has-text-caribbean-green' : 'has-text-cerise';
     },
+    setChartWithCoinData(index) {
+      this.coinCards = this.coinCards.map((coinCard) => ({
+        ...coinCard,
+        isActive: false,
+      }));
+      this.coinCards[index].isActive = true;
+
+      // @TO-DO set ChartData
+    },
   },
   components: {
     PyramidStrategyCard: () => import('@frontend/components/cards/PyramidStrategyCard'),
@@ -178,6 +208,7 @@ export default {
     PyramidTab: () => import('@frontend/components/tabs/PyramidTab'),
     PyramidDataTable: () => import('@frontend/components/datatable/PyramidDataTable'),
     PyramidCandleChart: () => import('@frontend/components/chart/PyramidCandleChart'),
+    PyramidCoinCard: () => import('@frontend/components/cards/PyramidCoinCard'),
     StrategyModal: () => import('@frontend/views/Strategies/modals/StrategyModal'),
   },
 };
