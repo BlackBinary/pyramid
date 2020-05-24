@@ -42,7 +42,6 @@ module.exports = {
       // Return all strategies a user is linked to
       return dataSources.models.Strategy.findAll({ where: { userId: user.sub } });
     },
-
   },
   Mutation: {
     createStrategy: async (parent, args, { dataSources, user }) => {
