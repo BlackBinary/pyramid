@@ -49,7 +49,7 @@ module.exports = {
       // Get the user data sent by the client
       const {
         title,
-        type,
+        description,
       } = args;
 
       // User is not logged in
@@ -58,7 +58,7 @@ module.exports = {
       // Set the new strategyData object
       const strategyData = await dataSources.models.Strategy.create({
         title,
-        type,
+        description,
         userId: user.sub,
       });
 

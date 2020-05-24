@@ -34,7 +34,7 @@ module.exports = gql`
   }
 
   extend type Mutation {
-    createStrategy(title: String!): Strategy!
+    createStrategy(title: String!, description: String): Strategy!
     deleteStrategy(id: ID!): Strategy
   }
 `;
