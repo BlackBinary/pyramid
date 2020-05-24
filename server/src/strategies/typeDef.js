@@ -20,6 +20,8 @@ module.exports = gql`
 
   type StrategyIndicator {
     id: ID!
+    strategyId: ID!
+    indicatorId: ID!
     name: String!
     type: Signal!
     params: JSONObject
@@ -35,6 +37,7 @@ module.exports = gql`
 
   extend type Mutation {
     createStrategy(title: String!, description: String): Strategy!
+    # createStrategyIndicator(strategyId: ID!, indicatorId: ID!, params: JSONObject!, chartPeriod: Period!, type: Signal!, required: Boolean!)
     deleteStrategy(id: ID!): Strategy
   }
 `;
