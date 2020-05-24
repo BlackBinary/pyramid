@@ -19,7 +19,7 @@
 
 <script>
 import { CreateStrategy } from '@frontend/apollo/strategies/mutations.gql';
-import { getMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
 
 export default {
   props: {
@@ -59,11 +59,11 @@ export default {
             variables: this.strategy,
             update: (store, { data: { createStrategy } }) => {
               // Read the data from our cache for this query.
-              const data = store.readQuery({ query: getMyStrategies });
+              const data = store.readQuery({ query: GetMyStrategies });
               // Add our data from the mutation to the end
               data.myStrategies.push(createStrategy);
               // Write our data back to the cache.
-              store.writeQuery({ query: getMyStrategies, data });
+              store.writeQuery({ query: GetMyStrategies, data });
             },
           });
         this.close();
