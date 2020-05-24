@@ -1,5 +1,5 @@
-mutation CreateStrategy($title: String!, $type: Int!) {
-    createStrategy(title: $title, type: $type) {
+mutation CreateStrategy($title: String!, $description: String) {
+    createStrategy(title: $title, description: $description) {
         id
         title
         description
