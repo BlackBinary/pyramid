@@ -2,7 +2,7 @@
   div#app
     router-view
     transition-group.messageArea(name="slide-in-right" tag="ul")
-      li(v-for="(toaster, index) in toasters" :key="`toaster_${index}`")
+      li(v-for="(toaster, index) in toasters" :key="`${toaster.id}`")
         PyramidToaster(
           :value="toaster"
         )
