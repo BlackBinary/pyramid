@@ -1,0 +1,10 @@
+query HistoricCandles($pair: String!) {
+  getHistoricCandles (input:{ pair: $pair, interval: "1m", limit: 1000 }) {
+    time
+    close
+    high
+    low
+    open
+    volume
+  }
+}

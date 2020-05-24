@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      ohlcv: this.value,
+      ohlcv: [],
       colors: {
         colorBack: '#272731',
         colorGrid: '#454554',
@@ -41,6 +41,11 @@ export default {
       },
       font: '12px "Montserrat", sans-serif',
     };
+  },
+  mounted() {
+    this.ohlcv = this.value.map(({
+      time, close, high, low, open, volume,
+    }) => ([time, open, high, low, close, volume]));
   },
   components: {
     TradingVue,

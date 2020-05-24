@@ -5,7 +5,7 @@ div
       PyramidCoinCard(:data="coinCard" @click.native="setChartWithCoinData(index)")
   .row.m-b-xl
     .col-xs-12
-      PyramidCandleChart(v-model="chartData")
+      PyramidCandleChart(v-model="getHistoricCandles")
   .row.m-b-xl
     .col-xs-12
   .row.m-b-xl
@@ -43,11 +43,13 @@ div
 
 <script>
 import { getMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+import { HistoricCandles } from '@frontend/apollo/chart/queries.gql';
 
 export default {
   data() {
     return {
       myStrategies: [],
+      getHistoricCandles: [],
       addStrategyModal: false,
       coinCards: [
         {
@@ -68,13 +70,6 @@ export default {
           goingUp: false,
           isActive: false,
         },
-      ],
-      chartData: [
-        [1551128400000, 33, 37.1, 14, 14, 196],
-        [1551132000000, 13.7, 30, 6.6, 30, 206],
-        [1551135600000, 29.9, 33, 21.3, 21.8, 74],
-        [1551139200000, 21.7, 25.9, 18, 24, 140],
-        [1551142800000, 24.1, 24.1, 24, 24.1, 29],
       ],
       headers: [
         {
@@ -183,6 +178,12 @@ export default {
   apollo: {
     myStrategies: {
       query: getMyStrategies,
+    },
+    getHistoricCandles: {
+      query: HistoricCandles,
+      variables: {
+        pair: 'BNBBTC',
+      },
     },
   },
   methods: {
