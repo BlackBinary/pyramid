@@ -4,8 +4,8 @@
     thead
       tr
         th(v-for="header in headers") {{ header.name }}
-    transition-group(tag="tbody" transition="list")
-      tr(v-for="row in rows" :key="Math.floor(Math.random() * 100)")
+    tbody
+      tr(v-for="row in rows")
         slot(v-bind:row="row")
 </template>
 
