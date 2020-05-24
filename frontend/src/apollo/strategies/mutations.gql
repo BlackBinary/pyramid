@@ -1,10 +1,11 @@
-mutation CreateStrategy($title: String!, $description: String) {
-    createStrategy(title: $title, description: $description) {
+mutation CreateStrategy($name: String!, $description: String) {
+    createStrategy(name: $name, description: $description) {
         id
-        title
+        name
         description
     }
 }
+
 mutation DeleteStrategy($id: ID!) {
     deleteStrategy(id: $id) {
         id

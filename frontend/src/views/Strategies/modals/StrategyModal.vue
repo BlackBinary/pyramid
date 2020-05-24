@@ -4,8 +4,8 @@
       div.form-wapper(slot="content")
         PyramidField(icon="fa-pen")
           PyramidInput(
-            v-model="strategy.title"
-            placeholder="Strategy Title"
+            v-model="strategy.name"
+            placeholder="Strategy Name"
           )
         PyramidField(icon="fa-pen")
           PyramidInput(
@@ -13,7 +13,7 @@
             placeholder="Strategy Description"
           )
       div(slot="footer").has-text-right
-        button.button.is-black-coral.m-r-xs Cancel
+        button.button.is-black-coral.m-r-xs(@click="close") Close
         button.button.is-caribbean-green(@click="addStrategy") Create Strategy
 </template>
 
@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       strategy: {
-        title: '',
+        name: '',
         description: '',
       },
     };
@@ -47,8 +47,11 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.addStrategyModal = false;
+    },
     addStrategy() {
-      if (this.strategy.title.length) {
+      if (this.strategy.name.length) {
         this.$store.dispatch('addToaster', { message: 'Strategy added', type: 'success' });
         this.$apollo
           .mutate({
@@ -63,13 +66,13 @@ export default {
               store.writeQuery({ query: getMyStrategies, data });
             },
           });
-        this.addStrategyModal = false;
+        this.close();
         this.strategy = {
-          title: '',
+          name: '',
           description: '',
         };
       } else {
-        this.$store.dispatch('addToaster', { message: 'Strategy titles are mandatory', type: 'error' });
+        this.$store.dispatch('addToaster', { message: 'Strategy name is mandatory', type: 'error' });
       }
     },
   },

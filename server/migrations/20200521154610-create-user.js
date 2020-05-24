@@ -13,9 +13,6 @@ module.exports = {
     lastName: {
       type: Sequelize.STRING,
     },
-    prefix: {
-      type: Sequelize.STRING,
-    },
     email: {
       type: Sequelize.STRING,
       unique: true,

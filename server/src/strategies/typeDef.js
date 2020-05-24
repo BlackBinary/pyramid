@@ -3,12 +3,27 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
   type Strategy {
     id: ID!
-    title: String!
+    name: String!
     description: String
     userId: ID!
     user: User
     createdAt: String
     updatedAt: String
+  }
+
+  type Indicator {
+    id: ID!
+    name: String!
+  }
+
+  type StrategyIndicator {
+    id: ID!
+    strategyId: ID!
+    indicatorId: ID!
+    type: Signal!
+    params: JSONObject
+    chartPeriod: Period!
+    required: Boolean!
   }
 
   enum Signal {
@@ -18,17 +33,6 @@ module.exports = gql`
 
   scalar Period
 
-  type StrategyIndicator {
-    id: ID!
-    strategyId: ID!
-    indicatorId: ID!
-    name: String!
-    type: Signal!
-    params: JSONObject
-    chartPeriod: Period!
-    required: Boolean!
-  }
-
   extend type Query {
     strategies: [Strategy]
     myStrategies: [Strategy]
@@ -36,7 +40,7 @@ module.exports = gql`
   }
 
   extend type Mutation {
-    createStrategy(title: String!, description: String): Strategy!
+    createStrategy(name: String!, description: String): Strategy!
     deleteStrategy(id: ID!): Strategy
     # createStrategyIndicator(strategyId: ID!, indicatorId: ID!, params: JSONObject!, chartPeriod: Period!, type: Signal!, required: Boolean!): StrategyIndicator!
     # deleteStrategyIndicator(id: ID!): StrategyIndicator

@@ -46,9 +46,9 @@ module.exports = {
   },
   Mutation: {
     createStrategy: async (parent, args, { dataSources, user }) => {
-      // Get the user data sent by the client
+      // Get the data sent by the client
       const {
-        title,
+        name,
         description,
       } = args;
 
@@ -57,7 +57,7 @@ module.exports = {
 
       // Set the new strategyData object
       const strategyData = await dataSources.models.Strategy.create({
-        title,
+        name,
         description,
         userId: user.sub,
       });
@@ -66,7 +66,7 @@ module.exports = {
       return strategyData;
     },
     deleteStrategy: async (parent, args, { dataSources, user }) => {
-      // Get the user data sent by the client
+      // Get the data sent by the client
       const {
         id,
       } = args;
