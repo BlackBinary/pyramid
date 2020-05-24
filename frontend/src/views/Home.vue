@@ -1,7 +1,12 @@
 <template lang="pug">
 div
   .row.m-b-xl
-    h1 Dashboard
+    .col-xs-12
+      h1 Dashboard
+    .col-xs-12
+      PyramidCandleChart(v-model="chartData")
+  .row.m-b-xl
+    .col-xs-12
   .row.m-b-xl
     .col-xs-8
       PyramidTabs
@@ -43,6 +48,13 @@ export default {
     return {
       myStrategies: [],
       addStrategyModal: false,
+      chartData: [
+        [1551128400000, 33, 37.1, 14, 14, 196],
+        [1551132000000, 13.7, 30, 6.6, 30, 206],
+        [1551135600000, 29.9, 33, 21.3, 21.8, 74],
+        [1551139200000, 21.7, 25.9, 18, 24, 140],
+        [1551142800000, 24.1, 24.1, 24, 24.1, 29],
+      ],
       headers: [
         {
           name: 'Type',
@@ -165,6 +177,7 @@ export default {
     PyramidTabs: () => import('@frontend/components/tabs/PyramidTabs'),
     PyramidTab: () => import('@frontend/components/tabs/PyramidTab'),
     PyramidDataTable: () => import('@frontend/components/datatable/PyramidDataTable'),
+    PyramidCandleChart: () => import('@frontend/components/chart/PyramidCandleChart'),
     StrategyModal: () => import('@frontend/views/Strategies/modals/StrategyModal'),
   },
 };

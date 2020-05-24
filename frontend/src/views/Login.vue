@@ -16,8 +16,8 @@
           type="password"
           placeholder="Your password"
         )
-    button.button.round(@click="submitLogin")
-      .far.fa-arrow-right
+      button.button.round.m-t-lg(@click="submitLogin")
+        .far.fa-arrow-right
     img.login-background(alt="Pyramid Project Gradient" src="@assets/login-background.png")
 </template>
 
@@ -89,9 +89,11 @@ export default {
     left: 0;
     right: 0;
   }
+
+  .form-wapper {
+    padding: 60px 0 20px;
+    text-align: left;
+  }
 }
 
-.form-wapper {
-  padding: 60px 0 20px;
-}
 </style>

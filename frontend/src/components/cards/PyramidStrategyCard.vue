@@ -1,8 +1,8 @@
 <template lang="pug">
   .strategy-card
     .strategy-card--hitarea(@click="openStrategy(strategy)")
-      h3 {{ strategy.title }}
-      p {{ strategy.description }}
+      h3 {{ strategy.name }}
+      span {{ strategy.description }}
     .strategy-card--button-wrapper
       button.button.m-r-sm.square(
         @click="playPauseStrategy(strategy)"
