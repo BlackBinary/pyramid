@@ -53,11 +53,7 @@ export default {
         this.$apollo
           .mutate({
             mutation: CreateStrategy,
-            variables: {
-              title: this.strategy.title,
-              description: this.strategy.description,
-              type: 1,
-            },
+            variables: this.strategy,
             update: (store, { data: { createStrategy } }) => {
               // Read the data from our cache for this query.
               const data = store.readQuery({ query: getMyStrategies });
