@@ -9,10 +9,10 @@
  * When MACD pos buy. When MACD neg sell
  */
 
-const BaseStrategy = require('@root/server/src/lib/strategy/base');
+const BaseStrategy = require('@server/src/lib/strategy/base');
 
-const ema = require('@root/server/src/lib/indicators/ema');
-const sma = require('@root/server/src/lib/indicators/sma');
+const ema = require('@indicators/ema');
+const sma = require('@indicators/sma');
 
 class Strategy extends BaseStrategy {
   constructor(test = false) {

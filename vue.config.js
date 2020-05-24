@@ -22,10 +22,12 @@ module.exports = {
     },
     resolve: {
       alias: {
-        '@root': path.resolve(__dirname),
-        '@assets': path.resolve(__dirname, 'assets'),
+        '@data': path.resolve(__dirname, 'data'),
         '@server': path.resolve(__dirname, 'server'),
+        '@assets': path.resolve(__dirname, 'assets'),
         '@frontend': path.resolve(__dirname, 'frontend/src'),
+        '@indicators': path.resolve(__dirname, 'indicators'),
+        '@root': path.resolve(__dirname),
       },
     },
   },

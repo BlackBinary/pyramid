@@ -14,7 +14,7 @@ const {
   EmailOrPasswordUnknownError,
   PasswordsDoNotMatchError,
   UserAlreadyExistsError,
-} = require('@server/src/users/errors');
+} = require('@server/src/schema/users/errors');
 
 const generateAuthPayload = (user) => {
   // TODO: Add actual roles and permissions
