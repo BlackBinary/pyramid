@@ -13,7 +13,7 @@ div
 </template>
 
 <script>
-import { getMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
 
 export default {
   data() {
@@ -24,7 +24,7 @@ export default {
   },
   apollo: {
     myStrategies: {
-      query: getMyStrategies,
+      query: GetMyStrategies,
     },
   },
   methods: {
