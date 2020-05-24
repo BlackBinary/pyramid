@@ -22,7 +22,10 @@ export default new Vuex.Store({
   },
   actions: {
     addToaster: ({ commit }, payload) => {
-      commit('setToasters', payload);
+      commit('setToasters', {
+        ...payload,
+        id: Math.floor(Math.random() * 100),
+      });
       function timeout() {
         setTimeout(() => {
           commit('unsetToasters');

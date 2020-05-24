@@ -2,7 +2,7 @@
 	transition: all .2s ease;
 }
 .slide-in-right-leave-active {
-	transition: all .2s ease;
+  transition: all .2s ease;
 }
 .slide-in-right-enter, .slide-in-right-leave-to{
 	transform: translateX(50px);
