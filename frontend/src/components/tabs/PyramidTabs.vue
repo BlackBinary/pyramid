@@ -83,4 +83,9 @@ export default {
     }
   }
 }
+.tabs-details {
+  background: $gunMetal;
+  border-radius: 5px;
+  padding: 15px;
+}
 </style>

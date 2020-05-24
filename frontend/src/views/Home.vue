@@ -3,7 +3,7 @@ div
   .row.m-b-xl
     h1 Dashboard
   .row.m-b-xl
-    .col-xs-9
+    .col-xs-8
       PyramidTabs
         PyramidTab(name="Trade History" :selected="true")
           PyramidDataTable(:headers="headers" :rows="rows")
@@ -20,8 +20,9 @@ div
                 )
                   | {{ cols.status === 1 ? 'Denied' : 'Completed' }}
                 template(v-else) {{ cols.content }}
-        PyramidTab(name="Order Book") lalalalalal 2
-        PyramidTab(name="Active Orders") lalalalalal 2
+        PyramidTab(name="Order Book") Test 1
+        PyramidTab(name="Active Orders") Test 2
+    .col-xs-1
     .col-xs-3
       .row.m-b-lg
         .col-xs-6

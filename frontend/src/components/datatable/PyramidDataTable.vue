@@ -4,8 +4,8 @@
     thead
       tr
         th(v-for="header in headers") {{ header.name }}
-    tbody
-      tr(v-for="row in rows")
+    transition-group(tag="tbody" transition="list")
+      tr(v-for="row in rows" :key="Math.floor(Math.random() * 100)")
         slot(v-bind:row="row")
 </template>
 
@@ -27,10 +27,6 @@ export default {
 
 <style lang="scss">
 .pyramid-datatable {
-  background: $gunMetal;
-  border-radius: 5px;
-  padding: 15px;
-
   table {
     width: 100%;
     text-align: left;
