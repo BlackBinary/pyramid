@@ -16,7 +16,7 @@
 
 <script>
 import { DeleteStrategy } from '@frontend/apollo/strategies/mutations.gql';
-import { getMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
 
 export default {
   name: 'PyramidStrategyCard',
@@ -53,12 +53,12 @@ export default {
           variables: { id: this.strategy.id },
           update: (store) => {
             // Read the data from our cache for this query.
-            const data = store.readQuery({ query: getMyStrategies });
+            const data = store.readQuery({ query: GetMyStrategies });
             console.log(data);
             // Add our data from the mutation to the end
             data.myStrategies = data.myStrategies.filter((t) => t.id !== this.strategy.id);
             // Write our data back to the cache.
-            store.writeQuery({ query: getMyStrategies, data });
+            store.writeQuery({ query: GetMyStrategies, data });
           },
         });
     },
