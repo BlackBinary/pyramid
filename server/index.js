@@ -7,13 +7,7 @@ const jwtMiddleware = require('@server/src/middlewares/jwt');
 
 const app = express();
 
-app.use(jwtMiddleware);
-
-app.use((req, res, next) => {
-  console.log(req.user);
-
-  next();
-});
+app.use(...jwtMiddleware);
 
 schema.applyMiddleware({ app });
 
