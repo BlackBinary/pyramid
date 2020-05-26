@@ -1,5 +1,7 @@
 require('module-alias/register');
 
+require('dotenv').config();
+
 const express = require('express');
 
 const schema = require('@server/src/schema');
