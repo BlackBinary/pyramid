@@ -32,7 +32,6 @@ npm install
 
 👤 **Daen Rebel**
 
-* Twitter: [@daenrebel](https://twitter.com/daenrebel)
 * LinkedIn: [@daenrebel](https://linkedin.com/in/daenrebel)
 
 👤 **Tycho Kaspers**
