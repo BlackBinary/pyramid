@@ -15,6 +15,9 @@ query getStrategyQuery($id: ID!) {
     indicators {
       chartPeriod
       type
+      signal
+      params
+      required
     }
   }
 }
