@@ -7,20 +7,18 @@ module.exports = gql`
     description: String
     userId: ID!
     user: User
+    options: JSONObject
+    minBuy: Int!
+    minSell: Int!
     createdAt: String
     updatedAt: String
   }
 
   type Indicator {
     id: ID!
-    name: String!
-  }
-
-  type StrategyIndicator {
-    id: ID!
     strategyId: ID!
-    indicatorId: ID!
-    type: Signal!
+    type: String!
+    signal: Signal!
     params: JSONObject
     chartPeriod: Period!
     required: Boolean!
@@ -35,14 +33,13 @@ module.exports = gql`
 
   extend type Query {
     strategies: [Strategy]
-    myStrategies: [Strategy]
     strategy(id: ID!): Strategy
   }
 
   extend type Mutation {
     createStrategy(name: String!, description: String): Strategy!
     deleteStrategy(id: ID!): Strategy
-    # createStrategyIndicator(strategyId: ID!, indicatorId: ID!, params: JSONObject!, chartPeriod: Period!, type: Signal!, required: Boolean!): StrategyIndicator!
-    # deleteStrategyIndicator(id: ID!): StrategyIndicator
+    createIndicator(strategyId: ID!, params: JSONObject!, chartPeriod: Period!, signal: Signal!, required: Boolean!): Indicator!
+    deleteIndicator(id: ID!): Indicator
   }
 `;

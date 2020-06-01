@@ -39,20 +39,20 @@ div
         .col-xs-6.has-text-right
           .fal.fa-plus(@click="addStrategy")
       transition-group.row(tag="div" name="list")
-        .col-xs-12(v-for="(strategy, index) in myStrategies" :key="`${strategy.id}`")
+        .col-xs-12(v-for="(strategy, index) in strategies" :key="`${strategy.id}`")
           PyramidStrategyCard(:value="strategy")
       StrategyModal(v-model="addStrategyModal")
 </template>
 
 <script>
-import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
-import { GetHistoricCandles } from '@frontend/apollo/chart/queries.gql';
+import { getStrategiesQuery } from '@frontend/apollo/strategies/queries.gql';
+import { getHistoricCandlesQuery } from '@frontend/apollo/chart/queries.gql';
 
 export default {
   data() {
     return {
       activeCardIndex: 0,
-      myStrategies: [],
+      strategies: [],
       historicCandles: [],
       addStrategyModal: false,
       coinCards: [
@@ -183,11 +183,11 @@ export default {
     };
   },
   apollo: {
-    myStrategies: {
-      query: GetMyStrategies,
+    strategies: {
+      query: getStrategiesQuery,
     },
     historicCandles: {
-      query: GetHistoricCandles,
+      query: getHistoricCandlesQuery,
       pollInterval: 1000 * 60,
       variables() {
         return {

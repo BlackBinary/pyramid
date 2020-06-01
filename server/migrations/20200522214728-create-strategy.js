@@ -23,6 +23,9 @@ module.exports = {
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
     },
+    options: {
+      type: Sequelize.JSONB,
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE,

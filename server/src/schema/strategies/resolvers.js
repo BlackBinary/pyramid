@@ -34,13 +34,22 @@ module.exports = {
     },
   }),
   Query: {
-    strategies: (parent, args, { dataSources }) => dataSources.models.Strategy.findAll(),
-    myStrategies: (parent, args, { dataSources, user }) => {
+    strategies: (parent, args, { dataSources, user }) => {
       // User is not logged in
       if (!user) throw new AuthenticationError();
 
       // Return all strategies a user is linked to
       return dataSources.models.Strategy.findAll({ where: { userId: user.sub } });
+    },
+    strategy: (parent, args, { dataSources, user }) => {
+      // User is not logged in
+      if (!user) throw new AuthenticationError();
+
+      // Get the id of the strategy to query with
+      const { id } = args;
+
+      // Return the strategy by user and strategy id
+      return dataSources.models.Strategy.findOne({ where: { id, userId: user.sub } });
     },
   },
   Mutation: {
@@ -80,5 +89,7 @@ module.exports = {
         },
       });
     },
+    // createIndicator: async (parent, args, { dataSources, user }) => {},
+    // deleteIndicator: async (parent, args, { dataSources, user }) => {},
   },
 };

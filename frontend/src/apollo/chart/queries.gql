@@ -1,4 +1,4 @@
-query GetHistoricCandles($symbol: String!) {
+query getHistoricCandlesQuery($symbol: String!) {
   historicCandles (input:{ symbol: $symbol, interval: "1m", limit: 1000 }) {
     time
     close

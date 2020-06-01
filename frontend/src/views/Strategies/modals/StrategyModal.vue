@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { CreateStrategy } from '@frontend/apollo/strategies/mutations.gql';
+import { createStrategyMutation } from '@frontend/apollo/strategies/mutations.gql';
 import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
 
 export default {
@@ -55,7 +55,7 @@ export default {
         this.$store.dispatch('addToaster', { message: 'Strategy added', type: 'success' });
         this.$apollo
           .mutate({
-            mutation: CreateStrategy,
+            mutation: createStrategyMutation,
             variables: this.strategy,
             update: (store, { data: { createStrategy } }) => {
               // Read the data from our cache for this query.

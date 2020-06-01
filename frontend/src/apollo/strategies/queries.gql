@@ -1,7 +1,16 @@
-query GetMyStrategies {
-    myStrategies {
+query getStrategiesQuery {
+    strategies {
         id
         name
         description
     }
+}
+
+query getStrategyQuery($id: ID!) {
+  strategy (id: $id) {
+    id
+    name
+    description
+    options
+  }
 }
