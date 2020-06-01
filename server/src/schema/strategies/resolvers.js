@@ -42,6 +42,17 @@ module.exports = {
       // Return all strategies a user is linked to
       return dataSources.models.Strategy.findAll({ where: { userId: user.sub } });
     },
+    strategy: (parent, args, { dataSources, user }) => {
+      // Get the data sent by the client
+      const {
+        id,
+      } = args;
+
+      // User is not logged in
+      if (!user) throw new AuthenticationError();
+
+      return dataSources.models.Strategy.findOne({ where: { userId: user.sub, id } });
+    },
   },
   Mutation: {
     createStrategy: async (parent, args, { dataSources, user }) => {

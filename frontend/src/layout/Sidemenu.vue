@@ -129,7 +129,7 @@ export default {
           }
         }
 
-        &.router-link-exact-active {
+        &.router-link-active {
           color: $white;
         }
       }

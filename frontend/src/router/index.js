@@ -14,7 +14,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "main" */ '@frontend/layout/Sidemenu.vue'),
     children: [
       {
-        path: '/',
+        path: 'dashboard',
         name: 'Home',
         component: () => import(/* webpackChunkName: "home" */ '@frontend/views/Home.vue'),
       },

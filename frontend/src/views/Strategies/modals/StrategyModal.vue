@@ -62,8 +62,10 @@ export default {
               const data = store.readQuery({ query: GetMyStrategies });
               // Add our data from the mutation to the end
               data.myStrategies.push(createStrategy);
+              console.log(createStrategy);
               // Write our data back to the cache.
               store.writeQuery({ query: GetMyStrategies, data });
+              this.$router.push({ name: 'StrategyView', params: { strategyId: createStrategy.id } });
             },
           });
         this.close();
