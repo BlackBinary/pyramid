@@ -1,15 +1,24 @@
-query GetMyStrategies {
-    myStrategies {
+query getStrategiesQuery {
+    strategies {
         id
         name
         description
     }
 }
 
-query GetStrategyById($id: ID!) {
-  strategy(id: $id) {
+query getStrategyQuery($id: ID!) {
+  strategy (id: $id) {
     id
     name
     description
+    options
+    indicators {
+      chartPeriod
+      type
+      signal
+      params
+      required
+      required
+    }
   }
 }

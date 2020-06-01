@@ -61,7 +61,8 @@
 </template>
 
 <script>
-import { GetStrategyById } from '@frontend/apollo/strategies/queries.gql';
+import { getStrategyQuery } from '@frontend/apollo/strategies/queries.gql';
+import { createIndicatorMutation } from '@frontend/apollo/strategies/mutations.gql';
 
 export default {
   data() {
@@ -123,14 +124,15 @@ export default {
         },
       ],
       conditionals: [],
+      strategyId: this.$route.params.strategyId,
     };
   },
   apollo: {
     strategy: {
-      query: GetStrategyById,
+      query: getStrategyQuery,
       variables() {
         return {
-          id: this.$route.params.strategyId,
+          id: this.strategyId,
         };
       },
     },
@@ -158,6 +160,30 @@ export default {
     PyramidTab: () => import('@frontend/components/tabs/PyramidTab'),
     PyramidInput: () => import('@frontend/components/forms/PyramidInput'),
     PyramidField: () => import('@frontend/components/forms/PyramidField'),
+    createIndicator() {
+      this.$apollo
+        .mutate({
+          mutation: createIndicatorMutation,
+          variables: {
+            strategyId: this.strategyId,
+            type: 'MACD',
+            signal: 'BUY',
+            params: {
+              short: 12,
+              long: 26,
+              signal: 9,
+            },
+            chartPeriod: 60,
+            required: true,
+          },
+        })
+        .then(async (response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>

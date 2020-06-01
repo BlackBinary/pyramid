@@ -31,7 +31,7 @@
 
 <script>
 import { getAccount } from '@frontend/apollo/users/queries.gql';
-import { UpdateAccount } from '@frontend/apollo/users/mutations.gql';
+import { updateAccountMutation } from '@frontend/apollo/users/mutations.gql';
 
 export default {
   data() {
@@ -58,7 +58,7 @@ export default {
 
       this.$apollo
         .mutate({
-          mutation: UpdateAccount,
+          mutation: updateAccountMutation,
           variables: { firstName, lastName, email },
           update: (store, { data: { updateAccount: account } }) => {
             store.writeQuery({

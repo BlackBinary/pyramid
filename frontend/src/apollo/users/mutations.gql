@@ -1,10 +1,10 @@
-mutation LoginUser($email: String!, $password: String!) {
+mutation loginUserMutation($email: String!, $password: String!) {
     loginUser(email: $email, password: $password) {
         token
     }
 }
 
-mutation UpdateAccount($email: String!, $firstName: String!, $lastName: String!) {
+mutation updateAccountMutation($email: String!, $firstName: String!, $lastName: String!) {
     updateAccount(email: $email, firstName: $firstName, lastName: $lastName) {
         id
         firstName

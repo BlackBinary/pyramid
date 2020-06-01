@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const { GraphQLJSON, GraphQLJSONObject } = require('graphql-type-json');
 const { GraphQLScalarType } = require('graphql');
 const { Kind } = require('graphql/language');
@@ -8,18 +8,7 @@ const models = require('@server/src/models');
 const users = require('@server/src/schema/users');
 const strategies = require('@server/src/schema/strategies');
 const binance = require('@server/src/schema/binance');
-
-const defaultDef = gql`
-  # Custom scalar JSON type see https:www.npmjs.com/package/graphql-type-json
-  scalar JSON
-  scalar JSONObject
-
-  # Custom scalar
-  scalar Date
-
-  type Query
-  type Mutation
-`;
+const defaultDef = require('./defaultDef');
 
 const resolveFunctions = {
   JSON: GraphQLJSON,

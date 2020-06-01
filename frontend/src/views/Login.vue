@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { LoginUser } from '@frontend/apollo/users/mutations.gql';
+import { loginUserMutation } from '@frontend/apollo/users/mutations.gql';
 
 export default {
   name: 'Login',
@@ -44,7 +44,7 @@ export default {
 
       this.$apollo
         .mutate({
-          mutation: LoginUser,
+          mutation: loginUserMutation,
           variables: this.credentials,
         })
         .then(async (response) => {

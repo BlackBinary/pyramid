@@ -1,30 +1,29 @@
 
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Strategies', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Indicators', {
     id: {
       allowNull: false,
       primaryKey: true,
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
     },
-    name: {
-      type: Sequelize.STRING,
-      required: true,
-    },
-    description: {
-      type: Sequelize.STRING,
-    },
-    userId: {
+    strategyId: {
       type: Sequelize.UUID,
-      references: {
-        model: 'Users',
-        key: 'id',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
     },
-    options: {
+    type: {
+      type: Sequelize.STRING,
+    },
+    signal: {
+      type: Sequelize.STRING,
+    },
+    params: {
       type: Sequelize.JSONB,
+    },
+    chartPeriod: {
+      type: Sequelize.STRING,
+    },
+    required: {
+      type: Sequelize.BOOLEAN,
     },
     createdAt: {
       allowNull: false,
@@ -35,5 +34,5 @@ module.exports = {
       type: Sequelize.DATE,
     },
   }),
-  down: (queryInterface) => queryInterface.dropTable('Strategies'),
+  down: (queryInterface) => queryInterface.dropTable('Indicators'),
 };

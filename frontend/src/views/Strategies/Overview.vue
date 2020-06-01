@@ -7,24 +7,24 @@ div
     .col-xs-6.has-text-right
       button.button(@click="addStrategy") Create Strategy
   transition-group.row(tag="div" name="list")
-    .col-xs-3(v-for="(strategy, index) in myStrategies" :key="`${strategy.id}`")
+    .col-xs-3(v-for="(strategy, index) in strategies" :key="`${strategy.id}`")
       PyramidStrategyCard(:value="strategy")
   StrategyModal(v-model="addStrategyModal")
 </template>
 
 <script>
-import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+import { getStrategiesQuery } from '@frontend/apollo/strategies/queries.gql';
 
 export default {
   data() {
     return {
-      myStrategies: [],
+      strategies: [],
       addStrategyModal: false,
     };
   },
   apollo: {
-    myStrategies: {
-      query: GetMyStrategies,
+    strategies: {
+      query: getStrategiesQuery,
     },
   },
   methods: {

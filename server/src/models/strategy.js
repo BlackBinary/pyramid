@@ -9,11 +9,15 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     userId: DataTypes.UUID,
+    options: DataTypes.JSONB,
   }, {});
 
   Strategy.associate = (models) => {
     Strategy.belongsTo(models.User, {
       foreignKey: 'userId',
+    });
+    Strategy.hasMany(models.Indicator, {
+      foreignKey: 'strategyId',
     });
   };
 
