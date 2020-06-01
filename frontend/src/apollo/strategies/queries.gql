@@ -18,7 +18,6 @@ query getStrategyQuery($id: ID!) {
       signal
       params
       required
-      required
     }
   }
 }
