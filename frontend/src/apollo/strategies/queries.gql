@@ -12,5 +12,9 @@ query getStrategyQuery($id: ID!) {
     name
     description
     options
+    indicators {
+      chartPeriod
+      type
+    }
   }
 }

@@ -16,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
     Strategy.belongsTo(models.User, {
       foreignKey: 'userId',
     });
-    // Strategy.hasMany(models.Indicators, {
-    //   foreignKey: 'strategyId',
-    // });
+    Strategy.hasMany(models.Indicator, {
+      foreignKey: 'strategyId',
+    });
   };
 
   return Strategy;

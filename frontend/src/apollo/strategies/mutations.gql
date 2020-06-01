@@ -6,6 +6,14 @@ mutation createStrategyMutation($name: String!, $description: String) {
     }
 }
 
+mutation createIndicatorMutation($strategyId: ID!, $type: String!, $signal: Signal!, $params: JSONObject!, $chartPeriod: Period!, $required: Boolean!) {
+    createIndicator(strategyId: $strategyId, type: $type, signal: $signal, params: $params, chartPeriod: $chartPeriod, required: $required) {
+        id
+        type
+        params
+    }
+}
+
 mutation deleteStrategyMutation($id: ID!) {
     deleteStrategy(id: $id) {
         id
