@@ -15,20 +15,24 @@ div
     .col-xs-8
       PyramidTabs
         PyramidTab(name="Trade History" :selected="true")
-          PyramidDataTable(:headers="headers" :rows="rows")
+          PyramidDataTable(:headers="headers" :rows="tradeRows")
             template(v-slot="{ row }")
-              td(v-for="(cols, index) in row")
+              td(v-for="(val, key) in row")
                 span(
-                  v-if="index === 0"
-                  :class='completeOrErrorClass(cols.type)'
-                )
-                  | {{ cols.type === 1 ? 'Sell' : 'Buy' }}
+                  v-if="key === 'type'"
+                  :class="completeOrErrorClass(val === 'BUY')"
+                ) {{ val }}
                 span(
-                  v-if="index === 5"
-                  :class='completeOrErrorClass(cols.status)'
-                )
-                  | {{ cols.status === 1 ? 'Denied' : 'Completed' }}
-                template(v-else) {{ cols.content }}
+                  v-if="key === 'status'"
+                  :class="completeOrErrorClass(val === 'complete')"
+                ) {{ val }}
+                span(
+                  v-if="key === 'amount'"
+                ) {{ val }} {{ row.symbol }}
+                span(
+                  v-if="key === 'total'"
+                ) {{ row.total }}
+                span(v-else) {{ val }}
         PyramidTab(name="Order Book") Test 1
         PyramidTab(name="Active Orders") Test 2
     .col-xs-1
@@ -52,6 +56,22 @@ export default {
   data() {
     return {
       activeCardIndex: 0,
+      trades: [
+        {
+          type: 'BUY',
+          price: 9005.90,
+          amount: 30,
+          symbol: 'BTC',
+          status: 'failed',
+        },
+        {
+          type: 'SELL',
+          price: 10005.90,
+          amount: 29,
+          symbol: 'ETH',
+          status: 'complete',
+        },
+      ],
       strategies: [],
       historicCandles: [],
       addStrategyModal: false,
@@ -59,21 +79,21 @@ export default {
         {
           title: 'btc / eur',
           symbol: 'btceur',
-          value: '9,803.12',
+          value: 9803.12,
           goingUp: true,
           isActive: true,
         },
         {
           title: 'eth / btc',
           symbol: 'ethbtc',
-          value: '9,803.12',
+          value: 9803.12,
           goingUp: true,
           isActive: false,
         },
         {
           title: 'ltc / btc',
           symbol: 'ltcbtc',
-          value: '9,803.12',
+          value: 9803.12,
           goingUp: false,
           isActive: false,
         },
@@ -81,9 +101,6 @@ export default {
       headers: [
         {
           name: 'Type',
-        },
-        {
-          name: 'Id',
         },
         {
           name: 'Price',
@@ -98,94 +115,15 @@ export default {
           name: 'Status',
         },
       ],
-      rows: [
-        [
-          {
-            type: 0,
-          },
-          {
-            content: '30',
-          },
-          {
-            content: '9.005,90 EUR',
-          },
-          {
-            content: '0 BTC',
-          },
-          {
-            content: '10 BTC',
-          },
-          {
-            status: 0,
-          },
-        ],
-        [
-          {
-            type: 0,
-          },
-          {
-            content: '10',
-          },
-          {
-            content: '8.200,90 EUR',
-          },
-          {
-            content: '0 BTC',
-          },
-          {
-            content: '10 BTC',
-          },
-          {
-            status: 0,
-          },
-        ],
-        [
-          {
-            type: 0,
-          },
-          {
-            content: '10',
-          },
-          {
-            content: '8.200,90 EUR',
-          },
-          {
-            content: '0 BTC',
-          },
-          {
-            content: '10 BTC',
-          },
-          {
-            status: 1,
-          },
-        ],
-        [
-          {
-            type: 1,
-          },
-          {
-            content: '10',
-          },
-          {
-            content: '8.200,90 EUR',
-          },
-          {
-            content: '0 BTC',
-          },
-          {
-            content: '10 BTC',
-          },
-          {
-            status: 1,
-          },
-        ],
-      ],
     };
   },
   apollo: {
     strategies: {
       query: getStrategiesQuery,
     },
+    // trades: {
+    //   query: getTradesQuery,
+    // },
     historicCandles: {
       query: getHistoricCandlesQuery,
       pollInterval: 1000 * 60,
@@ -200,6 +138,15 @@ export default {
     activeCardData() {
       return this.coinCards[this.activeCardIndex];
     },
+    tradeRows() {
+      return this.trades.map((trade) => {
+        const total = trade.amount * trade.price;
+        return {
+          ...trade,
+          total,
+        };
+      });
+    },
   },
   methods: {
     coinCardData(coinCard, index) {
@@ -211,8 +158,8 @@ export default {
     addStrategy() {
       this.addStrategyModal = true;
     },
-    completeOrErrorClass(int) {
-      return int === 0 ? 'has-text-caribbean-green' : 'has-text-cerise';
+    completeOrErrorClass(bool) {
+      return bool === true ? 'has-text-caribbean-green' : 'has-text-cerise';
     },
     setChartWithCoinData(index) {
       this.coinCards = this.coinCards.map((coinCard) => ({
@@ -220,8 +167,6 @@ export default {
         isActive: false,
       }));
       this.coinCards[index].isActive = true;
-
-      // @TO-DO set ChartData
     },
   },
   components: {

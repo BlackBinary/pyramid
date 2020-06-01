@@ -1,5 +1,6 @@
 <template lang="pug">
 .pyramid-datatable
+  //- TODO: Work based on header index, and get data accordingly (assures position)
   table
     thead
       tr

@@ -1,5 +1,5 @@
 query getHistoricCandlesQuery($symbol: String!) {
-  historicCandles (input:{ symbol: $symbol, interval: "1m", limit: 1000 }) {
+  historicCandles (input:{ symbol: $symbol, interval: "1m", limit: 100 }) {
     time
     close
     high
