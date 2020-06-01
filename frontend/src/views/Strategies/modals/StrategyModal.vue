@@ -19,7 +19,7 @@
 
 <script>
 import { createStrategyMutation } from '@frontend/apollo/strategies/mutations.gql';
-import { GetMyStrategies } from '@frontend/apollo/strategies/queries.gql';
+import { getStrategiesQuery } from '@frontend/apollo/strategies/queries.gql';
 
 export default {
   props: {
@@ -59,12 +59,11 @@ export default {
             variables: this.strategy,
             update: (store, { data: { createStrategy } }) => {
               // Read the data from our cache for this query.
-              const data = store.readQuery({ query: GetMyStrategies });
+              const data = store.readQuery({ query: getStrategiesQuery });
               // Add our data from the mutation to the end
-              data.myStrategies.push(createStrategy);
-              console.log(createStrategy);
+              data.strategies.push(createStrategy);
               // Write our data back to the cache.
-              store.writeQuery({ query: GetMyStrategies, data });
+              store.writeQuery({ query: getStrategiesQuery, data });
               this.$router.push({ name: 'StrategyView', params: { strategyId: createStrategy.id } });
             },
           });
