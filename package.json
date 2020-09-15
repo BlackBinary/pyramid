@@ -10,7 +10,6 @@
     "frontend:test:unit": "vue-cli-service test:unit frontend/tests/**/*.spec.js"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-pro": "^5.13.0",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
     "apollo-link": "^1.2.14",
@@ -34,6 +33,7 @@
     "node-binance-api": "^0.11.5",
     "pg": "^8.2.1",
     "pg-hstore": "^2.3.3",
+    "pg-native": "^3.0.0",
     "sequelize": "^5.21.11",
     "trading-vue-js": "^0.5.0",
     "uuid": "^8.1.0",
