@@ -21,7 +21,7 @@
     "bottleneck": "^2.19.5",
     "core-js": "^3.6.4",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-jwt": "^5.3.3",
     "faker": "^4.1.0",
     "graphql": "^15.0.0",
